@@ -1,0 +1,2 @@
+# CardioVision AI
+The goal of CardioVision AI is to develop an intelligent, machine learning-based platform that predicts cardiovascular disease risk and visualizes important health indicators through an interactive dashboard. The system aims to analyze health-related data, identify significant risk factors, and present predictive insights using clear and interactive visualizations. It seeks to support early risk assessment, improve understanding of cardiovascular health, and assist users and healthcare professionals in making informed decisions.
