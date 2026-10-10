@@ -25,7 +25,7 @@
   </a>
 </div>
 
-    <strong>3D Interactive Coronary Risk Explorer & Clinical Explainability Platform</strong>
+  <strong>3D Interactive Coronary Risk Explorer & Clinical Explainability Platform</strong>
   </p>
 
   <p align="center">
