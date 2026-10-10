@@ -46,6 +46,16 @@
 
 </div>
 
+<!-- Logos Section: AWS Cloud Solution Architect -->
+<table border="0" align="center">
+<tr>
+ <td align="center" width="200">
+        <img src="https://images.credly.com/images/0e284c3f-5164-4b21-8660-0d84737941bc/image.png" width="100" alt="AWS Solutions Architect Logo" /><br/>
+        <sub><b>AWS Solution Architect</b></sub>
+      </td>
+    </tr>
+  </table>
+  
 ---
 
 ## 📖 Overview
