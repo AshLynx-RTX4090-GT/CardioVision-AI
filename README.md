@@ -20,18 +20,8 @@
     </a>
   </p>
 
-  <!-- If you have the image file inside your repository root, use this: -->
   <p align="center">
     <img src="CardioVision%20by%20LYNX.jpg" alt="CardioVision by LYNX Logo" width="130" style="border-radius: 50%;" />
-  </p>
-
-  <br />
-
-  <!-- Video Preview Card -->
-  <p align="center">
-    <a href="https://cardio-vision-ai-six.vercel.app/">
-      <img src="https://img.shields.io/badge/▶%20Watch%20Demo%20Video-CardioVision%20Walkthrough-red?style=for-the-badge&logo=youtube&logoColor=white" alt="Watch Demo" height="35" />
-    </a>
   </p>
 
   <br />
@@ -60,7 +50,7 @@
 
 ## 📖 Overview
 
-**CardioVision AI** is an interactive clinical decision-support and educational platform combining real-time **3D anatomical coronary visualization** with machine-learning-based risk estimation and permutation-sampled **Shapley (SHAP-style) explainability**. 
+**CardioVision AI** is an interactive clinical decision-support and educational platform that combines real-time **3D anatomical coronary visualization** with machine-learning-based risk estimation and permutation-sampled **Shapley (SHAP-style) explainability**. 
 
 It evaluates individual patient parameters against demographic cohorts to project multi-vessel stenosis risks across primary coronary trees (**LAD**, **LCX**, and **RCA**).
 
@@ -73,6 +63,21 @@ It evaluates individual patient parameters against demographic cohorts to projec
 - **Explainable AI (Shapley Values)**: Real-time additive feature attribution highlighting exact risk drivers (demographics, blood pressure, glucose, SpO₂, lifestyle).
 - **Synthetic Population Calibration**: Calibrated against diverse synthetic patient baselines to contextualize individualized percentiles.
 - **Zero-Dependency 3D**: Runs client-side Three.js directly via local imports, preventing CDN lag and enabling reliable offline/clinical deployment.
+
+---
+
+<!-- ======================================================== -->
+<!-- 🎬 ANIMATED DEMO PREVIEW (MIDDLE OF README)               -->
+<!-- ======================================================== -->
+
+<div align="center">
+  <h3>✨ CardioVision 3D Cardiac Simulation & Telemetry ✨</h3>
+  <br />
+  <!-- If converted to GIF in repo: -->
+  <img src="cardiovision-demo.gif" alt="CardioVision 3D Cardiac Simulation" width="650" style="border-radius: 14px; box-shadow: 0 8px 30px rgba(0, 0, 0, 0.45); max-width: 100%;" />
+  
+  <p><sub><i>Real-time 3D anatomical rendering and clinical telemetry engine by LYNX Co.</i></sub></p>
+</div>
 
 ---
 
