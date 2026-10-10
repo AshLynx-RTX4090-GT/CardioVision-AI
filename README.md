@@ -1,4 +1,29 @@
-# CardioVision AI – 3D Coronary Risk Explorer
+<div align="center">
+  <h1>CardioVision-AI</h1>
+  <p><strong>3D Coronary Risk Explorer</strong></p>
+  <p>
+    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg" alt="Python logo" width="72" height="72">
+    <a href="https://aws.amazon.com/certification/certified-solutions-architect-associate/">
+      <img src="https://img.shields.io/badge/AWS-Solutions%20Architect%20Associate-232F3E?logo=amazonaws&logoColor=FF9900" alt="AWS Solutions Architect badge" height="32">
+    </a>
+    <a href="https://cardio-vision-ai-six.vercel.app/">
+      <img src="frontend/cardiovision-lynx-logo.svg" alt="CardioVision badge" height="72">
+    </a>
+  </p>
+</div>
+
+<div align="center">
+  <video controls width="85%" poster="frontend/cardiovision-lynx-logo.svg">
+    <source src="CardioVision%20by%20LYNX.mp4" type="video/mp4">
+    Your browser does not support the video tag.
+  </video>
+</div>
+
+<div align="center" style="margin: 18px 0;">
+  <a href="https://cardio-vision-ai-six.vercel.app/" style="display: inline-block; padding: 12px 22px; border-radius: 10px; color: #ffffff; font-weight: 700; text-decoration: none; background: linear-gradient(90deg, rgb(0, 119, 255), rgb(126, 34, 206), rgb(236, 72, 153)); box-shadow: 0 0 14px rgba(126, 34, 206, 0.55);">
+    Visit the CardioVision-AI Website
+  </a>
+</div>
 
 CardioVision is an interactive clinical decision-support and educational platform that combines 3D anatomical coronary visualization with machine-learning-based risk estimation and permutation-sampled Shapley (SHAP-style) explainability.
 
@@ -85,3 +110,41 @@ The repository includes `vercel.json` and `api/index.js` configured for `@vercel
 
 ### Google Cloud Run / Docker
 The application automatically binds to `0.0.0.0:${PORT:-3000}`.
+
+---
+
+## License
+
+This project is distributed under the terms of the [MIT License](LICENSE).
+
+## Disclaimer
+
+CardioVision-AI is intended for educational, research, and demonstration purposes only. It is not a medical device and does not provide diagnosis, treatment recommendations, or emergency medical advice. Predictions and visualizations must not replace assessment by a qualified healthcare professional. Always consult an appropriately licensed clinician for medical decisions.
+
+## 3D Project Flowchart
+
+```mermaid
+flowchart LR
+    U([User]) --> UI["frontend / public<br/>index.html + app.js"]
+    UI --> V["Three.js Viewer<br/>anatomy.js + viewer.js"]
+    UI --> API["API Layer<br/>server.js / api/index.js"]
+    API --> CORE["Core Risk Engine<br/>src/app.js + model.js"]
+    CORE --> DATA["Cohort & Schema<br/>cohort.js + schema.js"]
+    CORE --> M["Trained Models<br/>models/*.joblib"]
+    API --> STORE["Storage<br/>src/storage.js"]
+    STORE --> D["data/"]
+    CORE --> EX["Explainability<br/>SHAP-style output"]
+    EX --> UI
+    API --> DEPLOY["Deployment<br/>vercel.json / scripts/"]
+
+    classDef ui fill:#0ea5e9,stroke:#075985,color:#fff
+    classDef api fill:#8b5cf6,stroke:#5b21b6,color:#fff
+    classDef core fill:#10b981,stroke:#047857,color:#fff
+    classDef data fill:#f59e0b,stroke:#b45309,color:#fff
+    classDef deploy fill:#ec4899,stroke:#9d174d,color:#fff
+    class UI,V ui
+    class API,STORE api
+    class CORE,EX core
+    class DATA,M,D data
+    class DEPLOY deploy
+```
