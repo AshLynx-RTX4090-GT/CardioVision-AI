@@ -303,17 +303,21 @@ export function predict(patientInput, stats, background, metrics, explain = true
     explanation: {},
   };
 
+  const threshold = typeof metrics?.threshold === "number" ? metrics.threshold : 0.5;
+  const targetsInfo = metrics?.targets || {};
+  const prevalenceInfo = metrics?.prevalence || {};
+
   for (const t of ALL_TARGETS) {
     const p = predictProbability(t, row, stats);
-    const sel = metrics.targets[t]?.selected || "Random Forest";
+    const sel = targetsInfo[t]?.selected || "Random Forest";
     out.predictions[t] = {
       label: TARGET_LABELS[t],
       probability: p,
       level: riskLevel(p),
-      positive: Boolean(p >= metrics.threshold),
+      positive: Boolean(p >= threshold),
       model: sel,
-      prevalence: metrics.prevalence[t],
-      test_auc: metrics.targets[t]?.test?.roc_auc ?? 0.9,
+      prevalence: prevalenceInfo[t] ?? 0.5,
+      test_auc: targetsInfo[t]?.test?.roc_auc ?? 0.9,
     };
 
     if (explain) {

@@ -10,8 +10,10 @@
   "scripts": {
     "dev": "node server.js",
     "start": "node server.js",
-    "build": "mkdir -p public && cp -r frontend/* public/",
-    "lint": "node -c api/index.js src/app.js src/model.js src/cohort.js src/schema.js src/storage.js"
+    "build": "node scripts/build.js",
+    "vercel-build": "node scripts/build.js",
+    "postinstall": "node scripts/build.js",
+    "lint": "node -c api/index.js src/app.js src/model.js src/cohort.js src/schema.js src/storage.js scripts/build.js"
   },
   "dependencies": {
     "express": "^4.21.2",
