@@ -1,0 +1,461 @@
+/* CardioVision AI - Unified Glassmorphism & Liquid Design System */
+
+:root {
+  --brand-coral: #f97352;
+  --brand-coral-light: #ff8a6c;
+  --brand-coral-soft: #fff2ee;
+  --brand-teal: #14b8a6;
+  --brand-bg: #f5f7fb;
+  --ink: #1e293b;
+  --muted: #64748b;
+  --line: rgba(226, 232, 240, 0.8);
+  --up: #d1495b;
+  --down: #2a77c9;
+}
+
+body {
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  background-color: #f4f6fa;
+  color: #1e293b;
+}
+
+/* Glassmorphism Classes */
+.glass-card {
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.95);
+}
+
+.floating-glass {
+  background: rgba(255, 255, 255, 0.84);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 14px 34px -4px rgba(20, 30, 55, 0.09);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+}
+
+.liquid-glass {
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.78) 0%, rgba(255, 255, 255, 0.46) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.75);
+  box-shadow: 0 20px 40px -15px rgba(220, 38, 38, 0.06), 0 8px 20px -6px rgba(15, 23, 42, 0.05), inset 0 1px 1px 0 rgba(255, 255, 255, 0.9), inset 0 -2px 4px 0 rgba(0, 0, 0, 0.02);
+}
+
+.liquid-glass-accent {
+  backdrop-filter: blur(22px) saturate(190%);
+  -webkit-backdrop-filter: blur(22px) saturate(190%);
+  background: linear-gradient(135deg, rgba(255, 245, 242, 0.85) 0%, rgba(255, 235, 230, 0.5) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  box-shadow: 0 20px 40px -12px rgba(249, 115, 82, 0.15), inset 0 1px 2px 0 rgba(255, 255, 255, 0.95), inset 0 -2px 4px 0 rgba(249, 115, 82, 0.04);
+}
+
+.liquid-pill {
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  background: rgba(255, 255, 255, 0.65);
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.9), 0 4px 12px rgba(0, 0, 0, 0.03);
+}
+
+.liquid-badge {
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  background: rgba(255, 255, 255, 0.82);
+  border: 1px solid rgba(255, 255, 255, 0.92);
+  box-shadow: 0 8px 20px -4px rgba(20, 30, 55, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+/* Keyframes & Animations */
+@keyframes pulse-ring {
+  0% { transform: scale(0.95); opacity: 0.8; }
+  50% { transform: scale(1.35); opacity: 0; }
+  100% { transform: scale(0.95); opacity: 0; }
+}
+
+.pulse-node {
+  position: relative;
+}
+
+.pulse-node::after {
+  content: '';
+  position: absolute;
+  top: -6px;
+  left: -6px;
+  right: -6px;
+  bottom: -6px;
+  border-radius: 9999px;
+  background: rgba(249, 115, 82, 0.5);
+  animation: pulse-ring 2.2s cubic-bezier(0.24, 0, 0.38, 1) infinite;
+  z-index: -1;
+}
+
+.pulse-node-white::after {
+  background: rgba(255, 255, 255, 0.8);
+}
+
+@keyframes float-subtle {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+
+.float-card {
+  animation: float-subtle 4s ease-in-out infinite;
+}
+
+@keyframes liquidPulseRing {
+  0% { transform: scale(0.85); opacity: 0.8; }
+  50% { opacity: 0.35; }
+  100% { transform: scale(1.4); opacity: 0; }
+}
+
+.liquid-pulse-ring {
+  border-radius: 9999px;
+  border: 1.5px solid rgba(249, 115, 82, 0.28);
+  animation: liquidPulseRing 2.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) infinite;
+  pointer-events: none;
+}
+
+@keyframes liquidBlobDrift {
+  0% { transform: translate(0px, 0px) scale(1); }
+  33% { transform: translate(30px, -20px) scale(1.08); }
+  66% { transform: translate(-20px, 20px) scale(0.94); }
+  100% { transform: translate(0px, 0px) scale(1); }
+}
+
+.liquid-mesh-orb {
+  animation: liquidBlobDrift 16s ease-in-out infinite;
+}
+
+.liquid-mesh-orb-2 {
+  animation: liquidBlobDrift 20s ease-in-out infinite reverse;
+}
+
+@keyframes floatBob {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-6px); }
+}
+
+.float-liquid-1 { animation: floatBob 5s ease-in-out infinite; }
+.float-liquid-2 { animation: floatBob 6s ease-in-out infinite 1s; }
+.float-liquid-3 { animation: floatBob 5.5s ease-in-out infinite 0.5s; }
+
+@keyframes heartbeat {
+  0%, 100% { transform: scale(1); }
+  14% { transform: scale(1.06); }
+  28% { transform: scale(1); }
+  42% { transform: scale(1.04); }
+  70% { transform: scale(1); }
+}
+
+.animate-heartbeat {
+  animation: heartbeat 1.5s ease-in-out infinite;
+  transform-origin: center center;
+}
+
+.telemetry-ring {
+  position: absolute;
+  border-radius: 9999px;
+  border: 1px dashed rgba(249, 115, 82, 0.35);
+  animation: telemetrySpin 30s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes telemetrySpin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.liquid-btn-interactive {
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.liquid-btn-interactive:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 12px 24px -6px rgba(249, 115, 82, 0.3), inset 0 1px 1px rgba(255, 255, 255, 0.8);
+}
+
+/* 3D Viewer & Artery Elements */
+.viewer-container {
+  position: relative;
+  height: 480px;
+  border-radius: 20px;
+  overflow: hidden;
+  background: radial-gradient(ellipse at 50% 35%, #1c2740, #0b111e);
+  touch-action: none;
+}
+
+.viewer-container canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  cursor: grab;
+}
+
+.viewer-container canvas:active {
+  cursor: grabbing;
+}
+
+.vessel-chip {
+  position: absolute;
+  left: 0;
+  top: 0;
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  background: rgba(15, 23, 42, 0.88);
+  backdrop-filter: blur(8px);
+  color: #fff;
+  border: 2px solid var(--c, #8a94a3);
+  border-radius: 999px;
+  padding: 3px 10px 3px 8px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+  z-index: 2;
+  will-change: transform;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  transition: border-color 0.2s;
+}
+
+.vessel-chip .dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--c);
+}
+
+.vessel-chip.selected {
+  background: var(--c);
+  color: #0f172a;
+}
+
+.vessel-chip.selected .dot {
+  background: #0f172a;
+}
+
+.vessel-chip.dim {
+  opacity: 0.45;
+}
+
+.viewer-tip {
+  position: absolute;
+  left: 0;
+  top: 0;
+  pointer-events: none;
+  background: rgba(15, 23, 42, 0.94);
+  color: #fff;
+  padding: 6px 10px;
+  border-radius: 8px;
+  font-size: 12px;
+  z-index: 5;
+  max-width: 260px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3);
+}
+
+.viewer-tip[hidden] {
+  display: none;
+}
+
+/* Patient Form & Cards */
+.field.num, .field.cat {
+  display: grid;
+  grid-template-columns: 1fr 100px;
+  gap: 8px;
+  align-items: center;
+}
+
+.field.bin {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  cursor: pointer;
+}
+
+.field.bin input {
+  position: absolute;
+  opacity: 0;
+}
+
+.field.bin .sw {
+  width: 32px;
+  height: 18px;
+  border-radius: 99px;
+  background: #cbd5e1;
+  position: relative;
+  flex: none;
+  transition: .15s;
+}
+
+.field.bin .sw::after {
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 14px;
+  height: 14px;
+  background: #fff;
+  border-radius: 50%;
+  transition: .15s;
+}
+
+.field.bin input:checked + .sw {
+  background: #f97352;
+}
+
+.field.bin input:checked + .sw::after {
+  left: 16px;
+}
+
+details {
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  border-radius: 12px;
+  margin-bottom: 8px;
+  background: rgba(255, 255, 255, 0.6);
+}
+
+summary {
+  padding: 9px 12px;
+  font-weight: 700;
+  font-size: 13px;
+  cursor: pointer;
+  list-style: none;
+  display: flex;
+  justify-content: space-between;
+}
+
+summary::-webkit-details-marker {
+  display: none;
+}
+
+summary::after {
+  content: "▾";
+  color: #94a3b8;
+}
+
+details[open] summary::after {
+  content: "▴";
+}
+
+.cad-card {
+  width: 100%;
+  text-align: left;
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: center;
+  background: color-mix(in srgb, var(--c) 8%, #ffffff);
+  border: 2px solid rgba(226, 232, 240, 0.8);
+  border-left: 6px solid var(--c);
+  border-radius: 16px;
+  padding: 14px 16px;
+  transition: all 0.2s;
+}
+
+.cad-card.active, .vcard.active {
+  border-color: var(--c);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--c) 25%, transparent);
+}
+
+.vcard {
+  text-align: left;
+  background: rgba(255, 255, 255, 0.9);
+  border: 2px solid rgba(226, 232, 240, 0.8);
+  border-top: 5px solid var(--c);
+  border-radius: 14px;
+  padding: 10px 12px;
+  transition: all 0.2s;
+}
+
+.pbar {
+  position: relative;
+  height: 8px;
+  background: #e2e8f0;
+  border-radius: 99px;
+  overflow: hidden;
+  margin-top: 5px;
+}
+
+.pbar .fill {
+  height: 100%;
+  border-radius: 99px;
+  transition: width 0.4s ease;
+}
+
+.pbar .tick {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: #0f172a;
+  opacity: 0.45;
+}
+
+/* SHAP Waterfall and Chart styles */
+.chart {
+  display: block;
+  width: 100%;
+  height: auto;
+  font-family: inherit;
+}
+
+.chart .grid {
+  stroke: #e2e8f0;
+  stroke-dasharray: 2 3;
+}
+
+.chart .axis {
+  fill: #64748b;
+  font-size: 10px;
+}
+
+.chart .val {
+  fill: #0f172a;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.tablewrap {
+  overflow-x: auto;
+}
+
+.mtable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+.mtable th, .mtable td {
+  padding: 6px 8px;
+  text-align: left;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.mtable tr.sel {
+  background: #fff2ee;
+  font-weight: 700;
+}
+
+.cm {
+  border-collapse: collapse;
+  font-size: 12px;
+  margin-top: 6px;
+}
+
+.cm th, .cm td {
+  padding: 6px 10px;
+  text-align: center;
+  border: 1px solid #e2e8f0;
+}
+
+.cm td.ok {
+  background: rgba(20, 184, 166, var(--a, 0.2));
+  color: #0f766e;
+}
+
+.cm td.bad {
+  background: rgba(249, 115, 82, var(--a, 0.2));
+  color: #c2410c;
+}

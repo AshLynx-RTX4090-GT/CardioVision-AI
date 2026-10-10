@@ -1,0 +1,2626 @@
+{
+  "diagnosticId": "DIAG-1791629515011-534",
+  "backendPath": "data/diagnostics/diag_DIAG-1791629515011-534.json",
+  "timestamp": "2026-10-10T10:51:55.011Z",
+  "patientId": "USR-GOOG-8819",
+  "patientName": "Ashirbad Biswal",
+  "features": {
+    "Age": 60,
+    "Sex": 1,
+    "DM": 1,
+    "HTN": 1
+  },
+  "results": {
+    "source": "synthetic",
+    "disclaimer": "Decision-support / educational use only. Predictions are statistical estimates and are NOT a substitute for formal diagnostic imaging (e.g. coronary angiography or CT angiography) or clinical judgement.",
+    "warnings": [],
+    "predictions": {
+      "CAD": {
+        "label": "Overall CAD",
+        "probability": 0.9237905572016603,
+        "level": "high",
+        "positive": true,
+        "model": "Random Forest",
+        "prevalence": 0.7557755775577558,
+        "test_auc": 0.9188405797101449
+      },
+      "LAD": {
+        "label": "LAD",
+        "probability": 0.7841471891774855,
+        "level": "high",
+        "positive": true,
+        "model": "Random Forest",
+        "prevalence": 0.5082508250825083,
+        "test_auc": 0.9021505376344086
+      },
+      "LCX": {
+        "label": "LCX",
+        "probability": 0.6422170929574377,
+        "level": "moderate",
+        "positive": true,
+        "model": "Random Forest",
+        "prevalence": 0.37293729372937295,
+        "test_auc": 0.6281464530892449
+      },
+      "RCA": {
+        "label": "RCA",
+        "probability": 0.6765583565793539,
+        "level": "high",
+        "positive": true,
+        "model": "Random Forest",
+        "prevalence": 0.3927392739273927,
+        "test_auc": 0.6385135135135136
+      }
+    },
+    "explanation": {
+      "CAD": {
+        "base_value": 0.7418344145743736,
+        "prediction": 0.9237905572016611,
+        "contributions": [
+          {
+            "name": "Typical Chest Pain",
+            "label": "Typical chest pain",
+            "group": "Symptoms",
+            "unit": "",
+            "value": null,
+            "shap": 0.05335944539989952,
+            "z": null,
+            "population_median": 1,
+            "atypical": false
+          },
+          {
+            "name": "DM",
+            "label": "Diabetes mellitus",
+            "group": "History",
+            "unit": "",
+            "value": 1,
+            "shap": 0.050784802160284255,
+            "z": 1.8768026160738083,
+            "population_median": 0,
+            "atypical": false
+          },
+          {
+            "name": "Sex",
+            "label": "Sex (1 = male)",
+            "group": "Demographics",
+            "unit": "",
+            "value": 1,
+            "shap": 0.035570102780798474,
+            "z": 1.1305730797793698,
+            "population_median": 0,
+            "atypical": false
+          },
+          {
+            "name": "Function Class",
+            "label": "Functional class (0-4)",
+            "group": "Symptoms",
+            "unit": "",
+            "value": null,
+            "shap": 0.025320192651566063,
+            "z": null,
+            "population_median": 2,
+            "atypical": false
+          },
+          {
+            "name": "HTN",
+            "label": "Hypertension",
+            "group": "History",
+            "unit": "",
+            "value": 1,
+            "shap": 0.021024379553669096,
+            "z": 1.0862118187112098,
+            "population_median": 0,
+            "atypical": false
+          },
+          {
+            "name": "Age",
+            "label": "Age",
+            "group": "Demographics",
+            "unit": "yrs",
+            "value": 60,
+            "shap": 0.017994589837606566,
+            "z": 0.26446262009166666,
+            "population_median": 59,
+            "atypical": false
+          },
+          {
+            "name": "Tinversion",
+            "label": "T inversion",
+            "group": "ECG",
+            "unit": "",
+            "value": null,
+            "shap": -0.01160100153557638,
+            "z": null,
+            "population_median": 0,
+            "atypical": false
+          },
+          {
+            "name": "LDL",
+            "label": "LDL cholesterol",
+            "group": "Laboratory",
+            "unit": "mg/dL",
+            "value": null,
+            "shap": 0.010472195748580434,
+            "z": null,
+            "population_median": 114,
+            "atypical": false
+          },
+          {
+            "name": "Q Wave",
+            "label": "Q wave",
+            "group": "ECG",
+            "unit": "",
+            "value": null,
+            "shap": -0.00853867329294008,
+            "z": null,
+            "population_median": 0,
+            "atypical": false
+          },
+          {
+            "name": "BP",
+            "label": "Systolic blood pressure",
+            "group": "Examination",
+            "unit": "mmHg",
+            "value": null,
+            "shap": 0.007564909194528082,
+            "z": null,
+            "population_median": 132,
+            "atypical": false
+          },
+          {
+            "name": "St Elevation",
+            "label": "ST elevation",
+            "group": "ECG",
+            "unit": "",
+            "value": null,
+            "shap": -0.007535365943591025,
+            "z": null,
+            "population_median": 0,
+            "atypical": false
+          },
+          {
+            "name": "Dyspnea",
+            "label": "Dyspnea",
+            "group": "Symptoms",
+            "unit": "",
+            "value": null,
+            "shap": -0.007432446433859719,
+            "z": null,
+            "population_median": 0,
+            "atypical": false
+          },
+          {
+            "name": "WBC",
+            "label": "White blood cells",
+            "group": "Laboratory",
+            "unit": "/µL",
+            "value": null,
+            "shap": 0.00690892109504464,
+            "z": null,
+            "population_median": 7700,
+            "atypical": false
+          },
+          {
+            "name": "Region RWMA",
+            "label": "Regional wall motion abnormality (0-4 regions)",
+            "group": "Echo",
+            "unit": "",
+            "value": null,
+            "shap": 0.006212574360749049,
+            "z": null,
+            "population_median": 1,
+            "atypical": false
+          },
+          {
+            "name": "DLP",
+            "label": "Dyslipidemia",
+            "group": "History",
+            "unit": "",
+            "value": null,
+            "shap": -0.004763705543943498,
+            "z": null,
+            "population_median": 0,
+            "atypical": false
+          },
+          {
+            "name": "LVH",
+            "label": "Left ventricular hypertrophy",
+            "group": "ECG",
+            "unit": "",
+            "value": null,
+            "shap": -0.0037498370567752744,
+            "z": null,
+            "population_median": 0,
+            "atypical": false
+          },
+          {
+            "name": "St Depression",
+            "label": "ST depression",
+            "group": "ECG",
+            "unit": "",
+            "value": null,
+            "shap": -0.003345456739769794,
+            "z": null,
+            "population_median": 0,
+            "atypical": false
+          },
+          {
+            "name": "HDL",
+            "label": "HDL cholesterol",
+            "group": "Laboratory",
+            "unit": "mg/dL",
+            "value": null,
+            "shap": 0.002305185476914266,
+            "z": null,
+            "population_median": 38,
+            "atypical": false
+          },
+          {
+            "name": "FH",
+            "label": "Family history of CAD",
+            "group": "History",
+            "unit": "",
+            "value": null,
+            "shap": -0.002305172454458453,
+            "z": null,
+            "population_median": 0,
+            "atypical": false
+          },
+          {
+            "name": "FBS",
+            "label": "Fasting blood sugar",
+            "group": "Laboratory",
+            "unit": "mg/dL",
+            "value": null,
+            "shap": -0.0018124043344151166,
+            "z": null,
+            "population_median": 106,
+            "atypical": false
+          },
+          {
+            "name": "Nonanginal",
+            "label": "Non-anginal chest pain",
+            "group": "Symptoms",
+            "unit": "",
+            "value": null,
+            "shap": 0.0015718914624840222,
+            "z": null,
+            "population_median": 0,
+            "atypical": false
+          },
+          {
+            "name": "Current Smoker",
+            "label": "Current smoker",
+            "group": "History",
+            "unit": "",
+            "value": null,
+            "shap": -0.0015135352365691617,
+            "z": null,
+            "population_median": 0,
+            "atypical": false
+          },
+          {
+            "name": "Obesity",
+            "label": "Obesity",
+            "group": "History",
+            "unit": "",
+            "value": null,
+            "shap": -0.0014504952652268002,
+            "z": null,
+            "population_median": 0,
+            "atypical": false
+          },
+          {
+            "name": "CR",
+            "label": "Creatinine",
+            "group": "Laboratory",
+            "unit": "mg/dL",
+            "value": null,
+            "shap": 0.0013712142024059916,
+            "z": null,
+            "population_median": 1,
+            "atypical": false
+          },
+          {
+            "name": "Poor R Progression",
+            "label": "Poor R progression",
+            "group": "ECG",
+            "unit": "",
+            "value": null,
+            "shap": -0.0010896272288865062,
+            "z": null,
+            "population_median": 0,
+            "atypical": false
+          },
+          {
+            "name": "ESR",
+            "label": "ESR",
+            "group": "Laboratory",
+            "unit": "mm/h",
+            "value": null,
+            "shap": -0.0009626105113061155,
+            "z": null,
+            "population_median": 21,
+            "atypical": false
+          },
+          {
+            "name": "Exertional CP",
+            "label": "Exertional chest pain",
+            "group": "Symptoms",
+            "unit": "",
+            "value": null,
+            "shap": -0.000719779587560353,
+            "z": null,
+            "population_median": 0,
+            "atypical": false
+          },
+          {
+            "name": "TG",
+            "label": "Triglycerides",
+            "group": "Laboratory",
+            "unit": "mg/dL",
+            "value": null,
+            "shap": -0.0006214231043899991,
+            "z": null,
+            "population_median": 163,
+            "atypical": false
+          },
+          {
+            "name": "EF-TTE",
+            "label": "Ejection fraction (TTE)",
+            "group": "Echo",
+            "unit": "%",
+            "value": null,
+            "shap": -0.0004622689689248857,
+            "z": null,
+            "population_median": 45,
+            "atypical": false
+          },
+          {
+            "name": "LowTH Ang",
+            "label": "Low-threshold angina",
+            "group": "Symptoms",
+            "unit": "",
+            "value": null,
+            "shap": -0.00030650307901214716,
+            "z": null,
+            "population_median": 0,
+            "atypical": false
+          },
+          {
+            "name": "CHF",
+            "label": "Congestive heart failure",
+            "group": "History",
+            "unit": "",
+            "value": null,
+            "shap": -0.0002939549800384869,
+            "z": null,
+            "population_median": 0,
+            "atypical": false
+          },
+          {
+            "name": "Weight",
+            "label": "Weight",
+            "group": "Demographics",
+            "unit": "kg",
+            "value": null,
+            "shap": 0,
+            "z": null,
+            "population_median": 66,
+            "atypical": false
+          },
+          {
+            "name": "Length",
+            "label": "Height",
+            "group": "Demographics",
+            "unit": "cm",
+            "value": null,
+            "shap": 0,
+            "z": null,
+            "population_median": 163,
+            "atypical": false
+          },
+          {
+            "name": "BMI",
+            "label": "BMI",
+            "group": "Demographics",
+            "unit": "kg/m²",
+            "value": null,
+            "shap": 0,
+            "z": null,
+            "population_median": 24.7,
+            "atypical": false
+          },
+          {
+            "name": "EX-Smoker",
+            "label": "Ex-smoker",
+            "group": "History",
+            "unit": "",
+            "value": null,
+            "shap": 0,
+            "z": null,
+            "population_median": 0,
+            "atypical": false
+          },
+          {
+            "name": "CRF",
+            "label": "Chronic renal failure",
+            "group": "History",
+            "unit": "",
+            "value": null,
+            "shap": 0,
+            "z": null,
+            "population_median": 0,
+            "atypical": false
+          },
+          {
+            "name": "CVA",
+            "label": "Cerebrovascular accident",
+            "group": "History",
+            "unit": "",
+            "value": null,
+            "shap": 0,
+            "z": null,
+            "population_median": 0,
+            "atypical": false
+          },
+          {
+            "name": "Airway disease",
+            "label": "Airway disease",
+            "group": "History",
+            "unit": "",
+            "value": null,
+            "shap": 0,
+            "z": null,
+            "population_median": 0,
+            "atypical": false
+          },
+          {
+            "name": "Thyroid Disease",
+            "label": "Thyroid disease",
+            "group": "History",
+            "unit": "",
+            "value": null,
+            "shap": 0,
+            "z": null,
+            "population_median": 0,
+            "atypical": false
+          },
+          {
+            "name": "PR",
+            "label": "Pulse rate",
+            "group": "Examination",
+            "unit": "bpm",
+            "value": null,
+            "shap": 0,
+            "z": null,
+            "population_median": 76,
+            "atypical": false
+          },
+          {
+            "name": "Edema",
+            "label": "Edema",
+            "group": "Examination",
+            "unit": "",
+            "value": null,
+            "shap": 0,
+            "z": null,
+            "population_median": 0,
+            "atypical": false
+          },
+          {
+            "name": "Weak Peripheral Pulse",
+            "label": "Weak peripheral pulse",
+            "group": "Examination",
+            "unit": "",
+            "value": null,
+            "shap": 0,
+            "z": null,
+            "population_median": 0,
+            "atypical": false
+          },
+          {
+            "name": "Lung rales",
+            "label": "Lung rales",
+            "group": "Examination",
+            "unit": "",
+            "value": null,
+            "shap": 0,
+            "z": null,
+            "population_median": 0,
+            "atypical": false
+          },
+          {
+            "name": "Systolic Murmur",
+            "label": "Systolic murmur",
+            "group": "Examination",
+            "unit": "",
+            "value": null,
+            "shap": 0,
+            "z": null,
+            "population_median": 0,
+            "atypical": false
+          },
+          {
+            "name": "Diastolic Murmur",
+            "label": "Diastolic murmur",
+            "group": "Examination",
+            "unit": "",
+            "value": null,
+            "shap": 0,
+            "z": null,
+            "population_median": 0,
+            "atypical": false
+          },
+          {
+            "name": "Atypical",
+            "label": "Atypical chest pain",
+            "group": "Symptoms",
+            "unit": "",
+            "value": null,
+            "shap": 0,
+            "z": null,
+            "population_median": 0,
+            "atypical": false
+          },
+          {
+            "name": "BBB",
+            "label": "Bundle branch block (0 none, 1 LBBB, 2 RBBB)",
+            "group": "ECG",
+            "unit": "",
+            "value": null,
+            "shap": 0,
+            "z": null,
+            "population_median": 0,
+            "atypical": false
+          },
+          {
+            "name": "BUN",
+            "label": "Blood urea nitrogen",
+            "group": "Laboratory",
+            "unit": "mg/dL",
+            "value": null,
+            "shap": 0,
+            "z": null,
+            "population_median": 17,
+            "atypical": false
+          },
+          {
+            "name": "HB",
+            "label": "Hemoglobin",
+            "group": "Laboratory",
+            "unit": "g/dL",
+            "value": null,
+            "shap": 0,
+            "z": null,
+            "population_median": 13.4,
+            "atypical": false
+          },
+          {
+            "name": "K",
+            "label": "Potassium",
+            "group": "Laboratory",
+            "unit": "mEq/L",
+            "value": null,
+            "shap": 0,
+            "z": null,
+            "population_median": 4.2,
+            "atypical": false
+          },
+          {
+            "name": "Na",
+            "label": "Sodium",
+            "group": "Laboratory",
+            "unit": "mEq/L",
+            "value": null,
+            "shap": 0,
+            "z": null,
+            "population_median": 141,
+            "atypical": false
+          },
+          {
+            "name": "Lymph",
+            "label": "Lymphocytes",
+            "group": "Laboratory",
+            "unit": "%",
+            "value": null,
+            "shap": 0,
+            "z": null,
+            "population_median": 30,
+            "atypical": false
+          },
+          {
+            "name": "Neut",
+            "label": "Neutrophils",
+            "group": "Laboratory",
+            "unit": "%",
+            "value": null,
+            "shap": 0,
+            "z": null,
+            "population_median": 64,
+            "atypical": false
+          },
+          {
+            "name": "PLT",
+            "label": "Platelets",
+            "group": "Laboratory",
+            "unit": "×10³/µL",
+            "value": null,
+            "shap": 0,
+            "z": null,
+            "population_median": 239,
+            "atypical": false
+          },
+          {
+            "name": "VHD",
+            "label": "Valvular heart disease (0 none … 3 severe)",
+            "group": "Echo",
+            "unit": "",
+            "value": null,
+            "shap": 0,
+            "z": null,
+            "population_median": 0,
+            "atypical": false
+          }
+        ],
+        "by_group": [
+          {
+            "group": "Demographics",
+            "shap": 0.05356469261840504
+          },
+          {
+            "group": "History",
+            "shap": 0.06148231823371696
+          },
+          {
+            "group": "Symptoms",
+            "shap": 0.07179280041351739
+          },
+          {
+            "group": "Examination",
+            "shap": 0.007564909194528082
+          },
+          {
+            "group": "ECG",
+            "shap": -0.03585996179753906
+          },
+          {
+            "group": "Laboratory",
+            "shap": 0.0176610785728341
+          },
+          {
+            "group": "Echo",
+            "shap": 0.005750305391824163
+          }
+        ],
+        "additivity_error": 8.604228440844963e-16
+      },
+      "LAD": {
+        "base_value": 0.6713480702172295,
+        "prediction": 0.7841471891774865,
+        "contributions": [
+          {
+            "name": "DM",
+            "label": "Diabetes mellitus",
+            "group": "History",
+            "unit": "",
+            "value": 1,
+            "shap": 0.07631309833346199,
+            "z": 1.8768026160738083,
+            "population_median": 0,
+            "atypical": false
+          },
+          {
+            "name": "Function Class",
+            "label": "Functional class (0-4)",
+            "group": "Symptoms",
+            "unit": "",
+            "value": null,
+            "shap": 0.05345878712427693,
+            "z": null,
+            "population_median": 2,
+            "atypical": false
+          },
+          {
+            "name": "Typical Chest Pain",
+            "label": "Typical chest pain",
+            "group": "Symptoms",
+            "unit": "",
+            "value": null,
+            "shap": 0.05049038164056515,
+            "z": null,
+            "population_median": 1,
+            "atypical": false
+          },
+          {
+            "name": "Sex",
+            "label": "Sex (1 = male)",
+            "group": "Demographics",
+            "unit": "",
+            "value": 1,
+            "shap": 0.04672184586573145,
+            "z": 1.1305730797793698,
+            "population_median": 0,
+            "atypical": false
+          },
+          {
+            "name": "St Elevation",
+            "label": "ST elevation",
+            "group": "ECG",
+            "unit": "",
+            "value": null,
+            "shap": -0.03468037138478494,
+            "z": null,
+            "population_median": 0,
+            "atypical": false
+          },
+          {
+            "name": "Tinversion",
+            "label": "T inversion",
+            "group": "ECG",
+            "unit": "",
+            "value": null,
+            "shap": -0.03463779887629345,
+            "z": null,
+            "population_median": 0,
+            "atypical": false
+          },
+          {
+            "name": "HTN",
+            "label": "Hypertension",
+            "group": "History",
+            "unit": "",
+            "value": 1,
+            "shap": 0.03147110499834656,
+            "z": 1.0862118187112098,
+            "population_median": 0,
+            "atypical": false
+          },
+          {
+            "name": "Region RWMA",
+            "label": "Regional wall motion abnormality (0-4 regions)",
+            "group": "Echo",
+            "unit": "",
+            "value": null,
+            "shap": 0.021217045255265802,
+            "z": null,
+            "population_median": 1,
+            "atypical": false
+          },
+          {
+            "name": "Q Wave",
+            "label": "Q wave",
+            "group": "ECG",
+            "unit": "",
+            "value": null,
+            "shap": -0.0175059638361202,
+            "z": null,
+            "population_median": 0,
+            "atypical": false
+          },
+          {
+            "name": "DLP",
+            "label": "Dyslipidemia",
+            "group": "History",
+            "unit": "",
+            "value": null,
+            "shap": -0.01718262071658063,
+            "z": null,
+            "population_median": 0,
+            "atypical": false
+          },
+          {
+            "name": "Poor R Progression",
+            "label": "Poor R progression",
+            "group": "ECG",
+            "unit": "",
+            "value": null,
+            "shap": -0.01436563787034501,
+            "z": null,
+            "population_median": 0,
+            "atypical": false
+          },
+          {
+            "name": "EF-TTE",
+            "label": "Ejection fraction (TTE)",
+            "group": "Echo",
+            "unit": "%",
+            "value": null,
+            "shap": -0.011815360875421692,
+            "z": null,
+            "population_median": 45,
+            "atypical": false
+          },
+          {
+            "name": "LowTH Ang",
+            "label": "Low-threshold angina",
+            "group": "Symptoms",
+            "unit": "",
+            "value": null,
+            "shap": -0.008723776115203563,
+            "z": null,
+            "population_median": 0,
+            "atypical": false
+          },
+          {
+            "name": "BP",
+            "label": "Systolic blood pressure",
+            "group": "Examination",
+            "unit": "mmHg",
+            "value": null,
+            "shap": -0.008368995282168912,
+            "z": null,
+            "population_median": 132,
+            "atypical": false
+          },
+          {
+            "name": "Current Smoker",
+            "label": "Current smoker",
+            "group": "History",
+            "unit": "",
+            "value": null,
+            "shap": -0.007943953394600876,
+            "z": null,
+            "population_median": 0,
+            "atypical": false
+          },
+          {
+            "name": "Age",
+            "label": "Age",
+            "group": "Demographics",
+            "unit": "yrs",
+            "value": 60,
+            "shap": -0.003926870149593035,
+            "z": 0.26446262009166666,
+            "population_median": 59,
+            "atypical": false
+          },
+          {
+            "name": "FBS",
+            "label": "Fasting blood sugar",
+            "group": "Laboratory",
+            "unit": "mg/dL",
+            "value": null,
+            "shap": -0.0034962334101128153,
+            "z": null,
+            "population_median": 106,
+            "atypical": false
+          },
+          {
+            "name": "HDL",
+            "label": "HDL cholesterol",
+            "group": "Laboratory",
+            "unit": "mg/dL",
+            "value": null,
+            "shap": -0.0029633646073838815,
+            "z": null,
+            "population_median": 38,
+            "atypical": false
+          },
+          {
+            "name": "FH",
+            "label": "Family history of CAD",
+            "group": "History",
+            "unit": "",
+            "value": null,
+            "shap": -0.000640020405187576,
+            "z": null,
+            "population_median": 0,
+            "atypical": false
+          },
+          {
+            "name": "LDL",
+            "label": "LDL cholesterol",
+            "group": "Laboratory",
+            "unit": "mg/dL",
+            "value": null,
+            "shap": -0.0006221773335947887,
+            "z": null,
+            "population_median": 114,
+            "atypical": false
+          },
+          {
+            "name": "Weight",
+            "label": "Weight",
+            "group": "Demographics",
+            "unit": "kg",
+            "value": null,
+            "shap": 0,
+            "z": null,
+            "population_median": 66,
+            "atypical": false
+          },
+          {
+            "name": "Length",
+            "label": "Height",
+            "group": "Demographics",
+            "unit": "cm",
+            "value": null,
+            "shap": 0,
+            "z": null,
+            "population_median": 163,
+            "atypical": false
+          },
+          {
+            "name": "BMI",
+            "label": "BMI",
+            "group": "Demographics",
+            "unit": "kg/m²",
+            "value": null,
+            "shap": 0,
+            "z": null,
+            "population_median": 24.7,
+            "atypical": false
+          },
+          {
+            "name": "EX-Smoker",
+            "label": "Ex-smoker",
+            "group": "History",
+            "unit": "",
+            "value": null,
+            "shap": 0,
+            "z": null,
+            "population_median": 0,
+            "atypical": false
+          },
+          {
+            "name": "Obesity",
+            "label": "Obesity",
+            "group": "History",
+            "unit": "",
+            "value": null,
+            "shap": 0,
+            "z": null,
+            "population_median": 0,
+            "atypical": false
+          },
+          {
+            "name": "CRF",
+            "label": "Chronic renal failure",
+            "group": "History",
+            "unit": "",
+            "value": null,
+            "shap": 0,
+            "z": null,
+            "population_median": 0,
+            "atypical": false
+          },
+          {
+            "name": "CVA",
+            "label": "Cerebrovascular accident",
+            "group": "History",
+            "unit": "",
+            "value": null,
+            "shap": 0,
+            "z": null,
+            "population_median": 0,
+            "atypical": false
+          },
+          {
+            "name": "Airway disease",
+            "label": "Airway disease",
+            "group": "History",
+            "unit": "",
+            "value": null,
+            "shap": 0,
+            "z": null,
+            "population_median": 0,
+            "atypical": false
+          },
+          {
+            "name": "Thyroid Disease",
+            "label": "Thyroid disease",
+            "group": "History",
+            "unit": "",
+            "value": null,
+            "shap": 0,
+            "z": null,
+            "population_median": 0,
+            "atypical": false
+          },
+          {
+            "name": "CHF",
+            "label": "Congestive heart failure",
+            "group": "History",
+            "unit": "",
+            "value": null,
+            "shap": 0,
+            "z": null,
+            "population_median": 0,
+            "atypical": false
+          },
+          {
+            "name": "PR",
+            "label": "Pulse rate",
+            "group": "Examination",
+            "unit": "bpm",
+            "value": null,
+            "shap": 0,
+            "z": null,
+            "population_median": 76,
+            "atypical": false
+          },
+          {
+            "name": "Edema",
+            "label": "Edema",
+            "group": "Examination",
+            "unit": "",
+            "value": null,
+            "shap": 0,
+            "z": null,
+            "population_median": 0,
+            "atypical": false
+          },
+          {
+            "name": "Weak Peripheral Pulse",
+            "label": "Weak peripheral pulse",
+            "group": "Examination",
+            "unit": "",
+            "value": null,
+            "shap": 0,
+            "z": null,
+            "population_median": 0,
+            "atypical": false
+          },
+          {
+            "name": "Lung rales",
+            "label": "Lung rales",
+            "group": "Examination",
+            "unit": "",
+            "value": null,
+            "shap": 0,
+            "z": null,
+            "population_median": 0,
+            "atypical": false
+          },
+          {
+            "name": "Systolic Murmur",
+            "label": "Systolic murmur",
+            "group": "Examination",
+            "unit": "",
+            "value": null,
+            "shap": 0,
+            "z": null,
+            "population_median": 0,
+            "atypical": false
+          },
+          {
+            "name": "Diastolic Murmur",
+            "label": "Diastolic murmur",
+            "group": "Examination",
+            "unit": "",
+            "value": null,
+            "shap": 0,
+            "z": null,
+            "population_median": 0,
+            "atypical": false
+          },
+          {
+            "name": "Dyspnea",
+            "label": "Dyspnea",
+            "group": "Symptoms",
+            "unit": "",
+            "value": null,
+            "shap": 0,
+            "z": null,
+            "population_median": 0,
+            "atypical": false
+          },
+          {
+            "name": "Atypical",
+            "label": "Atypical chest pain",
+            "group": "Symptoms",
+            "unit": "",
+            "value": null,
+            "shap": 0,
+            "z": null,
+            "population_median": 0,
+            "atypical": false
+          },
+          {
+            "name": "Nonanginal",
+            "label": "Non-anginal chest pain",
+            "group": "Symptoms",
+            "unit": "",
+            "value": null,
+            "shap": 0,
+            "z": null,
+            "population_median": 0,
+            "atypical": false
+          },
+          {
+            "name": "Exertional CP",
+            "label": "Exertional chest pain",
+            "group": "Symptoms",
+            "unit": "",
+            "value": null,
+            "shap": 0,
+            "z": null,
+            "population_median": 0,
+            "atypical": false
+          },
+          {
+            "name": "St Depression",
+            "label": "ST depression",
+            "group": "ECG",
+            "unit": "",
+            "value": null,
+            "shap": 0,
+            "z": null,
+            "population_median": 0,
+            "atypical": false
+          },
+          {
+            "name": "LVH",
+            "label": "Left ventricular hypertrophy",
+            "group": "ECG",
+            "unit": "",
+            "value": null,
+            "shap": 0,
+            "z": null,
+            "population_median": 0,
+            "atypical": false
+          },
+          {
+            "name": "BBB",
+            "label": "Bundle branch block (0 none, 1 LBBB, 2 RBBB)",
+            "group": "ECG",
+            "unit": "",
+            "value": null,
+            "shap": 0,
+            "z": null,
+            "population_median": 0,
+            "atypical": false
+          },
+          {
+            "name": "CR",
+            "label": "Creatinine",
+            "group": "Laboratory",
+            "unit": "mg/dL",
+            "value": null,
+            "shap": 0,
+            "z": null,
+            "population_median": 1,
+            "atypical": false
+          },
+          {
+            "name": "TG",
+            "label": "Triglycerides",
+            "group": "Laboratory",
+            "unit": "mg/dL",
+            "value": null,
+            "shap": 0,
+            "z": null,
+            "population_median": 163,
+            "atypical": false
+          },
+          {
+            "name": "BUN",
+            "label": "Blood urea nitrogen",
+            "group": "Laboratory",
+            "unit": "mg/dL",
+            "value": null,
+            "shap": 0,
+            "z": null,
+            "population_median": 17,
+            "atypical": false
+          },
+          {
+            "name": "ESR",
+            "label": "ESR",
+            "group": "Laboratory",
+            "unit": "mm/h",
+            "value": null,
+            "shap": 0,
+            "z": null,
+            "population_median": 21,
+            "atypical": false
+          },
+          {
+            "name": "HB",
+            "label": "Hemoglobin",
+            "group": "Laboratory",
+            "unit": "g/dL",
+            "value": null,
+            "shap": 0,
+            "z": null,
+            "population_median": 13.4,
+            "atypical": false
+          },
+          {
+            "name": "K",
+            "label": "Potassium",
+            "group": "Laboratory",
+            "unit": "mEq/L",
+            "value": null,
+            "shap": 0,
+            "z": null,
+            "population_median": 4.2,
+            "atypical": false
+          },
+          {
+            "name": "Na",
+            "label": "Sodium",
+            "group": "Laboratory",
+            "unit": "mEq/L",
+            "value": null,
+            "shap": 0,
+            "z": null,
+            "population_median": 141,
+            "atypical": false
+          },
+          {
+            "name": "WBC",
+            "label": "White blood cells",
+            "group": "Laboratory",
+            "unit": "/µL",
+            "value": null,
+            "shap": 0,
+            "z": null,
+            "population_median": 7700,
+            "atypical": false
+          },
+          {
+            "name": "Lymph",
+            "label": "Lymphocytes",
+            "group": "Laboratory",
+            "unit": "%",
+            "value": null,
+            "shap": 0,
+            "z": null,
+            "population_median": 30,
+            "atypical": false
+          },
+          {
+            "name": "Neut",
+            "label": "Neutrophils",
+            "group": "Laboratory",
+            "unit": "%",
+            "value": null,
+            "shap": 0,
+            "z": null,
+            "population_median": 64,
+            "atypical": false
+          },
+          {
+            "name": "PLT",
+            "label": "Platelets",
+            "group": "Laboratory",
+            "unit": "×10³/µL",
+            "value": null,
+            "shap": 0,
+            "z": null,
+            "population_median": 239,
+            "atypical": false
+          },
+          {
+            "name": "VHD",
+            "label": "Valvular heart disease (0 none … 3 severe)",
+            "group": "Echo",
+            "unit": "",
+            "value": null,
+            "shap": 0,
+            "z": null,
+            "population_median": 0,
+            "atypical": false
+          }
+        ],
+        "by_group": [
+          {
+            "group": "Demographics",
+            "shap": 0.04279497571613841
+          },
+          {
+            "group": "History",
+            "shap": 0.08201760881543946
+          },
+          {
+            "group": "Symptoms",
+            "shap": 0.09522539264963853
+          },
+          {
+            "group": "Examination",
+            "shap": -0.008368995282168912
+          },
+          {
+            "group": "ECG",
+            "shap": -0.1011897719675436
+          },
+          {
+            "group": "Laboratory",
+            "shap": -0.007081775351091485
+          },
+          {
+            "group": "Echo",
+            "shap": 0.00940168437984411
+          }
+        ],
+        "additivity_error": 4.440892098500626e-16
+      },
+      "LCX": {
+        "base_value": 0.5127942732491146,
+        "prediction": 0.6422170929574377,
+        "contributions": [
+          {
+            "name": "Typical Chest Pain",
+            "label": "Typical chest pain",
+            "group": "Symptoms",
+            "unit": "",
+            "value": null,
+            "shap": 0.07889450062218564,
+            "z": null,
+            "population_median": 1,
+            "atypical": false
+          },
+          {
+            "name": "DM",
+            "label": "Diabetes mellitus",
+            "group": "History",
+            "unit": "",
+            "value": 1,
+            "shap": 0.07148379937001677,
+            "z": 1.8768026160738083,
+            "population_median": 0,
+            "atypical": false
+          },
+          {
+            "name": "Sex",
+            "label": "Sex (1 = male)",
+            "group": "Demographics",
+            "unit": "",
+            "value": 1,
+            "shap": 0.0569877793871101,
+            "z": 1.1305730797793698,
+            "population_median": 0,
+            "atypical": false
+          },
+          {
+            "name": "St Depression",
+            "label": "ST depression",
+            "group": "ECG",
+            "unit": "",
+            "value": null,
+            "shap": -0.05501177206392995,
+            "z": null,
+            "population_median": 0,
+            "atypical": false
+          },
+          {
+            "name": "HTN",
+            "label": "Hypertension",
+            "group": "History",
+            "unit": "",
+            "value": 1,
+            "shap": 0.041457706632438335,
+            "z": 1.0862118187112098,
+            "population_median": 0,
+            "atypical": false
+          },
+          {
+            "name": "Tinversion",
+            "label": "T inversion",
+            "group": "ECG",
+            "unit": "",
+            "value": null,
+            "shap": -0.03989223721799868,
+            "z": null,
+            "population_median": 0,
+            "atypical": false
+          },
+          {
+            "name": "DLP",
+            "label": "Dyslipidemia",
+            "group": "History",
+            "unit": "",
+            "value": null,
+            "shap": -0.016944069357341832,
+            "z": null,
+            "population_median": 0,
+            "atypical": false
+          },
+          {
+            "name": "Age",
+            "label": "Age",
+            "group": "Demographics",
+            "unit": "yrs",
+            "value": 60,
+            "shap": 0.016307534022498866,
+            "z": 0.26446262009166666,
+            "population_median": 59,
+            "atypical": false
+          },
+          {
+            "name": "Exertional CP",
+            "label": "Exertional chest pain",
+            "group": "Symptoms",
+            "unit": "",
+            "value": null,
+            "shap": -0.014211147900547564,
+            "z": null,
+            "population_median": 0,
+            "atypical": false
+          },
+          {
+            "name": "TG",
+            "label": "Triglycerides",
+            "group": "Laboratory",
+            "unit": "mg/dL",
+            "value": null,
+            "shap": -0.012625134206404712,
+            "z": null,
+            "population_median": 163,
+            "atypical": false
+          },
+          {
+            "name": "Current Smoker",
+            "label": "Current smoker",
+            "group": "History",
+            "unit": "",
+            "value": null,
+            "shap": -0.010787066016316085,
+            "z": null,
+            "population_median": 0,
+            "atypical": false
+          },
+          {
+            "name": "LDL",
+            "label": "LDL cholesterol",
+            "group": "Laboratory",
+            "unit": "mg/dL",
+            "value": null,
+            "shap": 0.010483982974439306,
+            "z": null,
+            "population_median": 114,
+            "atypical": false
+          },
+          {
+            "name": "Region RWMA",
+            "label": "Regional wall motion abnormality (0-4 regions)",
+            "group": "Echo",
+            "unit": "",
+            "value": null,
+            "shap": 0.004535261067473593,
+            "z": null,
+            "population_median": 1,
+            "atypical": false
+          },
+          {
+            "name": "FH",
+            "label": "Family history of CAD",
+            "group": "History",
+            "unit": "",
+            "value": null,
+            "shap": -0.004281905190186962,
+            "z": null,
+            "population_median": 0,
+            "atypical": false
+          },
+          {
+            "name": "EF-TTE",
+            "label": "Ejection fraction (TTE)",
+            "group": "Echo",
+            "unit": "%",
+            "value": null,
+            "shap": 0.004059604913236731,
+            "z": null,
+            "population_median": 45,
+            "atypical": false
+          },
+          {
+            "name": "HDL",
+            "label": "HDL cholesterol",
+            "group": "Laboratory",
+            "unit": "mg/dL",
+            "value": null,
+            "shap": -0.0010340173283504006,
+            "z": null,
+            "population_median": 38,
+            "atypical": false
+          },
+          {
+            "name": "Weight",
+            "label": "Weight",
+            "group": "Demographics",
+            "unit": "kg",
+            "value": null,
+            "shap": 0,
+            "z": null,
+            "population_median": 66,
+            "atypical": false
+          },
+          {
+            "name": "Length",
+            "label": "Height",
+            "group": "Demographics",
+            "unit": "cm",
+            "value": null,
+            "shap": 0,
+            "z": null,
+            "population_median": 163,
+            "atypical": false
+          },
+          {
+            "name": "BMI",
+            "label": "BMI",
+            "group": "Demographics",
+            "unit": "kg/m²",
+            "value": null,
+            "shap": 0,
+            "z": null,
+            "population_median": 24.7,
+            "atypical": false
+          },
+          {
+            "name": "EX-Smoker",
+            "label": "Ex-smoker",
+            "group": "History",
+            "unit": "",
+            "value": null,
+            "shap": 0,
+            "z": null,
+            "population_median": 0,
+            "atypical": false
+          },
+          {
+            "name": "Obesity",
+            "label": "Obesity",
+            "group": "History",
+            "unit": "",
+            "value": null,
+            "shap": 0,
+            "z": null,
+            "population_median": 0,
+            "atypical": false
+          },
+          {
+            "name": "CRF",
+            "label": "Chronic renal failure",
+            "group": "History",
+            "unit": "",
+            "value": null,
+            "shap": 0,
+            "z": null,
+            "population_median": 0,
+            "atypical": false
+          },
+          {
+            "name": "CVA",
+            "label": "Cerebrovascular accident",
+            "group": "History",
+            "unit": "",
+            "value": null,
+            "shap": 0,
+            "z": null,
+            "population_median": 0,
+            "atypical": false
+          },
+          {
+            "name": "Airway disease",
+            "label": "Airway disease",
+            "group": "History",
+            "unit": "",
+            "value": null,
+            "shap": 0,
+            "z": null,
+            "population_median": 0,
+            "atypical": false
+          },
+          {
+            "name": "Thyroid Disease",
+            "label": "Thyroid disease",
+            "group": "History",
+            "unit": "",
+            "value": null,
+            "shap": 0,
+            "z": null,
+            "population_median": 0,
+            "atypical": false
+          },
+          {
+            "name": "CHF",
+            "label": "Congestive heart failure",
+            "group": "History",
+            "unit": "",
+            "value": null,
+            "shap": 0,
+            "z": null,
+            "population_median": 0,
+            "atypical": false
+          },
+          {
+            "name": "BP",
+            "label": "Systolic blood pressure",
+            "group": "Examination",
+            "unit": "mmHg",
+            "value": null,
+            "shap": 0,
+            "z": null,
+            "population_median": 132,
+            "atypical": false
+          },
+          {
+            "name": "PR",
+            "label": "Pulse rate",
+            "group": "Examination",
+            "unit": "bpm",
+            "value": null,
+            "shap": 0,
+            "z": null,
+            "population_median": 76,
+            "atypical": false
+          },
+          {
+            "name": "Edema",
+            "label": "Edema",
+            "group": "Examination",
+            "unit": "",
+            "value": null,
+            "shap": 0,
+            "z": null,
+            "population_median": 0,
+            "atypical": false
+          },
+          {
+            "name": "Weak Peripheral Pulse",
+            "label": "Weak peripheral pulse",
+            "group": "Examination",
+            "unit": "",
+            "value": null,
+            "shap": 0,
+            "z": null,
+            "population_median": 0,
+            "atypical": false
+          },
+          {
+            "name": "Lung rales",
+            "label": "Lung rales",
+            "group": "Examination",
+            "unit": "",
+            "value": null,
+            "shap": 0,
+            "z": null,
+            "population_median": 0,
+            "atypical": false
+          },
+          {
+            "name": "Systolic Murmur",
+            "label": "Systolic murmur",
+            "group": "Examination",
+            "unit": "",
+            "value": null,
+            "shap": 0,
+            "z": null,
+            "population_median": 0,
+            "atypical": false
+          },
+          {
+            "name": "Diastolic Murmur",
+            "label": "Diastolic murmur",
+            "group": "Examination",
+            "unit": "",
+            "value": null,
+            "shap": 0,
+            "z": null,
+            "population_median": 0,
+            "atypical": false
+          },
+          {
+            "name": "Dyspnea",
+            "label": "Dyspnea",
+            "group": "Symptoms",
+            "unit": "",
+            "value": null,
+            "shap": 0,
+            "z": null,
+            "population_median": 0,
+            "atypical": false
+          },
+          {
+            "name": "Function Class",
+            "label": "Functional class (0-4)",
+            "group": "Symptoms",
+            "unit": "",
+            "value": null,
+            "shap": 0,
+            "z": null,
+            "population_median": 2,
+            "atypical": false
+          },
+          {
+            "name": "Atypical",
+            "label": "Atypical chest pain",
+            "group": "Symptoms",
+            "unit": "",
+            "value": null,
+            "shap": 0,
+            "z": null,
+            "population_median": 0,
+            "atypical": false
+          },
+          {
+            "name": "Nonanginal",
+            "label": "Non-anginal chest pain",
+            "group": "Symptoms",
+            "unit": "",
+            "value": null,
+            "shap": 0,
+            "z": null,
+            "population_median": 0,
+            "atypical": false
+          },
+          {
+            "name": "LowTH Ang",
+            "label": "Low-threshold angina",
+            "group": "Symptoms",
+            "unit": "",
+            "value": null,
+            "shap": 0,
+            "z": null,
+            "population_median": 0,
+            "atypical": false
+          },
+          {
+            "name": "Q Wave",
+            "label": "Q wave",
+            "group": "ECG",
+            "unit": "",
+            "value": null,
+            "shap": 0,
+            "z": null,
+            "population_median": 0,
+            "atypical": false
+          },
+          {
+            "name": "St Elevation",
+            "label": "ST elevation",
+            "group": "ECG",
+            "unit": "",
+            "value": null,
+            "shap": 0,
+            "z": null,
+            "population_median": 0,
+            "atypical": false
+          },
+          {
+            "name": "LVH",
+            "label": "Left ventricular hypertrophy",
+            "group": "ECG",
+            "unit": "",
+            "value": null,
+            "shap": 0,
+            "z": null,
+            "population_median": 0,
+            "atypical": false
+          },
+          {
+            "name": "Poor R Progression",
+            "label": "Poor R progression",
+            "group": "ECG",
+            "unit": "",
+            "value": null,
+            "shap": 0,
+            "z": null,
+            "population_median": 0,
+            "atypical": false
+          },
+          {
+            "name": "BBB",
+            "label": "Bundle branch block (0 none, 1 LBBB, 2 RBBB)",
+            "group": "ECG",
+            "unit": "",
+            "value": null,
+            "shap": 0,
+            "z": null,
+            "population_median": 0,
+            "atypical": false
+          },
+          {
+            "name": "FBS",
+            "label": "Fasting blood sugar",
+            "group": "Laboratory",
+            "unit": "mg/dL",
+            "value": null,
+            "shap": 0,
+            "z": null,
+            "population_median": 106,
+            "atypical": false
+          },
+          {
+            "name": "CR",
+            "label": "Creatinine",
+            "group": "Laboratory",
+            "unit": "mg/dL",
+            "value": null,
+            "shap": 0,
+            "z": null,
+            "population_median": 1,
+            "atypical": false
+          },
+          {
+            "name": "BUN",
+            "label": "Blood urea nitrogen",
+            "group": "Laboratory",
+            "unit": "mg/dL",
+            "value": null,
+            "shap": 0,
+            "z": null,
+            "population_median": 17,
+            "atypical": false
+          },
+          {
+            "name": "ESR",
+            "label": "ESR",
+            "group": "Laboratory",
+            "unit": "mm/h",
+            "value": null,
+            "shap": 0,
+            "z": null,
+            "population_median": 21,
+            "atypical": false
+          },
+          {
+            "name": "HB",
+            "label": "Hemoglobin",
+            "group": "Laboratory",
+            "unit": "g/dL",
+            "value": null,
+            "shap": 0,
+            "z": null,
+            "population_median": 13.4,
+            "atypical": false
+          },
+          {
+            "name": "K",
+            "label": "Potassium",
+            "group": "Laboratory",
+            "unit": "mEq/L",
+            "value": null,
+            "shap": 0,
+            "z": null,
+            "population_median": 4.2,
+            "atypical": false
+          },
+          {
+            "name": "Na",
+            "label": "Sodium",
+            "group": "Laboratory",
+            "unit": "mEq/L",
+            "value": null,
+            "shap": 0,
+            "z": null,
+            "population_median": 141,
+            "atypical": false
+          },
+          {
+            "name": "WBC",
+            "label": "White blood cells",
+            "group": "Laboratory",
+            "unit": "/µL",
+            "value": null,
+            "shap": 0,
+            "z": null,
+            "population_median": 7700,
+            "atypical": false
+          },
+          {
+            "name": "Lymph",
+            "label": "Lymphocytes",
+            "group": "Laboratory",
+            "unit": "%",
+            "value": null,
+            "shap": 0,
+            "z": null,
+            "population_median": 30,
+            "atypical": false
+          },
+          {
+            "name": "Neut",
+            "label": "Neutrophils",
+            "group": "Laboratory",
+            "unit": "%",
+            "value": null,
+            "shap": 0,
+            "z": null,
+            "population_median": 64,
+            "atypical": false
+          },
+          {
+            "name": "PLT",
+            "label": "Platelets",
+            "group": "Laboratory",
+            "unit": "×10³/µL",
+            "value": null,
+            "shap": 0,
+            "z": null,
+            "population_median": 239,
+            "atypical": false
+          },
+          {
+            "name": "VHD",
+            "label": "Valvular heart disease (0 none … 3 severe)",
+            "group": "Echo",
+            "unit": "",
+            "value": null,
+            "shap": 0,
+            "z": null,
+            "population_median": 0,
+            "atypical": false
+          }
+        ],
+        "by_group": [
+          {
+            "group": "Demographics",
+            "shap": 0.07329531340960897
+          },
+          {
+            "group": "History",
+            "shap": 0.08092846543861022
+          },
+          {
+            "group": "Symptoms",
+            "shap": 0.06468335272163808
+          },
+          {
+            "group": "Examination",
+            "shap": 0
+          },
+          {
+            "group": "ECG",
+            "shap": -0.09490400928192863
+          },
+          {
+            "group": "Laboratory",
+            "shap": -0.0031751685603158067
+          },
+          {
+            "group": "Echo",
+            "shap": 0.008594865980710324
+          }
+        ],
+        "additivity_error": 1.3877787807814457e-16
+      },
+      "RCA": {
+        "base_value": 0.5347354335228685,
+        "prediction": 0.6765583565793541,
+        "contributions": [
+          {
+            "name": "DM",
+            "label": "Diabetes mellitus",
+            "group": "History",
+            "unit": "",
+            "value": 1,
+            "shap": 0.07461284742952747,
+            "z": 1.8768026160738083,
+            "population_median": 0,
+            "atypical": false
+          },
+          {
+            "name": "Sex",
+            "label": "Sex (1 = male)",
+            "group": "Demographics",
+            "unit": "",
+            "value": 1,
+            "shap": 0.0622745620385297,
+            "z": 1.1305730797793698,
+            "population_median": 0,
+            "atypical": false
+          },
+          {
+            "name": "HTN",
+            "label": "Hypertension",
+            "group": "History",
+            "unit": "",
+            "value": 1,
+            "shap": 0.04518124514364416,
+            "z": 1.0862118187112098,
+            "population_median": 0,
+            "atypical": false
+          },
+          {
+            "name": "Typical Chest Pain",
+            "label": "Typical chest pain",
+            "group": "Symptoms",
+            "unit": "",
+            "value": null,
+            "shap": 0.038014153332174776,
+            "z": null,
+            "population_median": 1,
+            "atypical": false
+          },
+          {
+            "name": "St Elevation",
+            "label": "ST elevation",
+            "group": "ECG",
+            "unit": "",
+            "value": null,
+            "shap": -0.027647751384281015,
+            "z": null,
+            "population_median": 0,
+            "atypical": false
+          },
+          {
+            "name": "Systolic Murmur",
+            "label": "Systolic murmur",
+            "group": "Examination",
+            "unit": "",
+            "value": null,
+            "shap": -0.02601392637979594,
+            "z": null,
+            "population_median": 0,
+            "atypical": false
+          },
+          {
+            "name": "DLP",
+            "label": "Dyslipidemia",
+            "group": "History",
+            "unit": "",
+            "value": null,
+            "shap": -0.020604047434582044,
+            "z": null,
+            "population_median": 0,
+            "atypical": false
+          },
+          {
+            "name": "Age",
+            "label": "Age",
+            "group": "Demographics",
+            "unit": "yrs",
+            "value": 60,
+            "shap": 0.0163804088471193,
+            "z": 0.26446262009166666,
+            "population_median": 59,
+            "atypical": false
+          },
+          {
+            "name": "BP",
+            "label": "Systolic blood pressure",
+            "group": "Examination",
+            "unit": "mmHg",
+            "value": null,
+            "shap": 0.014212630397690173,
+            "z": null,
+            "population_median": 132,
+            "atypical": false
+          },
+          {
+            "name": "Region RWMA",
+            "label": "Regional wall motion abnormality (0-4 regions)",
+            "group": "Echo",
+            "unit": "",
+            "value": null,
+            "shap": 0.013278130588650192,
+            "z": null,
+            "population_median": 1,
+            "atypical": false
+          },
+          {
+            "name": "Q Wave",
+            "label": "Q wave",
+            "group": "ECG",
+            "unit": "",
+            "value": null,
+            "shap": -0.011249043432203662,
+            "z": null,
+            "population_median": 0,
+            "atypical": false
+          },
+          {
+            "name": "LowTH Ang",
+            "label": "Low-threshold angina",
+            "group": "Symptoms",
+            "unit": "",
+            "value": null,
+            "shap": -0.010334592344345828,
+            "z": null,
+            "population_median": 0,
+            "atypical": false
+          },
+          {
+            "name": "FH",
+            "label": "Family history of CAD",
+            "group": "History",
+            "unit": "",
+            "value": null,
+            "shap": -0.006623997626680131,
+            "z": null,
+            "population_median": 0,
+            "atypical": false
+          },
+          {
+            "name": "EF-TTE",
+            "label": "Ejection fraction (TTE)",
+            "group": "Echo",
+            "unit": "%",
+            "value": null,
+            "shap": -0.006066219619906228,
+            "z": null,
+            "population_median": 45,
+            "atypical": false
+          },
+          {
+            "name": "Current Smoker",
+            "label": "Current smoker",
+            "group": "History",
+            "unit": "",
+            "value": null,
+            "shap": -0.005426866242569106,
+            "z": null,
+            "population_median": 0,
+            "atypical": false
+          },
+          {
+            "name": "LDL",
+            "label": "LDL cholesterol",
+            "group": "Laboratory",
+            "unit": "mg/dL",
+            "value": null,
+            "shap": -0.004370148442438276,
+            "z": null,
+            "population_median": 114,
+            "atypical": false
+          },
+          {
+            "name": "HDL",
+            "label": "HDL cholesterol",
+            "group": "Laboratory",
+            "unit": "mg/dL",
+            "value": null,
+            "shap": -0.0037944618140483676,
+            "z": null,
+            "population_median": 38,
+            "atypical": false
+          },
+          {
+            "name": "Weight",
+            "label": "Weight",
+            "group": "Demographics",
+            "unit": "kg",
+            "value": null,
+            "shap": 0,
+            "z": null,
+            "population_median": 66,
+            "atypical": false
+          },
+          {
+            "name": "Length",
+            "label": "Height",
+            "group": "Demographics",
+            "unit": "cm",
+            "value": null,
+            "shap": 0,
+            "z": null,
+            "population_median": 163,
+            "atypical": false
+          },
+          {
+            "name": "BMI",
+            "label": "BMI",
+            "group": "Demographics",
+            "unit": "kg/m²",
+            "value": null,
+            "shap": 0,
+            "z": null,
+            "population_median": 24.7,
+            "atypical": false
+          },
+          {
+            "name": "EX-Smoker",
+            "label": "Ex-smoker",
+            "group": "History",
+            "unit": "",
+            "value": null,
+            "shap": 0,
+            "z": null,
+            "population_median": 0,
+            "atypical": false
+          },
+          {
+            "name": "Obesity",
+            "label": "Obesity",
+            "group": "History",
+            "unit": "",
+            "value": null,
+            "shap": 0,
+            "z": null,
+            "population_median": 0,
+            "atypical": false
+          },
+          {
+            "name": "CRF",
+            "label": "Chronic renal failure",
+            "group": "History",
+            "unit": "",
+            "value": null,
+            "shap": 0,
+            "z": null,
+            "population_median": 0,
+            "atypical": false
+          },
+          {
+            "name": "CVA",
+            "label": "Cerebrovascular accident",
+            "group": "History",
+            "unit": "",
+            "value": null,
+            "shap": 0,
+            "z": null,
+            "population_median": 0,
+            "atypical": false
+          },
+          {
+            "name": "Airway disease",
+            "label": "Airway disease",
+            "group": "History",
+            "unit": "",
+            "value": null,
+            "shap": 0,
+            "z": null,
+            "population_median": 0,
+            "atypical": false
+          },
+          {
+            "name": "Thyroid Disease",
+            "label": "Thyroid disease",
+            "group": "History",
+            "unit": "",
+            "value": null,
+            "shap": 0,
+            "z": null,
+            "population_median": 0,
+            "atypical": false
+          },
+          {
+            "name": "CHF",
+            "label": "Congestive heart failure",
+            "group": "History",
+            "unit": "",
+            "value": null,
+            "shap": 0,
+            "z": null,
+            "population_median": 0,
+            "atypical": false
+          },
+          {
+            "name": "PR",
+            "label": "Pulse rate",
+            "group": "Examination",
+            "unit": "bpm",
+            "value": null,
+            "shap": 0,
+            "z": null,
+            "population_median": 76,
+            "atypical": false
+          },
+          {
+            "name": "Edema",
+            "label": "Edema",
+            "group": "Examination",
+            "unit": "",
+            "value": null,
+            "shap": 0,
+            "z": null,
+            "population_median": 0,
+            "atypical": false
+          },
+          {
+            "name": "Weak Peripheral Pulse",
+            "label": "Weak peripheral pulse",
+            "group": "Examination",
+            "unit": "",
+            "value": null,
+            "shap": 0,
+            "z": null,
+            "population_median": 0,
+            "atypical": false
+          },
+          {
+            "name": "Lung rales",
+            "label": "Lung rales",
+            "group": "Examination",
+            "unit": "",
+            "value": null,
+            "shap": 0,
+            "z": null,
+            "population_median": 0,
+            "atypical": false
+          },
+          {
+            "name": "Diastolic Murmur",
+            "label": "Diastolic murmur",
+            "group": "Examination",
+            "unit": "",
+            "value": null,
+            "shap": 0,
+            "z": null,
+            "population_median": 0,
+            "atypical": false
+          },
+          {
+            "name": "Dyspnea",
+            "label": "Dyspnea",
+            "group": "Symptoms",
+            "unit": "",
+            "value": null,
+            "shap": 0,
+            "z": null,
+            "population_median": 0,
+            "atypical": false
+          },
+          {
+            "name": "Function Class",
+            "label": "Functional class (0-4)",
+            "group": "Symptoms",
+            "unit": "",
+            "value": null,
+            "shap": 0,
+            "z": null,
+            "population_median": 2,
+            "atypical": false
+          },
+          {
+            "name": "Atypical",
+            "label": "Atypical chest pain",
+            "group": "Symptoms",
+            "unit": "",
+            "value": null,
+            "shap": 0,
+            "z": null,
+            "population_median": 0,
+            "atypical": false
+          },
+          {
+            "name": "Nonanginal",
+            "label": "Non-anginal chest pain",
+            "group": "Symptoms",
+            "unit": "",
+            "value": null,
+            "shap": 0,
+            "z": null,
+            "population_median": 0,
+            "atypical": false
+          },
+          {
+            "name": "Exertional CP",
+            "label": "Exertional chest pain",
+            "group": "Symptoms",
+            "unit": "",
+            "value": null,
+            "shap": 0,
+            "z": null,
+            "population_median": 0,
+            "atypical": false
+          },
+          {
+            "name": "St Depression",
+            "label": "ST depression",
+            "group": "ECG",
+            "unit": "",
+            "value": null,
+            "shap": 0,
+            "z": null,
+            "population_median": 0,
+            "atypical": false
+          },
+          {
+            "name": "Tinversion",
+            "label": "T inversion",
+            "group": "ECG",
+            "unit": "",
+            "value": null,
+            "shap": 0,
+            "z": null,
+            "population_median": 0,
+            "atypical": false
+          },
+          {
+            "name": "LVH",
+            "label": "Left ventricular hypertrophy",
+            "group": "ECG",
+            "unit": "",
+            "value": null,
+            "shap": 0,
+            "z": null,
+            "population_median": 0,
+            "atypical": false
+          },
+          {
+            "name": "Poor R Progression",
+            "label": "Poor R progression",
+            "group": "ECG",
+            "unit": "",
+            "value": null,
+            "shap": 0,
+            "z": null,
+            "population_median": 0,
+            "atypical": false
+          },
+          {
+            "name": "BBB",
+            "label": "Bundle branch block (0 none, 1 LBBB, 2 RBBB)",
+            "group": "ECG",
+            "unit": "",
+            "value": null,
+            "shap": 0,
+            "z": null,
+            "population_median": 0,
+            "atypical": false
+          },
+          {
+            "name": "FBS",
+            "label": "Fasting blood sugar",
+            "group": "Laboratory",
+            "unit": "mg/dL",
+            "value": null,
+            "shap": 0,
+            "z": null,
+            "population_median": 106,
+            "atypical": false
+          },
+          {
+            "name": "CR",
+            "label": "Creatinine",
+            "group": "Laboratory",
+            "unit": "mg/dL",
+            "value": null,
+            "shap": 0,
+            "z": null,
+            "population_median": 1,
+            "atypical": false
+          },
+          {
+            "name": "TG",
+            "label": "Triglycerides",
+            "group": "Laboratory",
+            "unit": "mg/dL",
+            "value": null,
+            "shap": 0,
+            "z": null,
+            "population_median": 163,
+            "atypical": false
+          },
+          {
+            "name": "BUN",
+            "label": "Blood urea nitrogen",
+            "group": "Laboratory",
+            "unit": "mg/dL",
+            "value": null,
+            "shap": 0,
+            "z": null,
+            "population_median": 17,
+            "atypical": false
+          },
+          {
+            "name": "ESR",
+            "label": "ESR",
+            "group": "Laboratory",
+            "unit": "mm/h",
+            "value": null,
+            "shap": 0,
+            "z": null,
+            "population_median": 21,
+            "atypical": false
+          },
+          {
+            "name": "HB",
+            "label": "Hemoglobin",
+            "group": "Laboratory",
+            "unit": "g/dL",
+            "value": null,
+            "shap": 0,
+            "z": null,
+            "population_median": 13.4,
+            "atypical": false
+          },
+          {
+            "name": "K",
+            "label": "Potassium",
+            "group": "Laboratory",
+            "unit": "mEq/L",
+            "value": null,
+            "shap": 0,
+            "z": null,
+            "population_median": 4.2,
+            "atypical": false
+          },
+          {
+            "name": "Na",
+            "label": "Sodium",
+            "group": "Laboratory",
+            "unit": "mEq/L",
+            "value": null,
+            "shap": 0,
+            "z": null,
+            "population_median": 141,
+            "atypical": false
+          },
+          {
+            "name": "WBC",
+            "label": "White blood cells",
+            "group": "Laboratory",
+            "unit": "/µL",
+            "value": null,
+            "shap": 0,
+            "z": null,
+            "population_median": 7700,
+            "atypical": false
+          },
+          {
+            "name": "Lymph",
+            "label": "Lymphocytes",
+            "group": "Laboratory",
+            "unit": "%",
+            "value": null,
+            "shap": 0,
+            "z": null,
+            "population_median": 30,
+            "atypical": false
+          },
+          {
+            "name": "Neut",
+            "label": "Neutrophils",
+            "group": "Laboratory",
+            "unit": "%",
+            "value": null,
+            "shap": 0,
+            "z": null,
+            "population_median": 64,
+            "atypical": false
+          },
+          {
+            "name": "PLT",
+            "label": "Platelets",
+            "group": "Laboratory",
+            "unit": "×10³/µL",
+            "value": null,
+            "shap": 0,
+            "z": null,
+            "population_median": 239,
+            "atypical": false
+          },
+          {
+            "name": "VHD",
+            "label": "Valvular heart disease (0 none … 3 severe)",
+            "group": "Echo",
+            "unit": "",
+            "value": null,
+            "shap": 0,
+            "z": null,
+            "population_median": 0,
+            "atypical": false
+          }
+        ],
+        "by_group": [
+          {
+            "group": "Demographics",
+            "shap": 0.078654970885649
+          },
+          {
+            "group": "History",
+            "shap": 0.08713918126934034
+          },
+          {
+            "group": "Symptoms",
+            "shap": 0.02767956098782895
+          },
+          {
+            "group": "Examination",
+            "shap": -0.011801295982105768
+          },
+          {
+            "group": "ECG",
+            "shap": -0.03889679481648468
+          },
+          {
+            "group": "Laboratory",
+            "shap": -0.008164610256486644
+          },
+          {
+            "group": "Echo",
+            "shap": 0.007211910968743964
+          }
+        ],
+        "additivity_error": 5.273559366969494e-16
+      }
+    }
+  }
+}

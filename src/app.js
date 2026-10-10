@@ -395,17 +395,46 @@ app.post("/api/predict", (req, res) => {
 });
 
 // Static assets
-const threeVendorPath = findPath(path.join("frontend", "vendor", "three"));
-const threeNodePath = findPath(path.join("node_modules", "three"));
-const threePath = fs.existsSync(path.join(threeVendorPath, "build", "three.module.js")) ? threeVendorPath : threeNodePath;
+const threeVendorCandidates = [
+  path.join(process.cwd(), "public", "vendor", "three"),
+  path.join(process.cwd(), "frontend", "vendor", "three"),
+  path.join(__dirname, "..", "public", "vendor", "three"),
+  path.join(__dirname, "..", "frontend", "vendor", "three"),
+  path.join(process.cwd(), "node_modules", "three"),
+];
+const threePath =
+  threeVendorCandidates.find((p) =>
+    fs.existsSync(path.join(p, "build", "three.module.js"))
+  ) || findPath(path.join("node_modules", "three"));
+
 app.use("/vendor/three", express.static(threePath));
 
-const frontendPath = findPath("frontend");
-app.use(express.static(frontendPath));
+const staticDirs = [
+  path.join(process.cwd(), "public"),
+  path.join(process.cwd(), "frontend"),
+  path.join(__dirname, "..", "public"),
+  path.join(__dirname, "..", "frontend"),
+];
+for (const sDir of staticDirs) {
+  if (fs.existsSync(sDir)) {
+    app.use(express.static(sDir));
+  }
+}
 
 // SPA fallback
 app.get("*", (req, res) => {
-  res.sendFile(path.join(frontendPath, "index.html"));
+  const htmlCandidates = [
+    path.join(process.cwd(), "public", "index.html"),
+    path.join(process.cwd(), "frontend", "index.html"),
+    path.join(__dirname, "..", "public", "index.html"),
+    path.join(__dirname, "..", "frontend", "index.html"),
+  ];
+  for (const candidate of htmlCandidates) {
+    if (fs.existsSync(candidate)) {
+      return res.sendFile(candidate);
+    }
+  }
+  res.status(404).send("Not Found");
 });
 
 export default app;

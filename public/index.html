@@ -1,0 +1,1705 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CardioVision AI - Intelligent Health Dashboard</title>
+  <meta name="description" content="CardioVision AI – Intelligent Health Dashboard & 3D Coronary Stenosis Explorer.">
+  <meta property="og:title" content="CardioVision AI - Intelligent Health Dashboard">
+  <meta property="og:description" content="CardioVision AI – Intelligent Health Dashboard & 3D Coronary Stenosis Explorer.">
+
+  <!-- Tailwind CSS v3 with Plugins -->
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <!-- Tailwind Configuration -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              coral: '#f97352',
+              'coral-light': '#ff8a6c',
+              'coral-soft': '#fff2ee',
+              teal: '#14b8a6',
+              bg: '#f5f7fb'
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'Plus Jakarta Sans', 'system-ui', 'sans-serif']
+          },
+          boxShadow: {
+            'soft': '0 8px 30px rgba(0, 0, 0, 0.04)',
+            'card': '0 4px 24px -2px rgba(16, 24, 40, 0.06)',
+            'floating': '0 20px 40px -8px rgba(249, 115, 82, 0.16)'
+          }
+        }
+      }
+    };
+  </script>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com" rel="preconnect">
+  <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="style.css">
+
+  <!-- jsPDF for Clinical Biometric PDF generation -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+  <!-- Import map for Three.js -->
+  <script type="importmap">
+  { "imports": {
+      "three": "/vendor/three/build/three.module.js",
+      "three/addons/": "/vendor/three/examples/jsm/"
+  } }
+  </script>
+
+  <!-- Prevent benign ResizeObserver loop notification from triggering unhandled error -->
+  <script>
+    window.addEventListener('error', function(event) {
+      if (event && event.message && (
+        event.message.includes('ResizeObserver loop completed with undelivered notifications') ||
+        event.message.includes('ResizeObserver loop limit exceeded')
+      )) {
+        event.stopImmediatePropagation();
+        event.preventDefault();
+        return true;
+      }
+    });
+  </script>
+</head>
+<body class="min-h-screen text-slate-800 antialiased selection:bg-brand-coral selection:text-white pb-10">
+
+  <!-- Background Animated Liquid Mesh Orbs -->
+  <div class="fixed inset-0 pointer-events-none -z-10 overflow-hidden">
+    <div class="absolute -top-32 left-1/4 w-[600px] h-[600px] bg-gradient-to-tr from-brand-coral/25 via-rose-300/25 to-amber-200/20 rounded-full blur-3xl liquid-mesh-orb"></div>
+    <div class="absolute top-1/3 -right-28 w-[640px] h-[640px] bg-gradient-to-bl from-rose-400/20 via-purple-300/15 to-brand-coral/15 rounded-full blur-3xl liquid-mesh-orb-2"></div>
+    <div class="absolute -bottom-40 left-10 w-[620px] h-[620px] bg-gradient-to-tr from-sky-300/20 via-teal-200/15 to-brand-coral/15 rounded-full blur-3xl liquid-mesh-orb"></div>
+    <div class="absolute top-10 -left-10 w-96 h-96 bg-gradient-to-br from-purple-200/20 via-pink-200/15 to-transparent rounded-full blur-2xl liquid-mesh-orb-2"></div>
+  </div>
+
+  <!-- BEGIN: MainContainer -->
+  <div class="max-w-[1520px] mx-auto px-4 sm:px-6 lg:px-8 pt-5">
+
+    <!-- Clinical Safety Bar (Collapsible) -->
+    <div id="safety-banner" class="mb-4 px-4 py-2 bg-amber-50/90 border border-amber-200/80 rounded-2xl text-xs text-amber-900 flex items-center justify-between gap-2 shadow-sm">
+      <div class="flex items-center gap-2">
+        <span class="text-amber-600 font-bold">⚠ Clinical Notice:</span>
+        <span>Decision support and educational visualization only. Not a substitute for formal clinical imaging (angiography/CTA) or professional physician judgement.</span>
+      </div>
+      <button id="dismiss-safety" class="text-amber-700 hover:text-amber-950 text-[11px] font-semibold underline">Acknowledge</button>
+    </div>
+
+    <!-- BEGIN: TopNavigationBar -->
+    <header class="flex items-center justify-between mb-6 gap-4 flex-wrap" data-purpose="top-navigation">
+      <!-- Logo Branding -->
+      <div class="flex items-center gap-3 cursor-pointer" id="brand-logo-btn">
+        <img src="/cardiovision-lynx-logo.svg" alt="CardioVision - LYNX Cardio Hospitals &amp; Care Berlin Logo" class="w-10 h-10 rounded-xl object-contain drop-shadow-md select-none bg-white p-0.5 border border-slate-100">
+        <div>
+          <span class="text-2xl font-extrabold tracking-tight text-slate-900">CardioVision</span>
+          <span class="text-xs font-semibold px-2 py-0.5 ml-1 bg-brand-coral-soft text-brand-coral rounded-md border border-brand-coral/20">AI v3.2</span>
+        </div>
+      </div>
+
+      <!-- Navigation Pills -->
+      <nav class="hidden md:flex items-center liquid-glass p-1.5 rounded-full transition-all duration-300" data-purpose="nav-tabs" id="nav-tabs">
+        <button data-tab="dashboard" class="nav-tab-btn px-6 py-2 rounded-full text-sm font-semibold text-white bg-gradient-to-r from-brand-coral to-brand-coral-light shadow-md shadow-brand-coral/30 transition-all duration-200 hover:scale-105 active:scale-95">Dashboard</button>
+        <button data-tab="diagnostics" class="nav-tab-btn px-5 py-2 rounded-full text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-white/50 transition-all">Diagnostics</button>
+        <button data-tab="aichat" class="nav-tab-btn px-5 py-2 rounded-full text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-white/50 transition-all">AI Chat</button>
+        <button data-tab="reports" class="nav-tab-btn px-5 py-2 rounded-full text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-white/50 transition-all">Reports</button>
+        <button data-tab="calendar" class="nav-tab-btn px-5 py-2 rounded-full text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-white/50 transition-all">Calendar</button>
+        <button data-tab="settings" class="nav-tab-btn px-5 py-2 rounded-full text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-white/50 transition-all">Settings</button>
+        <button data-tab="about" class="nav-tab-btn px-5 py-2 rounded-full text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-white/50 transition-all">About Us</button>
+      </nav>
+
+      <!-- Right Utility Actions -->
+      <div class="flex items-center gap-3 ml-auto md:ml-0">
+        <!-- Quick Search -->
+        <button id="quick-search-btn" aria-label="Quick Search" title="Search patients, biomarkers, or records" class="w-10 h-10 rounded-full bg-white border border-slate-200/80 flex items-center justify-center text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition shadow-sm">
+          <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+          </svg>
+        </button>
+
+        <!-- Notification Bell -->
+        <button id="notifications-btn" aria-label="Notifications" class="relative w-10 h-10 rounded-full bg-white border border-slate-200/80 flex items-center justify-center text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition shadow-sm">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+          </svg>
+          <span class="absolute top-2 right-2 w-2 h-2 bg-brand-coral rounded-full ring-2 ring-white"></span>
+        </button>
+
+        <!-- User Profile Pill -->
+        <div id="user-profile-pill" class="flex items-center gap-2 pl-2 pr-3 py-1.5 bg-white rounded-full border border-slate-200/80 shadow-sm cursor-pointer hover:border-slate-300">
+          <div class="w-8 h-8 rounded-full bg-slate-200 overflow-hidden relative border border-slate-100">
+            <img alt="Sarah Connor" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB9eLEf_IPmakKeGwiXjImBaRjBDAoe9gt1FS967W6Dnqp0LSgGYOUOnaSm71uZzEdbic2vARTl8Pmmq1t6Nr09oOmREutsGodYspMN3nwRVlzPKelSud_ydsMXN2Jx-hUiUJcWF3fVW_mzSLl_jQZpEjvUsvH0Zz-31kzoORzM0KydUf0uxa2kaPLEvMmwQRONXxhgR7VbrNhs9CRmAi31fdoyXHKobyWnBSN28Q0PPStEs1lbHYXngA">
+          </div>
+          <div class="hidden xl:block text-left text-xs leading-tight">
+            <p class="font-semibold text-slate-800">Sarah C.</p>
+            <p class="text-[10px] text-emerald-600 font-medium">● Wearable Active</p>
+          </div>
+        </div>
+      </div>
+    </header>
+    <!-- END: TopNavigationBar -->
+
+    <!-- Cloud Sync Status Bar -->
+    <div class="flex items-center justify-between px-4 py-2.5 mb-6 liquid-glass rounded-2xl text-xs text-slate-500 flex-wrap gap-2">
+      <div class="flex items-center gap-2">
+        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse ring-4 ring-emerald-500/20"></span>
+        <span class="font-medium text-slate-700">Encrypted Cloud Link:</span>
+        <span>Google Fit &amp; Apple Health synchronized (Updated 2m ago)</span>
+      </div>
+      <div class="flex items-center gap-4 text-slate-600 text-[11px]">
+        <span>Battery: 89% (CardioTag Sensor)</span>
+        <span class="hidden sm:inline">|</span>
+        <span id="download-pdf-btn" class="text-brand-coral font-semibold cursor-pointer hover:underline transition-colors">Download Biometric Log (PDF)</span>
+      </div>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- VIEW 1: DASHBOARD (Default) -->
+    <!-- ========================================================================= -->
+    <div id="view-dashboard" class="tab-view">
+      <!-- BEGIN: MainDashboardGrid -->
+      <main class="grid grid-cols-1 lg:grid-cols-12 gap-6" data-purpose="dashboard-content">
+
+        <!-- ================= LEFT / HERO COLUMN (7 Cols) ================= -->
+        <section class="lg:col-span-7 flex flex-col gap-6" data-purpose="left-health-diagnostics">
+          
+          <!-- Row 1: Top 3 Metric Mini Cards -->
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4" data-purpose="metric-cards">
+            <!-- Heart Rate -->
+            <div class="liquid-glass rounded-2xl p-4 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg">
+              <div class="flex items-center gap-3 mb-3">
+                <div class="w-10 h-10 rounded-xl bg-blue-50/80 text-blue-500 flex items-center justify-center border border-blue-200/40 shadow-sm">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+                </div>
+                <div>
+                  <h2 class="text-xs font-bold text-slate-800">Heart Rate</h2>
+                  <p class="text-[11px] text-slate-400">Normal Range</p>
+                </div>
+              </div>
+              <div class="flex items-baseline justify-between">
+                <div>
+                  <span id="metric-bpm" class="text-2xl font-black text-slate-900 tracking-tight">78</span>
+                  <span class="text-xs text-slate-400 font-semibold ml-1">BPM</span>
+                </div>
+                <span class="text-[10px] text-slate-400 font-medium">9:44 PM</span>
+              </div>
+              <div class="mt-2 h-1.5 w-full bg-blue-100/50 rounded-full overflow-hidden p-0.5 border border-white/60">
+                <div class="bg-gradient-to-r from-blue-400 to-blue-500 h-full rounded-full" style="width: 68%;"></div>
+              </div>
+            </div>
+
+            <!-- Blood Sugar -->
+            <div class="liquid-glass rounded-2xl p-4 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg">
+              <div class="flex items-center gap-3 mb-3">
+                <div class="w-10 h-10 rounded-xl bg-brand-coral-soft/90 text-brand-coral flex items-center justify-center border border-brand-coral/20 shadow-sm">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+                </div>
+                <div>
+                  <h2 class="text-xs font-bold text-slate-800">Blood Sugar</h2>
+                  <p class="text-[11px] text-slate-400">Normal Range</p>
+                </div>
+              </div>
+              <div class="flex items-baseline justify-between">
+                <div>
+                  <span id="metric-fbs" class="text-2xl font-black text-slate-900 tracking-tight">118/76</span>
+                  <span class="text-xs text-slate-400 font-semibold ml-1">mg/dL</span>
+                </div>
+                <span class="text-[10px] text-slate-400 font-medium">9:44 PM</span>
+              </div>
+              <div class="mt-2 h-1.5 w-full bg-orange-100/50 rounded-full overflow-hidden p-0.5 border border-white/60">
+                <div class="bg-gradient-to-r from-brand-coral to-rose-500 h-full rounded-full" style="width: 74%;"></div>
+              </div>
+            </div>
+
+            <!-- SpO2 Level -->
+            <div class="liquid-glass rounded-2xl p-4 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg">
+              <div class="flex items-center gap-3 mb-3">
+                <div class="w-10 h-10 rounded-xl bg-emerald-50/80 text-emerald-500 flex items-center justify-center border border-emerald-200/40 shadow-sm">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M13 10V3L4 14h7v7l9-11h-7z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+                </div>
+                <div>
+                  <h2 class="text-xs font-bold text-slate-800">SpO₂ Level</h2>
+                  <p class="text-[11px] text-slate-400">Normal Range</p>
+                </div>
+              </div>
+              <div class="flex items-baseline justify-between">
+                <div>
+                  <span class="text-2xl font-black text-slate-900 tracking-tight">97%</span>
+                  <span class="text-xs text-emerald-500 font-semibold ml-1">Optimal</span>
+                </div>
+                <span class="text-[10px] text-slate-400 font-medium">9:44 PM</span>
+              </div>
+              <div class="mt-2 h-1.5 w-full bg-emerald-100/50 rounded-full overflow-hidden p-0.5 border border-white/60">
+                <div class="bg-gradient-to-r from-emerald-400 to-emerald-500 h-full rounded-full" style="width: 97%;"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Row 2: Big 3D Heart Hero Card with Floating Callouts -->
+          <div class="relative liquid-glass rounded-3xl p-6 sm:p-8 overflow-hidden flex-1 min-h-[580px] flex flex-col justify-between" data-purpose="hero-heart-visualization">
+            <!-- Background glow blobs -->
+            <div class="absolute -right-20 top-20 w-96 h-96 bg-brand-coral/20 rounded-full blur-3xl pointer-events-none liquid-mesh-orb"></div>
+            <div class="absolute left-10 bottom-10 w-72 h-72 bg-rose-300/25 rounded-full blur-2xl pointer-events-none liquid-mesh-orb-2"></div>
+
+            <!-- Card Header -->
+            <div class="relative z-10 flex items-start justify-between flex-wrap gap-2">
+              <div>
+                <p class="text-xs font-medium text-slate-400 tracking-wide uppercase">Check Your</p>
+                <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight mt-0.5">Overall Health Status</h1>
+              </div>
+
+              <!-- Mode Switcher & Status -->
+              <div class="flex items-center gap-3">
+                <div class="flex items-center liquid-pill p-1 rounded-full text-xs">
+                  <button id="toggle-anatomical-view" class="px-3 py-1 rounded-full font-semibold text-slate-800 bg-white shadow-sm transition">Anatomical Render</button>
+                  <button id="toggle-3d-view" class="px-3 py-1 rounded-full font-medium text-slate-500 hover:text-slate-800 transition">Interactive 3D</button>
+                </div>
+                <div class="text-right">
+                  <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/90 text-white shadow-sm border border-emerald-400/40 backdrop-blur-md">Active</span>
+                  <div id="hero-health-pct" class="text-3xl sm:text-4xl font-extrabold text-slate-900 mt-1 tracking-tight">89%</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Heart Visual Center Container -->
+            <div class="relative flex-1 flex items-center justify-center my-6 min-h-[380px]">
+              
+              <!-- ANATOMICAL RENDER MODE (Default exact layout) -->
+              <div id="anatomical-mode-container" class="relative w-full h-full flex items-center justify-center">
+                <!-- Concentric liquid pulse rings -->
+                <div class="absolute w-72 h-72 sm:w-96 sm:h-96 liquid-pulse-ring"></div>
+                <div class="absolute w-60 h-60 sm:w-80 sm:h-80 liquid-pulse-ring" style="animation-delay: 1.2s;"></div>
+                <div class="absolute w-48 h-48 sm:w-64 sm:h-64 liquid-pulse-ring" style="animation-delay: 2.4s;"></div>
+
+                <!-- Heart + Telemetry rings -->
+                <div class="relative w-72 h-80 sm:w-80 sm:h-96 flex items-center justify-center">
+                  <div class="telemetry-ring w-64 h-64 sm:w-72 sm:h-72"></div>
+                  <div class="telemetry-ring w-48 h-48 sm:w-56 sm:h-56" style="animation-delay: 800ms;"></div>
+                  
+                  <img alt="Hyper-realistic anatomical 3D render of human biological heart" class="w-full h-full object-contain drop-shadow-2xl select-none animate-heartbeat relative z-10" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA4EsExwsQTZ1LysDbrBmKt4K8F1D11i4B5ZDjRWDYc1a-IBquchntqqtflnFKZ3B4BRp-f9rwsOXMm4Lg1zLcQq0oUVsip2Eu0XLF28pMeEWQwCiFxy3zDeQqE0UJN0mx_QWCwsWA5TxV2FVd_V3rJ2Cg2DGRFXzIOX_sYdww8GBqwltbVC7JHkC7j9SyMYUxx4P0104AcQPywErhd1GTHTIk42KXZN4rXfjZsDwMZoaNl_eDlBejMxg">
+
+                  <!-- Interactive Diagnostic Probes -->
+                  <div class="absolute top-[24%] right-[34%] w-4 h-4 rounded-full bg-white pulse-node pulse-node-white cursor-pointer shadow-lg z-20 probe-btn" data-probe="aorta" title="Aortic Arch Sensor (120 mmHg Flow Rate)">
+                    <span class="absolute -top-6 -right-12 hidden sm:block px-2 py-0.5 rounded-full liquid-pill text-[10px] font-bold text-slate-700">Aorta 120/80</span>
+                  </div>
+
+                  <div class="absolute top-[48%] left-[44%] w-4 h-4 rounded-full bg-brand-coral pulse-node cursor-pointer shadow-lg z-20 probe-btn" data-probe="coronary" title="Coronary Vessel Flow">
+                    <span class="absolute -bottom-6 -left-10 hidden sm:block px-2 py-0.5 rounded-full liquid-pill text-[10px] font-bold text-brand-coral">Coronary Active</span>
+                  </div>
+
+                  <div class="absolute bottom-[18%] left-[48%] w-3.5 h-3.5 rounded-full bg-white pulse-node pulse-node-white cursor-pointer shadow-lg z-20 probe-btn" data-probe="apex" title="Apex Myocardial Core Temperature">
+                    <span class="absolute -bottom-6 -right-8 hidden sm:block px-2 py-0.5 rounded-full liquid-pill text-[10px] font-bold text-slate-700">Apex 36.8°C</span>
+                  </div>
+                </div>
+
+                <!-- Floating Badge 1: SpO2 -->
+                <div class="absolute top-2 right-0 sm:right-6 liquid-badge rounded-2xl p-4 w-44 sm:w-48 text-center float-liquid-1 cursor-pointer transition hover:scale-105 duration-200 z-20" data-purpose="floating-spo2" id="badge-spo2">
+                  <p class="text-xs font-semibold text-slate-500 mb-0.5">Oxygen Saturation</p>
+                  <div class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">96%</div>
+                  <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mt-0.5">Spo2</p>
+                  <div class="mt-2 flex items-center justify-center gap-0.5 h-4">
+                    <span class="w-1 bg-brand-coral/70 h-2 rounded-full animate-pulse"></span>
+                    <span class="w-1 bg-brand-coral/90 h-3.5 rounded-full animate-pulse" style="animation-delay: 150ms"></span>
+                    <span class="w-1 bg-brand-coral h-4 rounded-full animate-pulse" style="animation-delay: 300ms"></span>
+                    <span class="w-1 bg-brand-coral/80 h-2.5 rounded-full animate-pulse" style="animation-delay: 450ms"></span>
+                    <span class="w-1 bg-brand-coral/50 h-1.5 rounded-full"></span>
+                  </div>
+                </div>
+
+                <!-- Floating Badge 2: Blood Pressure -->
+                <div class="absolute bottom-6 left-0 sm:left-4 liquid-badge rounded-2xl p-4 sm:p-5 w-44 sm:w-48 text-left float-liquid-2 cursor-pointer transition hover:scale-105 duration-200 z-20" data-purpose="floating-bp" id="badge-bp">
+                  <p class="text-xs font-semibold text-slate-500 mb-1">Blood Pressure</p>
+                  <div id="hero-bp-val" class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight leading-none">122/78</div>
+                  <span class="text-xs text-slate-400 font-semibold mt-1 inline-block">mmHg</span>
+                  <div class="mt-2.5 flex items-center gap-1.5">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 ring-2 ring-emerald-400/30"></span>
+                    <span class="text-[11px] font-semibold text-emerald-600">Stable Rhythm</span>
+                  </div>
+                </div>
+
+                <!-- Floating Badge 3: Temperature -->
+                <div class="absolute bottom-2 right-0 sm:right-10 liquid-badge rounded-2xl p-4 w-40 sm:w-44 text-center float-liquid-3 cursor-pointer transition hover:scale-105 duration-200 z-20" data-purpose="floating-temperature" id="badge-temp">
+                  <p class="text-xs font-semibold text-slate-500 mb-1">Temperature</p>
+                  <div class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">36.8°C</div>
+                  <span class="text-xs text-slate-400 font-semibold mt-0.5 inline-block">Heart</span>
+                </div>
+              </div>
+
+              <!-- LIVE 3D WEBGL VIEWER MODE (Toggled via button) -->
+              <div id="live-3d-hero-container" class="hidden relative w-full h-full flex flex-col items-center">
+                <div id="hero-viewer" class="viewer-container w-full h-[400px]">
+                  <div id="hero-viewer-fallback" class="hidden absolute inset-0 flex items-center justify-center text-center p-6 text-slate-300">
+                    <div>
+                      <p class="font-bold text-white mb-1">3D WebGL Context Initializing</p>
+                      <p class="text-xs">Manipulate 3D coronary tree with drag, scroll zoom, and artery clicks.</p>
+                    </div>
+                  </div>
+                  <div class="absolute top-3 left-3 px-3 py-1 bg-black/60 backdrop-blur-md rounded-full text-white text-[11px] font-semibold flex items-center gap-1.5">
+                    <span class="w-2 h-2 rounded-full bg-brand-coral animate-ping"></span>
+                    Interactive 3D Three.js Coronary Mesh
+                  </div>
+                  <div class="absolute bottom-3 left-3 right-3 flex items-center justify-between text-[11px] text-white/70 bg-black/40 backdrop-blur-md px-3 py-1.5 rounded-xl">
+                    <span>Drag = Rotate · Scroll = Zoom · Right-click = Pan</span>
+                    <span class="text-brand-coral font-bold">LAD · LCX · RCA Calibrated</span>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- Card Footer -->
+            <div class="relative z-10 pt-3 border-t border-white/60 flex items-center justify-between flex-wrap gap-2 text-xs text-slate-500">
+              <div class="flex items-center gap-2">
+                <span class="inline-block w-2 h-2 rounded-full bg-brand-coral shadow-sm shadow-brand-coral/50"></span>
+                <span class="font-medium text-slate-700">AI Prognosis:</span>
+                <span id="hero-cad-prognosis">Cardiovascular risk index is Low (11%)</span>
+              </div>
+              <button id="btn-view-scan" class="font-semibold text-brand-coral hover:text-brand-coral-light flex items-center gap-1 transition-colors">
+                View Complete Heart Scan
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+              </button>
+            </div>
+          </div>
+        </section>
+        <!-- END: LeftHealthDiagnostics -->
+
+        <!-- ================= RIGHT COLUMN (5 Cols) ================= -->
+        <section class="lg:col-span-5 flex flex-col gap-6" data-purpose="right-vital-charts">
+
+          <!-- Row 1: ECG Sparkline + Blood Status Bars -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            
+            <!-- ECG Chart -->
+            <div class="liquid-glass rounded-2xl p-4 sm:p-5 flex flex-col justify-between transition-all duration-300 hover:-translate-y-1 hover:shadow-lg" data-purpose="ecg-chart">
+              <div>
+                <div class="flex items-center gap-2 mb-1">
+                  <div class="w-6 h-6 rounded-lg bg-red-50/80 text-brand-coral flex items-center justify-center border border-rose-200/50 shadow-sm">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+                  </div>
+                  <span class="text-xs font-semibold text-slate-500">Heart Rate</span>
+                </div>
+                <div class="text-xl font-bold text-slate-900 tracking-tight">106/Bmp</div>
+              </div>
+              <div class="h-16 w-full mt-3 flex items-end">
+                <svg class="w-full h-full overflow-visible" preserveAspectRatio="none" viewBox="0 0 160 50">
+                  <path d="M0,35 L20,35 L28,25 L36,45 L45,15 L52,48 L58,32 L68,35 L80,35 L88,30 L95,40 L102,25 L112,42 L120,35 L160,35" fill="none" stroke="#cbd5e1" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"></path>
+                  <path d="M36,45 L45,15 L52,48 L58,32 L68,35 L88,30 L95,40 L102,25 L112,42" fill="none" stroke="#f97352" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.4"></path>
+                </svg>
+              </div>
+            </div>
+
+            <!-- Blood Status Bars -->
+            <div class="liquid-glass rounded-2xl p-4 sm:p-5 flex flex-col justify-between transition-all duration-300 hover:-translate-y-1 hover:shadow-lg" data-purpose="blood-status-bars">
+              <div>
+                <div class="flex items-center gap-2 mb-1">
+                  <div class="w-6 h-6 rounded-lg bg-orange-50/80 text-amber-600 flex items-center justify-center border border-amber-200/50 shadow-sm">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+                  </div>
+                  <span class="text-xs font-semibold text-slate-500">Blood Status</span>
+                </div>
+                <div class="text-xl font-bold text-slate-900 tracking-tight">114/72</div>
+              </div>
+              <div class="relative h-16 w-full mt-3 flex items-center justify-between pr-8">
+                <div class="flex items-center justify-between w-full h-12 gap-1.5">
+                  <span class="w-1 bg-slate-200/90 h-6 rounded-full"></span>
+                  <span class="w-1 bg-slate-200/90 h-9 rounded-full"></span>
+                  <span class="w-1 bg-slate-200/90 h-7 rounded-full"></span>
+                  <span class="w-1 bg-slate-200/90 h-10 rounded-full"></span>
+                  <span class="w-1 bg-slate-200/90 h-8 rounded-full"></span>
+                  <span class="w-1 bg-brand-coral h-12 rounded-full shadow-md shadow-brand-coral/40"></span>
+                  <span class="w-1 bg-slate-200/90 h-9 rounded-full"></span>
+                  <span class="w-1 bg-slate-200/90 h-11 rounded-full"></span>
+                  <span class="w-1 bg-slate-200/90 h-6 rounded-full"></span>
+                </div>
+                <div class="absolute right-0 top-1 text-right">
+                  <div class="text-sm font-extrabold text-slate-900 leading-none">116</div>
+                  <div class="text-[10px] text-slate-400 font-bold leading-none mt-0.5">/75</div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Row 2: Blood Glucose Dot Grid + Heart Function Card -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            
+            <!-- Glucose Dot Grid -->
+            <div class="liquid-glass rounded-2xl p-4 sm:p-5 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg" data-purpose="glucose-dot-grid">
+              <div class="flex items-center gap-2 mb-1">
+                <div class="w-6 h-6 rounded-lg bg-orange-50/80 text-brand-coral flex items-center justify-center border border-brand-coral/20 shadow-sm">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+                </div>
+                <span class="text-xs font-semibold text-slate-500">Blood Glucose</span>
+              </div>
+              <div class="text-xl font-bold text-slate-900 tracking-tight mb-3">106/Bmp</div>
+              <div class="grid grid-rows-4 gap-1.5 py-1">
+                <div class="flex justify-between items-center">
+                  <span class="w-2.5 h-2.5 rounded-full bg-brand-coral shadow-sm shadow-brand-coral/40"></span>
+                  <span class="w-2.5 h-2.5 rounded-full bg-brand-coral shadow-sm shadow-brand-coral/40"></span>
+                  <span class="w-2.5 h-2.5 rounded-full bg-brand-coral shadow-sm shadow-brand-coral/40"></span>
+                  <span class="w-2.5 h-2.5 rounded-full bg-brand-coral shadow-sm shadow-brand-coral/40"></span>
+                  <span class="w-2.5 h-2.5 rounded-full bg-brand-coral shadow-sm shadow-brand-coral/40"></span>
+                  <span class="w-2.5 h-2.5 rounded-full bg-brand-coral shadow-sm shadow-brand-coral/40"></span>
+                  <span class="w-2.5 h-2.5 rounded-full bg-brand-coral shadow-sm shadow-brand-coral/40"></span>
+                  <span class="w-2.5 h-2.5 rounded-full bg-brand-coral shadow-sm shadow-brand-coral/40"></span>
+                  <span class="w-2.5 h-2.5 rounded-full bg-brand-coral shadow-sm shadow-brand-coral/40"></span>
+                  <span class="w-2.5 h-2.5 rounded-full bg-brand-coral shadow-sm shadow-brand-coral/40"></span>
+                  <span class="w-2.5 h-2.5 rounded-full bg-brand-coral shadow-sm shadow-brand-coral/40"></span>
+                  <span class="w-2.5 h-2.5 rounded-full bg-brand-coral shadow-sm shadow-brand-coral/40"></span>
+                </div>
+                <div class="flex justify-between items-center">
+                  <span class="w-2.5 h-2.5 rounded-full bg-brand-coral"></span>
+                  <span class="w-2.5 h-2.5 rounded-full bg-brand-coral"></span>
+                  <span class="w-2.5 h-2.5 rounded-full bg-brand-coral"></span>
+                  <span class="w-2.5 h-2.5 rounded-full bg-brand-coral"></span>
+                  <span class="w-2.5 h-2.5 rounded-full bg-brand-coral/80"></span>
+                  <span class="w-2.5 h-2.5 rounded-full bg-brand-coral/80"></span>
+                  <span class="w-2.5 h-2.5 rounded-full bg-brand-coral/80"></span>
+                  <span class="w-2.5 h-2.5 rounded-full bg-brand-coral/80"></span>
+                  <span class="w-2.5 h-2.5 rounded-full bg-brand-coral/80"></span>
+                  <span class="w-2.5 h-2.5 rounded-full bg-brand-coral/80"></span>
+                  <span class="w-2.5 h-2.5 rounded-full bg-brand-coral/80"></span>
+                  <span class="w-2.5 h-2.5 rounded-full bg-brand-coral/80"></span>
+                </div>
+                <div class="flex justify-between items-center">
+                  <span class="w-2.5 h-2.5 rounded-full bg-brand-coral"></span>
+                  <span class="w-2.5 h-2.5 rounded-full bg-brand-coral"></span>
+                  <span class="w-2.5 h-2.5 rounded-full bg-brand-coral"></span>
+                  <span class="w-2.5 h-2.5 rounded-full bg-brand-coral/80"></span>
+                  <span class="w-2.5 h-2.5 rounded-full bg-brand-coral/80"></span>
+                  <span class="w-2.5 h-2.5 rounded-full bg-brand-coral/60"></span>
+                  <span class="w-2.5 h-2.5 rounded-full bg-brand-coral/60"></span>
+                  <span class="w-2.5 h-2.5 rounded-full bg-brand-coral/60"></span>
+                  <span class="w-2.5 h-2.5 rounded-full bg-brand-coral/60"></span>
+                  <span class="w-2.5 h-2.5 rounded-full bg-brand-coral/60"></span>
+                  <span class="w-2.5 h-2.5 rounded-full bg-brand-coral/60"></span>
+                  <span class="w-2.5 h-2.5 rounded-full bg-brand-coral/60"></span>
+                </div>
+                <div class="flex justify-between items-center">
+                  <span class="w-2.5 h-2.5 rounded-full bg-brand-coral"></span>
+                  <span class="w-2.5 h-2.5 rounded-full bg-brand-coral"></span>
+                  <span class="w-2.5 h-2.5 rounded-full bg-brand-coral"></span>
+                  <span class="w-2.5 h-2.5 rounded-full bg-brand-coral"></span>
+                  <span class="w-2.5 h-2.5 rounded-full bg-brand-coral"></span>
+                  <span class="w-2.5 h-2.5 rounded-full bg-brand-coral"></span>
+                  <span class="w-2.5 h-2.5 rounded-full bg-brand-coral"></span>
+                  <span class="w-2.5 h-2.5 rounded-full bg-brand-coral"></span>
+                  <span class="w-2.5 h-2.5 rounded-full bg-brand-coral"></span>
+                  <span class="w-2.5 h-2.5 rounded-full bg-brand-coral"></span>
+                  <span class="w-2.5 h-2.5 rounded-full bg-brand-coral"></span>
+                  <span class="w-2.5 h-2.5 rounded-full bg-brand-coral"></span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Heart Function Card -->
+            <div class="liquid-glass rounded-2xl p-4 sm:p-5 flex flex-col justify-between transition-all duration-300 hover:-translate-y-1 hover:shadow-lg" data-purpose="heart-function-card">
+              <div>
+                <div class="flex items-center justify-between mb-1">
+                  <h3 class="text-xs font-bold text-slate-800">Heart Function Efficiency</h3>
+                  <button class="text-slate-400 hover:text-slate-600 transition" title="Efficiency Details">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+                  </button>
+                </div>
+                <div class="flex items-baseline gap-2 mt-1">
+                  <span class="text-2xl font-black text-slate-900 tracking-tight">89%</span>
+                  <span class="text-xs text-slate-400 font-semibold">Moderate</span>
+                </div>
+              </div>
+              <div class="mt-4">
+                <div class="h-6 w-full rounded-xl bg-slate-100/70 p-1 border border-white/60 overflow-hidden relative">
+                  <div class="h-full rounded-lg bg-gradient-to-r from-brand-coral via-rose-400 to-rose-300 shadow-sm transition-all duration-500" style="width: 89%;"></div>
+                </div>
+                <div class="flex justify-between items-center text-[10px] text-slate-400 font-bold mt-1.5 px-0.5">
+                  <span>0</span>
+                  <span>100%</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Row 3: Upcoming Appointments Weekly Strip -->
+          <div class="liquid-glass rounded-2xl p-5" data-purpose="upcoming-appointments">
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="text-sm font-bold text-slate-900">Upcoming Appointments</h3>
+              <button aria-label="Appointments Menu" class="text-slate-400 hover:text-slate-700 transition">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+              </button>
+            </div>
+            <div class="flex items-center justify-between gap-1 sm:gap-2">
+              <button aria-label="Previous Days" class="cal-nav-btn w-8 h-8 rounded-full liquid-pill hover:bg-white text-slate-500 flex items-center justify-center transition">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M15 19l-7-7 7-7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+              </button>
+              
+              <div data-day="18" class="cal-day-item flex flex-col items-center justify-center py-2 px-2.5 rounded-xl cursor-pointer hover:bg-white/50 transition text-slate-500">
+                <span class="text-xs font-bold text-slate-700">18</span>
+                <span class="text-[10px] font-medium text-slate-400 mt-0.5">Sat</span>
+              </div>
+              <div data-day="19" class="cal-day-item flex flex-col items-center justify-center py-2 px-2.5 rounded-xl cursor-pointer hover:bg-white/50 transition text-slate-500">
+                <span class="text-xs font-bold text-slate-700">19</span>
+                <span class="text-[10px] font-medium text-slate-400 mt-0.5">Sun</span>
+              </div>
+              <div data-day="20" class="cal-day-item flex flex-col items-center justify-center py-2 px-2.5 rounded-xl cursor-pointer hover:bg-white/50 transition text-slate-500">
+                <span class="text-xs font-bold text-slate-700">20</span>
+                <span class="text-[10px] font-medium text-slate-400 mt-0.5">Mon</span>
+              </div>
+              
+              <!-- Active Selected Day (Wed 21) -->
+              <div data-day="21" class="cal-day-item active flex flex-col items-center justify-center py-2.5 px-4 rounded-2xl bg-gradient-to-b from-brand-coral to-[#ea580c] text-white shadow-lg shadow-brand-coral/35 cursor-pointer transform hover:scale-105 transition-all">
+                <span class="text-sm font-extrabold leading-none">21</span>
+                <span class="text-[11px] font-semibold mt-1 opacity-90 leading-none">Wed</span>
+              </div>
+              
+              <div data-day="22" class="cal-day-item flex flex-col items-center justify-center py-2 px-2.5 rounded-xl cursor-pointer hover:bg-white/50 transition text-slate-500">
+                <span class="text-xs font-bold text-slate-700">22</span>
+                <span class="text-[10px] font-medium text-slate-400 mt-0.5">Wed</span>
+              </div>
+              <div data-day="23" class="cal-day-item flex flex-col items-center justify-center py-2 px-2.5 rounded-xl cursor-pointer hover:bg-white/50 transition text-slate-500">
+                <span class="text-xs font-bold text-slate-700">23</span>
+                <span class="text-[10px] font-medium text-slate-400 mt-0.5">Thu</span>
+              </div>
+              <div data-day="24" class="cal-day-item flex flex-col items-center justify-center py-2 px-2.5 rounded-xl cursor-pointer hover:bg-white/50 transition text-slate-500">
+                <span class="text-xs font-bold text-slate-700">24</span>
+                <span class="text-[10px] font-medium text-slate-400 mt-0.5">Fri</span>
+              </div>
+
+              <button aria-label="Next Days" class="cal-nav-btn w-8 h-8 rounded-full liquid-pill hover:bg-white text-slate-500 flex items-center justify-center transition">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- Row 4: Doctor Details & Consultation -->
+          <div class="liquid-glass rounded-2xl p-5" data-purpose="doctor-details">
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="text-sm font-bold text-slate-900">Doctor Details</h3>
+              <button aria-label="Doctor Details Menu" class="text-slate-400 hover:text-slate-700 transition">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+              </button>
+            </div>
+
+            <!-- Primary Attending Cardiologist (Dr. Alina Bhart) -->
+            <div class="flex items-center justify-between p-3 rounded-2xl liquid-pill mb-4 flex-wrap gap-3">
+              <div class="flex items-center gap-3">
+                <div class="w-12 h-12 rounded-full overflow-hidden bg-slate-200 relative border-2 border-white shadow-md flex-shrink-0">
+                  <img alt="Dr. Alina Bhart" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD9Z_W9ZdGmm9FAwZ7p04DOI1LewV_g41Q_W5lrjnXcXMbSeBY01Ta5unk0TE2Nyqc0kBTQlAVNlS8RO3EsF0EgZCxnRwgUtaiRjoZM9n4tr7bFKbmoXcp9rFqiQbqjHT5WpcF8YXDg-8dojpod1sq_mTZELEJvo_eVMqcG6Jv1oyebp9ZrgTOxwJtxNJw15aHHjGW6TKEUYiZKWGupxLnjfGYUW4vL210Q8xntXzIGG_2WZ-9wlRlc6w">
+                </div>
+                <div>
+                  <h4 class="text-sm font-bold text-slate-900 leading-tight">Alina Bhart</h4>
+                  <p class="text-xs text-slate-400 font-medium">Cardiologist</p>
+                </div>
+              </div>
+              <div class="text-left sm:text-right">
+                <p class="text-xs font-bold text-slate-800">08:35 - 09:30 Pm</p>
+                <p class="text-[11px] text-slate-400 font-medium">21 August</p>
+              </div>
+              <div class="flex items-center gap-2">
+                <button id="doctor-call-btn" class="w-9 h-9 rounded-full bg-brand-coral-soft hover:bg-brand-coral text-brand-coral hover:text-white flex items-center justify-center transition shadow-sm liquid-btn-interactive" title="Initiate Telehealth Call">
+                  <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 4V3z"></path></svg>
+                </button>
+                <button id="doctor-chat-btn" class="w-9 h-9 rounded-full bg-brand-coral text-white hover:bg-brand-coral-light flex items-center justify-center transition shadow-md shadow-brand-coral/30 liquid-btn-interactive" title="Start Live Consultation">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+                </button>
+              </div>
+            </div>
+
+            <!-- Specialist Upcoming Mini List -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3" data-purpose="specialist-upcoming-list">
+              <!-- Specialist 1 -->
+              <div class="p-3 rounded-2xl liquid-pill hover:shadow-md transition-all cursor-pointer specialist-card" data-doctor="Anika Verma">
+                <div class="flex items-center justify-between mb-2">
+                  <div class="w-6 h-6 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center border border-purple-200/50">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+                  </div>
+                  <span class="text-[11px] font-semibold text-slate-500">22 August</span>
+                </div>
+                <div class="flex items-center gap-2 mt-2">
+                  <img alt="Anika Verma" class="w-7 h-7 rounded-full object-cover border border-white" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBVUuDVHsp8Ga1Fz0-k_NlPIMn3nlOY9kqfrZ33dIfvgBik_71-RK0LyfbNdUMLRIUzuQT12Pt-2495MyLC6217T1EhGRm2mV9E56YM6peiHGfO7v6_wKvtzQSn5wEaZf16LiNTbjFs0R87T5z8NTZY_2tVHTp_YQnuGpY3OQas8HmEL3qXr7kFjpMV5P7mHNDA2gbQQmNvTxgV1BwQtwIWodB3tBsG20GpGYDUZ-UpBF5eSiiFQH9Qbg">
+                  <div>
+                    <h5 class="text-xs font-bold text-slate-800 leading-none">Anika Verma</h5>
+                    <p class="text-[10px] text-slate-400 font-medium leading-none mt-1">Neurologist</p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Specialist 2 -->
+              <div class="p-3 rounded-2xl liquid-pill hover:shadow-md transition-all cursor-pointer specialist-card" data-doctor="Sana Kapoor">
+                <div class="flex items-center justify-between mb-2">
+                  <div class="w-6 h-6 rounded-lg bg-rose-50 text-rose-500 flex items-center justify-center border border-rose-200/50">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+                  </div>
+                  <span class="text-[11px] font-semibold text-slate-500">24 August</span>
+                </div>
+                <div class="flex items-center gap-2 mt-2">
+                  <img alt="Sana Kapoor" class="w-7 h-7 rounded-full object-cover border border-white" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBR_rJmdaUE4inVLojz2EgxwggUYXg6XQ7aCKHKJS_hCCwpAA_GhTSyhv5w21rQjktMjH4Ola1tqFRrLvlU2A3BINBiHf0c22m5uPXEaZviTJKOD2adOm1SGPtHdKbiftDiBKskTFFwOim-MZS3AMkJ8tJK5A4v7sPzbtF4Hg07Lq1GPwmUDz9sHyNEqfXZAnba1YRmWVtdMqnUrTF6P1RsUWz1jLh883fhOvxZyaZ3Rpkx5jnObd-xIg">
+                  <div>
+                    <h5 class="text-xs font-bold text-slate-800 leading-none">Sana Kapoor</h5>
+                    <p class="text-[10px] text-slate-400 font-medium leading-none mt-1">Orthopedic</p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Specialist 3 -->
+              <div class="p-3 rounded-2xl liquid-pill hover:shadow-md transition-all cursor-pointer specialist-card" data-doctor="Karan Basu">
+                <div class="flex items-center justify-between mb-2">
+                  <div class="w-6 h-6 rounded-lg bg-red-50 text-red-500 flex items-center justify-center border border-rose-200/50">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+                  </div>
+                  <span class="text-[11px] font-semibold text-slate-500">25 August</span>
+                </div>
+                <div class="flex items-center gap-2 mt-2">
+                  <img alt="Karan Basu" class="w-7 h-7 rounded-full object-cover border border-white" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCOg2HZrNQtu10StJ0KksOCi8_gUC2a6bKWx3t05EGt_afbY7BrZBM-TnXcjyp4hvJz00cfRzYl5R7mabBY1e_Z5Soq8if6ZJFP8dFSx9CZysOcj4XkNFi3-GdsS1C3P4gB9by3JSwVH8Sp2LBv9rgIz7YsC0M_3mmpSy1u9O_URwXDvFAelfXiCZ49wLjjc8IdZGSKl-hJ8MjLJLMt4UYgrTawX3NwaZ4nGjVDKGWzzpsV8WspE99Nag">
+                  <div>
+                    <h5 class="text-xs font-bold text-slate-800 leading-none">Karan Basu</h5>
+                    <p class="text-[10px] text-slate-400 font-medium leading-none mt-1">Heart Specialist</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Row 5: AI Emergency Support & Assistance Card -->
+          <div class="liquid-glass-accent rounded-2xl p-5 border border-rose-200/80 shadow-md" data-purpose="emergency-assistance-card">
+            <div class="flex items-center justify-between mb-3">
+              <div class="flex items-center gap-2">
+                <div class="w-8 h-8 rounded-xl bg-red-500/15 text-red-600 flex items-center justify-center border border-red-300/40">
+                  <svg class="w-4 h-4 animate-pulse" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path d="M13 10V3L4 14h7v7l9-11h-7z" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+                </div>
+                <div>
+                  <h3 class="text-sm font-bold text-slate-900 leading-none">AI Emergency Support &amp; Assistance</h3>
+                  <p class="text-[10px] text-slate-500 font-medium mt-0.5">Autonomous 24/7 Cardiology Dispatch Protocol</p>
+                </div>
+              </div>
+              <div class="flex items-center gap-1.5 px-2.5 py-1 rounded-full liquid-pill text-emerald-600 border border-emerald-500/30">
+                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse ring-2 ring-emerald-400/40"></span>
+                <span class="text-[10px] font-bold tracking-tight">Protocol Active</span>
+              </div>
+            </div>
+
+            <div class="p-3 rounded-xl liquid-pill mb-3 text-xs">
+              <div class="flex items-center justify-between mb-1.5">
+                <span class="text-slate-600 font-medium">Hemodynamic Risk Status</span>
+                <span class="px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-700 font-bold text-[10px] border border-emerald-400/30">Low Risk (Normal Sinus Rhythm)</span>
+              </div>
+              <div class="flex items-center justify-between text-[11px] text-slate-600">
+                <div class="flex items-center gap-1.5">
+                  <span>Telemetry Sync:</span>
+                  <span class="font-bold text-slate-800">0.4s Real-Time</span>
+                </div>
+                <div class="flex items-center gap-1.5">
+                  <span>EMS Geo-Fence:</span>
+                  <span class="font-bold text-slate-800">Ready (Nearest Unit 1.4 mi)</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-2 mb-2.5">
+              <button id="emergency-call-btn" class="flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl bg-gradient-to-r from-brand-coral to-rose-500 hover:from-rose-500 hover:to-rose-600 text-white text-xs font-bold shadow-md shadow-brand-coral/30 liquid-btn-interactive">
+                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 4V3z"></path></svg>
+                <span>Emergency AI Call</span>
+              </button>
+              
+              <button id="emergency-chat-btn" class="flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl liquid-pill hover:bg-white text-slate-800 text-xs font-bold liquid-btn-interactive">
+                <svg class="w-4 h-4 text-brand-coral" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+                <span>Emergency AI Chat</span>
+              </button>
+            </div>
+
+            <button id="dispatch-emt-btn" class="w-full py-2 px-3 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-700 border border-rose-300/60 text-xs font-semibold flex items-center justify-center gap-2 transition liquid-btn-interactive">
+              <svg class="w-3.5 h-3.5 text-rose-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+              <span>Dispatch EMT &amp; Alert Attending Physician</span>
+            </button>
+          </div>
+
+        </section>
+        <!-- END: RightVitalCharts -->
+
+      </main>
+      <!-- END: MainDashboardGrid -->
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- VIEW 2: DIAGNOSTICS & 3D CORONARY EXPLORER -->
+    <!-- ========================================================================= -->
+    <div id="view-diagnostics" class="tab-view hidden">
+      <div class="mb-4 flex items-center justify-between flex-wrap gap-2">
+        <div>
+          <h2 class="text-2xl font-black text-slate-900 tracking-tight">Complete 3D Coronary Diagnostics</h2>
+          <p class="text-xs text-slate-500 mt-0.5">Biometric risk factor scoring, interactive Three.js artery stenosis mapping, and SHAP Shapley explainability.</p>
+        </div>
+        <div class="flex items-center gap-2">
+          <div id="source-badge" class="px-3 py-1 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800 border border-emerald-300">Data: Synthetic Stand-in</div>
+          <button id="btn-back-to-dash" class="px-4 py-1.5 rounded-full liquid-pill hover:bg-white text-xs font-bold text-slate-700 transition">Back to Dashboard</button>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        
+        <!-- LEFT: Patient Clinical Variables (4 Cols) -->
+        <aside class="lg:col-span-4 liquid-glass rounded-3xl p-5 flex flex-col max-h-[820px] overflow-hidden">
+          <div class="flex items-center justify-between mb-3 pb-3 border-b border-slate-200/80">
+            <div>
+              <h3 class="text-sm font-bold text-slate-900">Patient Input Data</h3>
+              <p class="text-[11px] text-slate-400">Edits update coronary risk in real-time</p>
+            </div>
+            <div class="flex items-center gap-2">
+              <select id="sample-select" class="text-xs py-1 px-2.5 rounded-xl border-slate-200 bg-white/80 focus:ring-brand-coral font-medium text-slate-700 shadow-sm">
+                <option value="">Load example…</option>
+              </select>
+              <button id="reset-btn" type="button" class="px-2.5 py-1 text-xs rounded-xl border border-slate-200 bg-white hover:bg-slate-50 font-semibold text-slate-600 transition shadow-sm">Reset</button>
+            </div>
+          </div>
+
+          <div class="flex-1 overflow-y-auto pr-1">
+            <form id="patient-form" autocomplete="off" class="space-y-2"></form>
+          </div>
+
+          <button id="predict-btn" type="button" class="mt-4 w-full py-3 rounded-2xl bg-gradient-to-r from-brand-coral to-rose-500 hover:from-rose-500 hover:to-rose-600 text-white font-bold text-xs shadow-md shadow-brand-coral/30 transition transform active:scale-98">
+            Recompute Coronary Risk &amp; Shapley Values
+          </button>
+        </aside>
+
+        <!-- CENTER: Interactive 3D Coronary Artery Viewer (5 Cols) -->
+        <section class="lg:col-span-5 liquid-glass rounded-3xl p-5 flex flex-col">
+          <!-- Viewer Toolbar -->
+          <div class="flex flex-wrap items-center justify-between gap-2 mb-3 pb-3 border-b border-slate-200/80 text-xs">
+            <!-- Camera angles -->
+            <div class="flex items-center gap-1 bg-slate-100/80 p-1 rounded-xl" id="view-buttons">
+              <button data-view="anterior" class="px-2 py-1 rounded-lg font-semibold bg-white text-slate-800 shadow-xs">Front</button>
+              <button data-view="left" class="px-2 py-1 rounded-lg text-slate-600 hover:text-slate-900">Left</button>
+              <button data-view="posterior" class="px-2 py-1 rounded-lg text-slate-600 hover:text-slate-900">Back</button>
+              <button data-view="right" class="px-2 py-1 rounded-lg text-slate-600 hover:text-slate-900">Right</button>
+              <button data-view="superior" class="px-2 py-1 rounded-lg text-slate-600 hover:text-slate-900">Top</button>
+            </div>
+
+            <!-- Anatomy layers -->
+            <div class="flex items-center gap-2">
+              <label class="flex items-center gap-1 text-[11px] font-medium text-slate-600 cursor-pointer">
+                <input type="checkbox" data-layer="torso" checked class="rounded text-brand-coral focus:ring-brand-coral w-3.5 h-3.5"> Torso
+              </label>
+              <label class="flex items-center gap-1 text-[11px] font-medium text-slate-600 cursor-pointer">
+                <input type="checkbox" data-layer="ribs" checked class="rounded text-brand-coral focus:ring-brand-coral w-3.5 h-3.5"> Ribs
+              </label>
+              <label class="flex items-center gap-1 text-[11px] font-medium text-slate-600 cursor-pointer">
+                <input type="checkbox" data-layer="lungs" checked class="rounded text-brand-coral focus:ring-brand-coral w-3.5 h-3.5"> Lungs
+              </label>
+              <label class="flex items-center gap-1 text-[11px] font-medium text-slate-600 cursor-pointer">
+                <input type="checkbox" id="autorotate" class="rounded text-brand-coral focus:ring-brand-coral w-3.5 h-3.5"> Rotate
+              </label>
+            </div>
+          </div>
+
+          <!-- Opacity + Snapshot -->
+          <div class="flex items-center justify-between text-xs mb-3 px-1">
+            <label class="flex items-center gap-2 text-slate-500">
+              Heart opacity
+              <input type="range" id="heart-opacity" min="0.25" max="1" step="0.05" value="0.92" class="w-24 accent-brand-coral">
+            </label>
+            <button id="snap-btn" type="button" class="px-3 py-1 rounded-xl liquid-pill hover:bg-white text-slate-700 font-semibold text-[11px] flex items-center gap-1 transition">
+              <svg class="w-3.5 h-3.5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+              Save PNG
+            </button>
+          </div>
+
+          <!-- 3D Canvas Box -->
+          <div id="viewer" class="viewer-container flex-1 min-h-[440px]">
+            <div id="viewer-fallback" class="hidden absolute inset-0 flex items-center justify-center p-6 text-center text-slate-300"></div>
+            <div class="absolute top-3 left-3 px-3 py-1 bg-amber-100/90 text-amber-900 border border-amber-300 rounded-full text-[10px] font-bold">
+              Educational visualization · not diagnostic imaging
+            </div>
+            <div class="absolute bottom-3 left-3 text-[11px] text-white/70 bg-black/40 px-3 py-1 rounded-lg">
+              Drag = rotate · Scroll = zoom · Right-drag = pan · Click vessel to inspect
+            </div>
+          </div>
+
+          <!-- Legend Bar -->
+          <div class="mt-4 p-3 bg-white/70 rounded-2xl border border-slate-200/80">
+            <div class="flex justify-between text-[11px] font-bold text-slate-600 mb-1">
+              <span>Stenosis Probability Gradient:</span>
+              <span class="text-brand-coral">0% (Low) → 100% (High Narrowing)</span>
+            </div>
+            <div id="legend-bar" class="h-2.5 rounded-full overflow-hidden w-full"></div>
+            <div class="flex justify-between text-[10px] text-slate-400 font-semibold mt-1">
+              <span>0% Normal</span>
+              <span>33% Mild</span>
+              <span>66% Moderate</span>
+              <span>100% Severe (≥50% Stenosis)</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- RIGHT: Results & Shapley Explanations (3 Cols) -->
+        <section class="lg:col-span-3 liquid-glass rounded-3xl p-5 flex flex-col max-h-[820px] overflow-hidden">
+          <h3 class="text-sm font-bold text-slate-900 mb-2">Vessel Risk &amp; Model Output</h3>
+          <div class="flex-1 overflow-y-auto space-y-4 pr-1">
+            <div id="summary"></div>
+            <div id="warnings"></div>
+            <div class="pt-2 border-t border-slate-200">
+              <h4 class="text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Explainable AI (SHAP)</h4>
+              <div id="target-tabs" class="flex gap-1 p-1 bg-slate-100 rounded-xl mb-3"></div>
+              <div id="explain"></div>
+            </div>
+          </div>
+        </section>
+
+      </div>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- VIEW 3: AI CARDIOLOGY CONSULTATION CHAT -->
+    <!-- ========================================================================= -->
+    <div id="view-aichat" class="tab-view hidden">
+      <div class="max-w-4xl mx-auto liquid-glass rounded-3xl p-6 sm:p-8">
+        <div class="flex items-center justify-between pb-4 mb-4 border-b border-slate-200">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-2xl bg-brand-coral-soft text-brand-coral flex items-center justify-center font-bold">♥</div>
+            <div>
+              <h2 class="text-xl font-extrabold text-slate-900">CardioVision Clinical AI Assistant</h2>
+              <p class="text-xs text-slate-500">Autonomous Hemodynamic &amp; Coronary Risk Assessment</p>
+            </div>
+          </div>
+          <span class="px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800">Online 24/7</span>
+        </div>
+
+        <!-- Chat messages container -->
+        <div id="chat-messages" class="space-y-4 min-h-[380px] max-h-[500px] overflow-y-auto p-2 mb-4">
+          <!-- Bot welcome message -->
+          <div class="flex gap-3 items-start">
+            <div class="w-8 h-8 rounded-full bg-brand-coral text-white flex items-center justify-center text-xs font-bold flex-shrink-0">AI</div>
+            <div class="p-4 rounded-2xl bg-white border border-slate-200/80 text-xs text-slate-800 shadow-sm max-w-lg">
+              Hello Sarah. I am monitoring your real-time CardioTag sensor data. Your current resting heart rate is 78 BPM, blood pressure is 122/78 mmHg, and your overall coronary stenosis probability is computed as <strong>Low (11%)</strong>. How can I assist you today?
+            </div>
+          </div>
+        </div>
+
+        <!-- Prompt suggestion chips -->
+        <div class="flex flex-wrap gap-2 mb-3">
+          <button class="chat-chip px-3 py-1 rounded-full liquid-pill text-xs font-medium text-slate-700 hover:bg-white transition">Assess my current heart telemetry</button>
+          <button class="chat-chip px-3 py-1 rounded-full liquid-pill text-xs font-medium text-slate-700 hover:bg-white transition">Explain LAD vs RCA coronary risk</button>
+          <button class="chat-chip px-3 py-1 rounded-full liquid-pill text-xs font-medium text-slate-700 hover:bg-white transition">Are there any arrhythmia signs?</button>
+          <button class="chat-chip px-3 py-1 rounded-full liquid-pill text-xs font-medium text-slate-700 hover:bg-white transition">Pre-consultation summary for Dr. Alina Bhart</button>
+        </div>
+
+        <!-- Input row -->
+        <form id="chat-form" class="flex gap-2">
+          <input type="text" id="chat-input" placeholder="Type your cardiac health question or symptom..." class="flex-1 rounded-2xl border-slate-200 px-4 py-3 text-sm focus:ring-brand-coral focus:border-brand-coral bg-white/90">
+          <button type="submit" class="px-6 py-3 rounded-2xl bg-gradient-to-r from-brand-coral to-rose-500 hover:from-rose-500 hover:to-rose-600 text-white font-bold text-sm shadow-md shadow-brand-coral/30 transition">
+            Send
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- VIEW 4: BIOMETRIC REPORTS -->
+    <!-- ========================================================================= -->
+    <div id="view-reports" class="tab-view hidden">
+      <div class="max-w-4xl mx-auto liquid-glass rounded-3xl p-6 sm:p-8">
+        <div class="flex items-center justify-between pb-4 mb-6 border-b border-slate-200">
+          <div>
+            <h2 class="text-xl font-extrabold text-slate-900">Comprehensive Biometric Health Record</h2>
+            <p class="text-xs text-slate-500">Patient: Sarah Connor · Age: 59 · Wearable ID: CT-8921</p>
+          </div>
+          <button id="print-report-btn" class="px-4 py-2 rounded-xl bg-brand-coral text-white font-bold text-xs shadow-md shadow-brand-coral/30 hover:bg-brand-coral-light transition">Print / Export PDF</button>
+        </div>
+
+        <div class="space-y-6 text-sm">
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div class="p-4 rounded-2xl bg-white border border-slate-200">
+              <span class="text-xs text-slate-400 font-semibold">Mean Resting HR</span>
+              <p class="text-2xl font-black text-slate-800 mt-1">76 BPM</p>
+              <p class="text-[11px] text-emerald-600 font-medium">Optimal sinus rhythm</p>
+            </div>
+            <div class="p-4 rounded-2xl bg-white border border-slate-200">
+              <span class="text-xs text-slate-400 font-semibold">Blood Pressure Trend</span>
+              <p class="text-2xl font-black text-slate-800 mt-1">122/78 mmHg</p>
+              <p class="text-[11px] text-emerald-600 font-medium">Stage 1 Pre-HTN managed</p>
+            </div>
+            <div class="p-4 rounded-2xl bg-white border border-slate-200">
+              <span class="text-xs text-slate-400 font-semibold">Predicted CAD Probability</span>
+              <p class="text-2xl font-black text-slate-800 mt-1">11.4%</p>
+              <p class="text-[11px] text-emerald-600 font-medium">Low likelihood of major stenosis</p>
+            </div>
+          </div>
+
+          <div class="p-5 rounded-2xl bg-white border border-slate-200">
+            <h3 class="font-bold text-slate-900 text-sm mb-3">Coronary Artery Vessel Breakdown</h3>
+            <div class="grid grid-cols-3 gap-4 text-center">
+              <div class="p-3 rounded-xl bg-slate-50 border border-slate-100">
+                <span class="text-xs text-slate-500 font-bold">LAD (Left Anterior Descending)</span>
+                <p class="text-lg font-black text-emerald-600 mt-1">8.2% risk</p>
+                <p class="text-[10px] text-slate-400">Patent perfusion</p>
+              </div>
+              <div class="p-3 rounded-xl bg-slate-50 border border-slate-100">
+                <span class="text-xs text-slate-500 font-bold">LCX (Left Circumflex)</span>
+                <p class="text-lg font-black text-emerald-600 mt-1">12.1% risk</p>
+                <p class="text-[10px] text-slate-400">Normal lumen caliber</p>
+              </div>
+              <div class="p-3 rounded-xl bg-slate-50 border border-slate-100">
+                <span class="text-xs text-slate-500 font-bold">RCA (Right Coronary Artery)</span>
+                <p class="text-lg font-black text-emerald-600 mt-1">9.5% risk</p>
+                <p class="text-[10px] text-slate-400">Normal distal run-off</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- VIEW 5: CALENDAR -->
+    <!-- ========================================================================= -->
+    <div id="view-calendar" class="tab-view hidden">
+      <div class="max-w-4xl mx-auto liquid-glass rounded-3xl p-6 sm:p-8">
+        <h2 class="text-xl font-extrabold text-slate-900 mb-1">Cardiology Appointment Schedule</h2>
+        <p class="text-xs text-slate-500 mb-6">Upcoming clinic consultations, tele-health reviews, and cardiac imaging slots.</p>
+
+        <div class="space-y-4">
+          <div class="p-4 rounded-2xl bg-white border border-brand-coral/40 shadow-sm flex items-center justify-between flex-wrap gap-3">
+            <div class="flex items-center gap-3">
+              <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuD9Z_W9ZdGmm9FAwZ7p04DOI1LewV_g41Q_W5lrjnXcXMbSeBY01Ta5unk0TE2Nyqc0kBTQlAVNlS8RO3EsF0EgZCxnRwgUtaiRjoZM9n4tr7bFKbmoXcp9rFqiQbqjHT5WpcF8YXDg-8dojpod1sq_mTZELEJvo_eVMqcG6Jv1oyebp9ZrgTOxwJtxNJw15aHHjGW6TKEUYiZKWGupxLnjfGYUW4vL210Q8xntXzIGG_2WZ-9wlRlc6w" class="w-12 h-12 rounded-full object-cover">
+              <div>
+                <h4 class="font-bold text-slate-900 text-sm">Dr. Alina Bhart (Lead Cardiologist)</h4>
+                <p class="text-xs text-brand-coral font-semibold">Confirmed · Wednesday, 21 August (08:35 - 09:30 PM)</p>
+              </div>
+            </div>
+            <button class="px-4 py-2 rounded-xl bg-brand-coral text-white font-bold text-xs shadow-md shadow-brand-coral/30 hover:bg-brand-coral-light transition">Join Video Call</button>
+          </div>
+
+          <div class="p-4 rounded-2xl bg-white border border-slate-200 flex items-center justify-between flex-wrap gap-3 opacity-90">
+            <div class="flex items-center gap-3">
+              <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuBVUuDVHsp8Ga1Fz0-k_NlPIMn3nlOY9kqfrZ33dIfvgBik_71-RK0LyfbNdUMLRIUzuQT12Pt-2495MyLC6217T1EhGRm2mV9E56YM6peiHGfO7v6_wKvtzQSn5wEaZf16LiNTbjFs0R87T5z8NTZY_2tVHTp_YQnuGpY3OQas8HmEL3qXr7kFjpMV5P7mHNDA2gbQQmNvTxgV1BwQtwIWodB3tBsG20GpGYDUZ-UpBF5eSiiFQH9Qbg" class="w-12 h-12 rounded-full object-cover">
+              <div>
+                <h4 class="font-bold text-slate-900 text-sm">Dr. Anika Verma (Neurologist)</h4>
+                <p class="text-xs text-slate-500 font-semibold">Scheduled · Thursday, 22 August (10:00 - 10:45 AM)</p>
+              </div>
+            </div>
+            <button class="px-4 py-2 rounded-xl liquid-pill font-bold text-xs text-slate-700 hover:bg-white transition">Reschedule</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- VIEW 6: SETTINGS -->
+    <!-- ========================================================================= -->
+    <div id="view-settings" class="tab-view hidden">
+      <div class="max-w-3xl mx-auto liquid-glass rounded-3xl p-6 sm:p-8">
+        <h2 class="text-xl font-extrabold text-slate-900 mb-1">CardioVision Device &amp; Telemetry Settings</h2>
+        <p class="text-xs text-slate-500 mb-6">Manage continuous wearable synchronization and alert escalation thresholds.</p>
+
+        <div class="space-y-4">
+          <div class="p-4 rounded-2xl bg-white border border-slate-200 flex items-center justify-between">
+            <div>
+              <p class="font-bold text-sm text-slate-900">CardioTag Ultra-Low Latency Telemetry</p>
+              <p class="text-xs text-slate-400">Stream 0.4s real-time ECG and hemodynamic waveform</p>
+            </div>
+            <input type="checkbox" checked class="rounded text-brand-coral focus:ring-brand-coral w-5 h-5">
+          </div>
+
+          <div class="p-4 rounded-2xl bg-white border border-slate-200 flex items-center justify-between">
+            <div>
+              <p class="font-bold text-sm text-slate-900">Apple Health &amp; Google Fit Sync</p>
+              <p class="text-xs text-slate-400">Continuously update blood pressure, step cadence, and resting HR</p>
+            </div>
+            <input type="checkbox" checked class="rounded text-brand-coral focus:ring-brand-coral w-5 h-5">
+          </div>
+
+          <div class="p-4 rounded-2xl bg-white border border-slate-200 flex items-center justify-between">
+            <div>
+              <p class="font-bold text-sm text-slate-900">Autonomous EMT Dispatch Trigger</p>
+              <p class="text-xs text-slate-400">Prompt emergency contact if ST elevation or ventricular fibrillation is detected</p>
+            </div>
+            <input type="checkbox" checked class="rounded text-brand-coral focus:ring-brand-coral w-5 h-5">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- VIEW 7: ABOUT US -->
+    <!-- ========================================================================= -->
+    <div id="view-about" class="tab-view hidden">
+      <div class="max-w-5xl mx-auto space-y-6">
+
+        <!-- Company Hero Header -->
+        <div class="liquid-glass rounded-3xl p-6 sm:p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+          <div class="flex items-center gap-4">
+            <div class="w-20 h-20 rounded-2xl bg-white p-1.5 shadow-md shadow-brand-coral/15 border border-slate-100 flex-shrink-0 flex items-center justify-center overflow-hidden">
+              <img src="/cardiovision-lynx-logo.svg" alt="CardioVision - LYNX Cardio Hospitals &amp; Care Berlin Official Logo" class="w-full h-full object-contain select-none">
+            </div>
+            <div>
+              <div class="flex items-center gap-2 flex-wrap">
+                <h2 class="text-2xl font-black text-slate-900 tracking-tight">LYNX Cardio Hospitals &amp; Care Berlin</h2>
+                <span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-brand-coral-soft text-brand-coral border border-brand-coral/20">Official Provider</span>
+              </div>
+              <p class="text-xs text-slate-500 mt-1">Pioneering Intelligent 3D Non-Invasive Hemodynamic &amp; Coronary Stenosis Diagnostics</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="px-3 py-1.5 rounded-xl liquid-pill text-xs font-semibold text-slate-700">ISO 13485 &amp; GDPR Certified</span>
+          </div>
+        </div>
+
+        <!-- Description & Establishment Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <!-- Company Description -->
+          <div class="liquid-glass rounded-3xl p-6 sm:p-7 flex flex-col justify-between">
+            <div>
+              <div class="flex items-center gap-2 mb-3">
+                <div class="w-8 h-8 rounded-xl bg-orange-50 text-brand-coral flex items-center justify-center font-bold text-sm">
+                  🏢
+                </div>
+                <h3 class="text-base font-bold text-slate-900">Company Description</h3>
+              </div>
+              <p class="text-xs text-slate-600 leading-relaxed">
+                <strong>CardioVision AI</strong> is engineered by <strong>LYNX Cardio Hospitals &amp; Care Berlin</strong>. Our core mission is bridging the gap between non-invasive outpatient biometric telemetry and high-precision coronary artery stenosis detection.
+              </p>
+              <p class="text-xs text-slate-600 leading-relaxed mt-2.5">
+                By synthesizing machine learning trained on gold-standard coronary angiography data with real-time wearable sensor dynamics, CardioVision provides patients and cardiologists with actionable, explainable (SHAP) physiological insights prior to invasive catheterization.
+              </p>
+            </div>
+            <div class="mt-4 pt-3 border-t border-slate-200/80 flex items-center gap-2 text-[11px] text-brand-coral font-semibold">
+              <span class="w-2 h-2 rounded-full bg-brand-coral animate-ping"></span>
+              Autonomous Telemetry Engine Active
+            </div>
+          </div>
+
+          <!-- Establishment -->
+          <div class="liquid-glass rounded-3xl p-6 sm:p-7 flex flex-col justify-between">
+            <div>
+              <div class="flex items-center gap-2 mb-3">
+                <div class="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold text-sm">
+                  🏛
+                </div>
+                <h3 class="text-base font-bold text-slate-900">Establishment &amp; Clinical Heritage</h3>
+              </div>
+              <p class="text-xs text-slate-600 leading-relaxed">
+                <strong>Established in 2021 in Berlin, Germany</strong>, LYNX Cardio Hospitals &amp; Care Berlin originated as an interdisciplinary clinical center for non-invasive hemodynamics and European biomedical computing researchers.
+              </p>
+              <p class="text-xs text-slate-600 leading-relaxed mt-2.5">
+                Over the past half-decade, our clinical trials have processed over 250,000 continuous patient telemetry hours, calibrating mathematical surrogate models for the Left Anterior Descending (LAD), Left Circumflex (LCX), and Right Coronary Artery (RCA).
+              </p>
+            </div>
+            <div class="mt-4 pt-3 border-t border-slate-200/80 flex items-center justify-between text-[11px] text-slate-500">
+              <span>Founded: <strong>2021 (Berlin, Germany)</strong></span>
+              <span class="text-emerald-700 font-bold">5+ Years Clinical Research</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Official Company Contact Details -->
+        <div class="liquid-glass rounded-3xl p-6 sm:p-7">
+          <div class="flex items-center gap-2 mb-4">
+            <div class="w-8 h-8 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold text-sm">
+              📍
+            </div>
+            <h3 class="text-base font-bold text-slate-900">Headquarters &amp; Direct Contact Information</h3>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
+            <!-- Phone -->
+            <div class="p-4 rounded-2xl bg-white border border-slate-200 flex flex-col justify-between">
+              <div>
+                <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Phone Number</span>
+                <p class="text-base font-extrabold text-slate-900 mt-1">1234567890</p>
+                <p class="text-[11px] text-slate-500 mt-0.5">24/7 International Clinical Dispatch Line</p>
+              </div>
+              <a href="tel:1234567890" class="mt-3 text-brand-coral font-bold text-[11px] hover:underline flex items-center gap-1">
+                Call Headquarters →
+              </a>
+            </div>
+
+            <!-- Email -->
+            <div class="p-4 rounded-2xl bg-white border border-slate-200 flex flex-col justify-between">
+              <div>
+                <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Company Mail</span>
+                <p class="text-sm font-extrabold text-slate-900 mt-1 break-all">Lynx@cardiovison.gmail.com</p>
+                <p class="text-[11px] text-slate-500 mt-0.5">Medical Inquiries &amp; Patient Registry</p>
+              </div>
+              <a href="mailto:Lynx@cardiovison.gmail.com" class="mt-3 text-brand-coral font-bold text-[11px] hover:underline flex items-center gap-1">
+                Send Email →
+              </a>
+            </div>
+
+            <!-- Address -->
+            <div class="p-4 rounded-2xl bg-white border border-slate-200 flex flex-col justify-between">
+              <div>
+                <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Company Address</span>
+                <p class="text-xs font-bold text-slate-900 mt-1 leading-snug">
+                  2nd Street, 5090, LYNX Co., Lynx Cardio Hospitals, Berlin, GERMANY - 10115
+                </p>
+                <p class="text-[11px] text-slate-500 mt-0.5">Central Clinical Hospital &amp; AI Research Campus</p>
+              </div>
+              <span class="mt-3 text-slate-400 font-semibold text-[11px]">
+                EU Central Clinical Hub
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Privacy Policy & Terms and Conditions -->
+        <div class="liquid-glass rounded-3xl p-6 sm:p-7 space-y-4">
+          <div class="flex items-center gap-2 mb-2">
+            <div class="w-8 h-8 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center font-bold text-sm">
+              🛡
+            </div>
+            <h3 class="text-base font-bold text-slate-900">Privacy Policy, Data Governance &amp; Terms of Service</h3>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs text-slate-600 leading-relaxed">
+            <div class="p-4 rounded-2xl bg-white/80 border border-slate-200">
+              <h4 class="font-bold text-slate-900 text-xs mb-1.5">1. Biometric Data Protection &amp; GDPR Compliance</h4>
+              <p>
+                All continuous ECG, pulse, blood pressure, and demographic values collected via the CardioTag Sensor or synchronized through Google Fit / Apple Health are protected under <strong>GDPR Article 9</strong> (Special Category Health Data) and international HIPAA equivalents. End-to-end 256-bit AES encryption is enforced during transmission and at rest. Data is strictly processed for the authenticated patient and is never monetized or shared with third-party advertisers.
+              </p>
+            </div>
+
+            <div class="p-4 rounded-2xl bg-white/80 border border-slate-200">
+              <h4 class="font-bold text-slate-900 text-xs mb-1.5">2. Terms of Clinical Decision Support</h4>
+              <p>
+                CardioVision AI predictions and 3D coronary visualizations are designed exclusively for <strong>clinical decision support, risk triage, and educational exploration</strong>. Predictions do not constitute emergency medical advice nor do they replace invasive coronary angiography, fractional flow reserve (FFR), or computed tomography coronary angiography (CTCA). Patients experiencing acute chest pain or myocardial infarction symptoms must immediately dial emergency medical services.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Copyrights & Intellectual Property -->
+        <div class="p-5 rounded-2xl liquid-pill text-center text-xs text-slate-500 border border-slate-200">
+          <p class="font-bold text-slate-800 text-sm">
+            © 2021 – 2026 LYNX Cardio Hospitals &amp; Care Berlin. All Rights Reserved.
+          </p>
+          <p class="text-[11px] text-slate-500 mt-1">
+            CardioVision AI™, CardioTag™, and the 3D Coronary Risk Explorer are registered trademarks of LYNX Cardio Hospitals &amp; Care Berlin (Berlin, Germany). Unauthorized reproduction, reverse engineering of model weights, or commercial distribution of this clinical interface without explicit written consent is strictly prohibited.
+          </p>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+  <!-- END: MainContainer -->
+
+  <!-- ========================================================================= -->
+  <!-- MODALS & OVERLAYS -->
+  <!-- ========================================================================= -->
+
+  <!-- Modal 1: Probe Telemetry HUD (Replaces window.alert) -->
+  <div id="probe-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm">
+    <div class="liquid-glass rounded-3xl p-6 max-w-md w-full shadow-2xl border border-white">
+      <div class="flex items-center justify-between mb-4">
+        <div class="flex items-center gap-2">
+          <span class="w-3 h-3 rounded-full bg-brand-coral animate-ping"></span>
+          <h3 id="probe-modal-title" class="text-base font-extrabold text-slate-900">Diagnostic Sensor Probe</h3>
+        </div>
+        <button id="probe-modal-close" class="text-slate-400 hover:text-slate-700 text-lg font-bold">✕</button>
+      </div>
+      <div id="probe-modal-content" class="text-xs text-slate-600 space-y-3">
+        <!-- populated dynamically -->
+      </div>
+      <button id="probe-modal-ok" class="mt-5 w-full py-2.5 rounded-xl bg-gradient-to-r from-brand-coral to-rose-500 text-white font-bold text-xs shadow-md shadow-brand-coral/30">Close Telemetry Inspector</button>
+    </div>
+  </div>
+
+  <!-- Modal 2: Doctor Telehealth Call Simulation -->
+  <div id="call-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-md">
+    <div class="liquid-glass rounded-3xl p-6 max-w-sm w-full shadow-2xl border border-white text-center">
+      <div class="w-20 h-20 rounded-full mx-auto overflow-hidden border-4 border-white shadow-lg mb-3">
+        <img id="call-modal-avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD9Z_W9ZdGmm9FAwZ7p04DOI1LewV_g41Q_W5lrjnXcXMbSeBY01Ta5unk0TE2Nyqc0kBTQlAVNlS8RO3EsF0EgZCxnRwgUtaiRjoZM9n4tr7bFKbmoXcp9rFqiQbqjHT5WpcF8YXDg-8dojpod1sq_mTZELEJvo_eVMqcG6Jv1oyebp9ZrgTOxwJtxNJw15aHHjGW6TKEUYiZKWGupxLnjfGYUW4vL210Q8xntXzIGG_2WZ-9wlRlc6w" class="w-full h-full object-cover">
+      </div>
+      <h3 id="call-modal-name" class="font-extrabold text-slate-900 text-base">Dr. Alina Bhart</h3>
+      <p id="call-modal-status" class="text-xs text-brand-coral font-semibold mt-0.5">Connecting secure telehealth audio link…</p>
+      
+      <div class="my-5 flex items-center justify-center gap-1 h-8">
+        <span class="w-1.5 h-3 bg-brand-coral rounded-full animate-bounce"></span>
+        <span class="w-1.5 h-6 bg-brand-coral rounded-full animate-bounce" style="animation-delay: 100ms;"></span>
+        <span class="w-1.5 h-8 bg-brand-coral rounded-full animate-bounce" style="animation-delay: 200ms;"></span>
+        <span class="w-1.5 h-5 bg-brand-coral rounded-full animate-bounce" style="animation-delay: 300ms;"></span>
+        <span class="w-1.5 h-3 bg-brand-coral rounded-full animate-bounce" style="animation-delay: 400ms;"></span>
+      </div>
+
+      <div class="flex gap-2">
+        <button id="end-call-btn" class="flex-1 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold text-xs shadow-md transition">End Call</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal 3: User Profile & Authentication Interface -->
+  <div id="profile-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-md">
+    <div class="liquid-glass rounded-3xl max-w-xl w-full shadow-2xl border border-white overflow-hidden max-h-[90vh] flex flex-col">
+      <!-- Modal Header -->
+      <div class="p-5 border-b border-slate-200/80 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-2xl bg-brand-coral-soft text-brand-coral flex items-center justify-center font-bold text-base">
+            👤
+          </div>
+          <div>
+            <h3 class="text-base font-extrabold text-slate-900">User Profile &amp; Account Portal</h3>
+            <p class="text-[11px] text-slate-500">Manage patient demographics, wearable link, and backend credentials</p>
+          </div>
+        </div>
+        <button id="profile-modal-close" class="text-slate-400 hover:text-slate-700 text-lg font-bold">✕</button>
+      </div>
+
+      <!-- Profile Tabs -->
+      <div class="px-5 pt-3 flex gap-2 border-b border-slate-200/80 bg-white/40 text-xs">
+        <button id="tab-btn-edit-profile" class="px-4 py-2 font-bold text-brand-coral border-b-2 border-brand-coral transition">Edit Profile</button>
+        <button id="tab-btn-auth-login" class="px-4 py-2 font-medium text-slate-500 hover:text-slate-800 transition">Switch Account / Login</button>
+      </div>
+
+      <!-- Modal Body (Scrollable) -->
+      <div class="p-5 overflow-y-auto flex-1 space-y-4">
+        
+        <!-- Tab Content 1: Edit Profile Form -->
+        <div id="profile-tab-edit">
+          <form id="profile-edit-form" class="space-y-3">
+            <!-- Profile Photo Upload & Files Card -->
+            <div class="p-3.5 bg-gradient-to-r from-slate-50 to-orange-50/30 rounded-2xl border border-slate-200 space-y-2.5 shadow-xs">
+              <div class="flex items-center justify-between">
+                <label class="block text-[11px] font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5">
+                  <svg class="w-3.5 h-3.5 text-brand-coral" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                  Profile Photo &amp; Avatar
+                </label>
+                <span id="photo-storage-status" class="text-[10px] text-emerald-600 font-semibold bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                  📁 Saved to Backend Files
+                </span>
+              </div>
+
+              <div class="flex items-start sm:items-center gap-3.5">
+                <!-- Avatar Preview with Click-to-Upload overlay -->
+                <div class="relative group cursor-pointer flex-shrink-0" id="avatar-preview-trigger" title="Click to upload profile photo from your files">
+                  <div class="w-16 h-16 rounded-full overflow-hidden border-2 border-white shadow-md bg-slate-100 flex items-center justify-center">
+                    <img id="form-avatar-preview" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB9eLEf_IPmakKeGwiXjImBaRjBDAoe9gt1FS967W6Dnqp0LSgGYOUOnaSm71uZzEdbic2vARTl8Pmmq1t6Nr09oOmREutsGodYspMN3nwRVlzPKelSud_ydsMXN2Jx-hUiUJcWF3fVW_mzSLl_jQZpEjvUsvH0Zz-31kzoORzM0KydUf0uxa2kaPLEvMmwQRONXxhgR7VbrNhs9CRmAi31fdoyXHKobyWnBSN28Q0PPStEs1lbHYXngA" class="w-full h-full object-cover">
+                  </div>
+                  <div class="absolute inset-0 bg-slate-900/60 rounded-full opacity-0 group-hover:opacity-100 flex flex-col items-center justify-center text-white transition-opacity text-[9px] font-bold">
+                    <svg class="w-4 h-4 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                    <span>Upload</span>
+                  </div>
+                </div>
+
+                <!-- Upload Actions and Drag Drop Zone -->
+                <div class="flex-1 min-w-0 space-y-2">
+                  <div class="flex flex-wrap items-center gap-2">
+                    <!-- Hidden File Input -->
+                    <input type="file" id="prof-avatar-file-input" accept="image/png, image/jpeg, image/jpg, image/webp, image/gif, image/svg+xml" class="hidden">
+                    
+                    <!-- Primary Upload from Files Button -->
+                    <button type="button" id="btn-upload-avatar-file" class="px-3 py-1.5 rounded-xl bg-gradient-to-r from-brand-coral to-rose-500 hover:from-rose-500 hover:to-rose-600 text-white font-bold text-xs shadow-sm transition flex items-center gap-1.5 cursor-pointer">
+                      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
+                      <span>Upload Profile Photo from Files</span>
+                    </button>
+
+                    <!-- Toggle Web URL Option -->
+                    <button type="button" id="btn-toggle-url-input" class="px-2.5 py-1.5 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-600 font-semibold text-[11px] transition cursor-pointer">
+                      Use URL
+                    </button>
+                  </div>
+
+                  <!-- Dropzone hint & selected file feedback -->
+                  <div id="avatar-drop-zone" class="p-2 border border-dashed border-slate-300 rounded-xl bg-white/70 text-center transition hover:border-brand-coral cursor-pointer">
+                    <p id="avatar-file-name-display" class="text-[11px] text-slate-500 font-medium truncate">
+                      Drop an image file here or <span class="text-brand-coral font-bold underline">choose from your files</span> (PNG, JPG, WebP)
+                    </p>
+                  </div>
+
+                  <!-- Direct URL field (collapsible) -->
+                  <div id="avatar-url-container" class="hidden">
+                    <input type="text" id="prof-avatar" class="w-full text-xs py-1.5 px-2.5 rounded-xl border-slate-200 bg-white focus:ring-brand-coral text-slate-700" placeholder="Paste image web URL: https://...">
+                  </div>
+                </div>
+              </div>
+
+              <!-- Uploaded Files Shelf (Persisted in data/uploads/) -->
+              <div id="uploaded-photos-shelf" class="pt-2 border-t border-slate-200/60 hidden">
+                <div class="flex items-center justify-between text-[10px] text-slate-400 mb-1.5">
+                  <span class="font-bold text-slate-600 uppercase flex items-center gap-1">
+                    <span>🗂️</span> My Uploaded Photos (Backend Files)
+                  </span>
+                  <span id="uploaded-photos-count" class="text-slate-400">0 photos</span>
+                </div>
+                <div id="uploaded-photos-list" class="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-thin">
+                  <!-- Dynamic thumbnails -->
+                </div>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+              <div>
+                <label class="block text-[10px] font-bold text-slate-500 mb-1">Full Legal Name</label>
+                <input type="text" id="prof-name" class="w-full text-xs py-2 px-3 rounded-xl border-slate-200 bg-white focus:ring-brand-coral" required>
+              </div>
+              <div>
+                <label class="block text-[10px] font-bold text-slate-500 mb-1">Navbar Display Name</label>
+                <input type="text" id="prof-display-name" class="w-full text-xs py-2 px-3 rounded-xl border-slate-200 bg-white focus:ring-brand-coral" required>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+              <div>
+                <label class="block text-[10px] font-bold text-slate-500 mb-1">Email Address</label>
+                <input type="email" id="prof-email" class="w-full text-xs py-2 px-3 rounded-xl border-slate-200 bg-white focus:ring-brand-coral" required>
+              </div>
+              <div>
+                <label class="block text-[10px] font-bold text-slate-500 mb-1">Phone Number</label>
+                <input type="text" id="prof-phone" class="w-full text-xs py-2 px-3 rounded-xl border-slate-200 bg-white focus:ring-brand-coral">
+              </div>
+            </div>
+
+            <div class="grid grid-cols-3 gap-3 text-xs">
+              <div>
+                <label class="block text-[10px] font-bold text-slate-500 mb-1">Age</label>
+                <input type="number" id="prof-age" min="18" max="110" class="w-full text-xs py-2 px-3 rounded-xl border-slate-200 bg-white focus:ring-brand-coral">
+              </div>
+              <div>
+                <label class="block text-[10px] font-bold text-slate-500 mb-1">Gender</label>
+                <select id="prof-gender" class="w-full text-xs py-2 px-2.5 rounded-xl border-slate-200 bg-white focus:ring-brand-coral">
+                  <option value="Female">Female</option>
+                  <option value="Male">Male</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-[10px] font-bold text-slate-500 mb-1">Blood Type</label>
+                <input type="text" id="prof-blood" class="w-full text-xs py-2 px-3 rounded-xl border-slate-200 bg-white focus:ring-brand-coral" placeholder="A+">
+              </div>
+            </div>
+
+            <div class="text-xs">
+              <label class="block text-[10px] font-bold text-slate-500 mb-1">Emergency Contact (Name &amp; Phone)</label>
+              <input type="text" id="prof-emergency" class="w-full text-xs py-2 px-3 rounded-xl border-slate-200 bg-white focus:ring-brand-coral">
+            </div>
+
+            <div class="p-3 bg-white/70 rounded-2xl border border-slate-200 text-xs flex items-center justify-between">
+              <div>
+                <span class="block text-[10px] font-bold text-slate-500 uppercase">Wearable Sensor Pairing</span>
+                <input type="text" id="prof-wearable-id" class="text-xs font-semibold text-slate-800 bg-transparent border-none p-0 focus:ring-0 mt-0.5" value="CardioTag Sensor #CT-8921">
+              </div>
+              <label class="flex items-center gap-2 cursor-pointer text-xs font-bold text-emerald-700">
+                <input type="checkbox" id="prof-wearable-active" checked class="rounded text-brand-coral focus:ring-brand-coral w-4 h-4"> Active
+              </label>
+            </div>
+
+            <div class="text-xs">
+              <label class="block text-[10px] font-bold text-slate-500 mb-1">Medical History &amp; Clinical Notes</label>
+              <textarea id="prof-notes" rows="2" class="w-full text-xs p-2.5 rounded-xl border-slate-200 bg-white focus:ring-brand-coral" placeholder="Known conditions, allergies, or prior interventions..."></textarea>
+            </div>
+
+            <div class="pt-2 space-y-2">
+              <button type="submit" id="save-profile-btn" class="w-full py-3 rounded-2xl bg-gradient-to-r from-brand-coral to-rose-500 hover:from-rose-500 hover:to-rose-600 text-white font-bold text-xs shadow-md shadow-brand-coral/30 transition flex items-center justify-center gap-2">
+                <span>Save the Profile Details</span>
+              </button>
+
+              <button type="button" id="prof-download-pdf-btn" class="w-full py-2.5 rounded-2xl bg-white border border-brand-coral/40 hover:bg-orange-50/60 text-brand-coral font-bold text-xs shadow-xs transition flex items-center justify-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+                <span>Download Biometric Log (PDF)</span>
+              </button>
+            </div>
+
+            <div class="flex items-center justify-between text-[10px] text-slate-400 px-1 pt-1">
+              <span>Backend Process: <strong class="text-emerald-600">Saved in data/accounts/</strong></span>
+              <span id="prof-last-updated" class="text-slate-400">Synced to server</span>
+            </div>
+          </form>
+        </div>
+
+        <!-- Tab Content 2: Auth Login & Preset Switcher -->
+        <div id="profile-tab-login" class="hidden space-y-4">
+
+          <!-- Connected Accounts & OAuth Redirect Section -->
+          <div class="p-4 bg-white/90 rounded-2xl border border-slate-200 shadow-sm space-y-3">
+            <div class="flex items-center justify-between">
+              <h4 class="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                <span>🔐</span>
+                <span>Connect &amp; Authorize Other Accounts</span>
+              </h4>
+              <span class="text-[10px] bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded-full font-semibold border border-emerald-200">
+                Direct OAuth Redirect
+              </span>
+            </div>
+            <p class="text-[11px] text-slate-500">
+              Select an account below to redirect directly to the authorization portal. Your account details, biometric logs, and diagnostic reports will be saved in your backend process.
+            </p>
+
+            <div class="space-y-2">
+              <!-- Login with Google -->
+              <button type="button" class="oauth-login-btn w-full p-2.5 rounded-xl border border-slate-200 hover:border-blue-400 bg-white hover:bg-blue-50/40 text-left transition flex items-center justify-between group shadow-xs" data-provider="google">
+                <div class="flex items-center gap-3">
+                  <div class="w-8 h-8 rounded-lg bg-white border border-slate-200 shadow-xs flex items-center justify-center flex-shrink-0">
+                    <svg class="w-4 h-4" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/></svg>
+                  </div>
+                  <div>
+                    <span class="text-xs font-bold text-slate-800 block group-hover:text-blue-600 transition">Login with Google</span>
+                    <span class="text-[10px] text-slate-400">OAuth 2.0 Single Sign-On · Account details saved in backend</span>
+                  </div>
+                </div>
+                <span class="text-[11px] font-semibold text-blue-600 group-hover:translate-x-0.5 transition flex items-center gap-1">
+                  Authorize <span class="text-xs">↗</span>
+                </span>
+              </button>
+
+              <!-- Login with Google Fit -->
+              <button type="button" class="oauth-login-btn w-full p-2.5 rounded-xl border border-slate-200 hover:border-emerald-400 bg-white hover:bg-emerald-50/40 text-left transition flex items-center justify-between group shadow-xs" data-provider="google_fit">
+                <div class="flex items-center gap-3">
+                  <div class="w-8 h-8 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-600 shadow-xs flex items-center justify-center flex-shrink-0 font-bold">
+                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+                  </div>
+                  <div>
+                    <span class="text-xs font-bold text-slate-800 block group-hover:text-emerald-600 transition">Login with Google Fit</span>
+                    <span class="text-[10px] text-slate-400">Sync Google Fit Wearable &amp; Cardiac Telemetry · Saved in backend</span>
+                  </div>
+                </div>
+                <span class="text-[11px] font-semibold text-emerald-600 group-hover:translate-x-0.5 transition flex items-center gap-1">
+                  Authorize <span class="text-xs">↗</span>
+                </span>
+              </button>
+
+              <!-- Login with Apple Account -->
+              <button type="button" class="oauth-login-btn w-full p-2.5 rounded-xl border border-slate-200 hover:border-slate-800 bg-white hover:bg-slate-50 text-left transition flex items-center justify-between group shadow-xs" data-provider="apple">
+                <div class="flex items-center gap-3">
+                  <div class="w-8 h-8 rounded-lg bg-slate-900 text-white shadow-xs flex items-center justify-center flex-shrink-0">
+                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 6.42c.67-.82 1.13-1.96.99-3.1-.97.04-2.14.65-2.82 1.44-.6.69-1.12 1.83-.98 2.94 1.08.08 2.15-.55 2.81-1.28"/></svg>
+                  </div>
+                  <div>
+                    <span class="text-xs font-bold text-slate-800 block group-hover:text-slate-900 transition">Login with Apple Account</span>
+                    <span class="text-[10px] text-slate-400">Sign in with Apple ID · Biometric FaceID / TouchID Passkey</span>
+                  </div>
+                </div>
+                <span class="text-[11px] font-semibold text-slate-800 group-hover:translate-x-0.5 transition flex items-center gap-1">
+                  Authorize <span class="text-xs">↗</span>
+                </span>
+              </button>
+
+              <!-- Connect with Apple Fitness+ -->
+              <button type="button" class="oauth-login-btn w-full p-2.5 rounded-xl border border-slate-200 hover:border-pink-400 bg-white hover:bg-pink-50/40 text-left transition flex items-center justify-between group shadow-xs" data-provider="apple_fitness">
+                <div class="flex items-center gap-3">
+                  <div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-pink-500 via-rose-500 to-amber-400 text-white shadow-xs flex items-center justify-center flex-shrink-0">
+                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></svg>
+                  </div>
+                  <div>
+                    <span class="text-xs font-bold text-slate-800 block group-hover:text-pink-600 transition">Connect with Apple Fitness+</span>
+                    <span class="text-[10px] text-slate-400">Apple Watch Activity &amp; Live Cardio Rings · Saved in backend</span>
+                  </div>
+                </div>
+                <span class="text-[11px] font-semibold text-pink-600 group-hover:translate-x-0.5 transition flex items-center gap-1">
+                  Connect <span class="text-xs">↗</span>
+                </span>
+              </button>
+
+              <!-- Login with Microsoft Account -->
+              <button type="button" class="oauth-login-btn w-full p-2.5 rounded-xl border border-slate-200 hover:border-sky-400 bg-white hover:bg-sky-50/40 text-left transition flex items-center justify-between group shadow-xs" data-provider="microsoft">
+                <div class="flex items-center gap-3">
+                  <div class="w-8 h-8 rounded-lg bg-white border border-slate-200 shadow-xs flex items-center justify-center flex-shrink-0">
+                    <svg class="w-4 h-4" viewBox="0 0 21 21"><rect x="1" y="1" width="9" height="9" fill="#f25022"/><rect x="11" y="1" width="9" height="9" fill="#7fba00"/><rect x="1" y="11" width="9" height="9" fill="#00a4ef"/><rect x="11" y="11" width="9" height="9" fill="#ffb900"/></svg>
+                  </div>
+                  <div>
+                    <span class="text-xs font-bold text-slate-800 block group-hover:text-sky-600 transition">Login with Microsoft Account</span>
+                    <span class="text-[10px] text-slate-400">Azure Entra ID &amp; Microsoft Cloud for Healthcare SSO</span>
+                  </div>
+                </div>
+                <span class="text-[11px] font-semibold text-sky-600 group-hover:translate-x-0.5 transition flex items-center gap-1">
+                  Authorize <span class="text-xs">↗</span>
+                </span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Quick Switch Presets -->
+          <div class="p-4 bg-white/80 rounded-2xl border border-slate-200">
+            <h4 class="text-xs font-bold text-slate-800 mb-2">Quick Switch Clinical Profiles</h4>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+              <button type="button" class="preset-login-btn p-2.5 rounded-xl border border-slate-200 hover:border-brand-coral text-left transition hover:bg-orange-50/50" data-preset="sarah">
+                <div class="flex items-center gap-2 mb-1">
+                  <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                  <span class="text-xs font-bold text-slate-900">Sarah C.</span>
+                </div>
+                <p class="text-[10px] text-slate-400">Patient · Age 59 (Low Risk)</p>
+              </button>
+
+              <button type="button" class="preset-login-btn p-2.5 rounded-xl border border-slate-200 hover:border-brand-coral text-left transition hover:bg-orange-50/50" data-preset="marcus">
+                <div class="flex items-center gap-2 mb-1">
+                  <span class="w-2 h-2 rounded-full bg-amber-500"></span>
+                  <span class="text-xs font-bold text-slate-900">Marcus V.</span>
+                </div>
+                <p class="text-[10px] text-slate-400">Patient · Age 64 (Moderate)</p>
+              </button>
+
+              <button type="button" class="preset-login-btn p-2.5 rounded-xl border border-slate-200 hover:border-brand-coral text-left transition hover:bg-orange-50/50" data-preset="dr_alina">
+                <div class="flex items-center gap-2 mb-1">
+                  <span class="w-2 h-2 rounded-full bg-blue-500"></span>
+                  <span class="text-xs font-bold text-slate-900">Dr. Alina B.</span>
+                </div>
+                <p class="text-[10px] text-slate-400">Cardiologist (Staff View)</p>
+              </button>
+            </div>
+          </div>
+
+          <!-- Email Password Sign In Form -->
+          <form id="custom-login-form" class="p-4 bg-white/80 rounded-2xl border border-slate-200 space-y-3">
+            <h4 class="text-xs font-bold text-slate-800">Login with Clinical Credentials</h4>
+            <div>
+              <label class="block text-[10px] font-bold text-slate-500 mb-1">User Email Address</label>
+              <input type="email" id="login-email" class="w-full text-xs py-2 px-3 rounded-xl border-slate-200 bg-white focus:ring-brand-coral" placeholder="name@institution.com" required>
+            </div>
+            <div>
+              <label class="block text-[10px] font-bold text-slate-500 mb-1">Password</label>
+              <input type="password" id="login-password" class="w-full text-xs py-2 px-3 rounded-xl border-slate-200 bg-white focus:ring-brand-coral" placeholder="••••••••••••" value="CardioSecure123">
+            </div>
+            <button type="submit" class="w-full py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs shadow-md transition">
+              Sign In to CardioVision Account
+            </button>
+          </form>
+
+          <div class="flex items-center justify-between text-xs text-slate-400 px-1 pt-1">
+            <span>Session: <strong id="session-status-badge" class="text-emerald-600 font-semibold">Active &amp; Persisted</strong></span>
+            <button id="logout-btn" type="button" class="text-red-600 hover:underline font-bold text-[11px] flex items-center gap-1">
+              <span>🚪</span>
+              <span>Logout Session</span>
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal 4: Comprehensive Medical Diagnostic Report Viewer -->
+  <div id="medical-report-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-md">
+    <div class="liquid-glass rounded-3xl max-w-3xl w-full shadow-2xl border border-white overflow-hidden max-h-[92vh] flex flex-col">
+      <!-- Report Header -->
+      <div class="p-5 border-b border-slate-200/80 flex items-center justify-between bg-white/60">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-2xl bg-brand-coral-soft text-brand-coral flex items-center justify-center font-bold text-base">
+            📋
+          </div>
+          <div>
+            <h3 class="text-base font-extrabold text-slate-900">Official Clinical Biometric &amp; Hemodynamic Report</h3>
+            <p class="text-[11px] text-slate-500">LYNX Cardio Hospitals &amp; Care Berlin · Electronic Health Record (EHR)</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-2">
+          <button id="modal-download-pdf-btn" class="px-3.5 py-1.5 rounded-xl bg-brand-coral text-white font-bold text-xs shadow-md shadow-brand-coral/30 hover:bg-brand-coral-light transition flex items-center gap-1.5">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+            Download PDF
+          </button>
+          <button id="medical-report-modal-close" class="text-slate-400 hover:text-slate-700 text-lg font-bold px-2">✕</button>
+        </div>
+      </div>
+
+      <!-- Printable Document Canvas Preview -->
+      <div id="printable-report-content" class="p-6 overflow-y-auto flex-1 bg-white text-slate-800 space-y-5 text-xs font-sans">
+        
+        <!-- Header Info -->
+        <div class="flex justify-between items-start pb-4 border-b-2 border-slate-900">
+          <div>
+            <h1 class="text-xl font-black text-slate-900 tracking-tight">LYNX CARDIO HOSPITALS &amp; CARE BERLIN</h1>
+            <p class="text-[11px] font-semibold text-brand-coral">Center for Advanced Non-Invasive Coronary Diagnostics</p>
+            <p class="text-[10px] text-slate-500 mt-0.5">2nd Street, 5090, Berlin, GERMANY - 10115 · Tel: 1234567890 · Lynx@cardiovison.gmail.com</p>
+          </div>
+          <div class="text-right">
+            <span class="inline-block px-2.5 py-0.5 rounded text-[10px] font-bold bg-slate-100 text-slate-800 border border-slate-200">DOCUMENT ID: EHR-2026-CT98</span>
+            <p class="text-[10px] text-slate-400 mt-1">Generated: <span id="rep-date"></span></p>
+          </div>
+        </div>
+
+        <!-- Patient Demographics Box -->
+        <div class="grid grid-cols-4 gap-3 p-3 bg-slate-50 rounded-xl border border-slate-200 text-[11px]">
+          <div><span class="text-slate-400 block text-[9px] uppercase font-bold">Patient Name</span><strong id="rep-patient-name" class="text-slate-900">Sarah Connor</strong></div>
+          <div><span class="text-slate-400 block text-[9px] uppercase font-bold">Patient ID / Age / Gender</span><span id="rep-patient-meta">USR-88219 · 59y / F</span></div>
+          <div><span class="text-slate-400 block text-[9px] uppercase font-bold">Wearable Telemetry</span><span id="rep-sensor-id">CardioTag Sensor #CT-8921</span></div>
+          <div><span class="text-slate-400 block text-[9px] uppercase font-bold">Blood Pressure / Resting HR</span><span id="rep-vitals">122/78 mmHg · 78 BPM</span></div>
+        </div>
+
+        <!-- Hemodynamic & CAD Assessment Summary -->
+        <div>
+          <h3 class="font-bold text-slate-900 text-xs uppercase tracking-wide pb-1 border-b border-slate-200 mb-2">1. Coronary Artery Stenosis Risk Assessment (ML Model Output)</h3>
+          <div class="grid grid-cols-4 gap-2 text-center">
+            <div class="p-3 bg-slate-50 rounded-lg border border-slate-200">
+              <span class="text-[10px] font-bold text-slate-500">Overall CAD Likelihood</span>
+              <p id="rep-cad-prob" class="text-lg font-black text-brand-coral mt-1">11.4%</p>
+              <p class="text-[9px] text-emerald-600 font-semibold">Low Stenosis Risk</p>
+            </div>
+            <div class="p-3 bg-slate-50 rounded-lg border border-slate-200">
+              <span class="text-[10px] font-bold text-slate-500">LAD Stenosis Risk</span>
+              <p id="rep-lad-prob" class="text-lg font-black text-slate-800 mt-1">8.2%</p>
+              <p class="text-[9px] text-slate-500">Patent perfusion</p>
+            </div>
+            <div class="p-3 bg-slate-50 rounded-lg border border-slate-200">
+              <span class="text-[10px] font-bold text-slate-500">LCX Stenosis Risk</span>
+              <p id="rep-lcx-prob" class="text-lg font-black text-slate-800 mt-1">12.1%</p>
+              <p class="text-[9px] text-slate-500">Normal lumen</p>
+            </div>
+            <div class="p-3 bg-slate-50 rounded-lg border border-slate-200">
+              <span class="text-[10px] font-bold text-slate-500">RCA Stenosis Risk</span>
+              <p id="rep-rca-prob" class="text-lg font-black text-slate-800 mt-1">9.5%</p>
+              <p class="text-[9px] text-slate-500">Normal run-off</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Clinical Biomarkers Table -->
+        <div>
+          <h3 class="font-bold text-slate-900 text-xs uppercase tracking-wide pb-1 border-b border-slate-200 mb-2">2. Physiological Biomarkers &amp; Lab Parameters</h3>
+          <table class="w-full text-[11px] border border-slate-200 rounded">
+            <thead class="bg-slate-100 text-slate-700 font-bold">
+              <tr>
+                <th class="p-2 text-left">Parameter</th>
+                <th class="p-2 text-left">Recorded Value</th>
+                <th class="p-2 text-left">Reference Population</th>
+                <th class="p-2 text-left">Evaluation</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100">
+              <tr><td class="p-2 font-medium">Resting Systolic/Diastolic BP</td><td class="p-2 font-bold" id="rep-bp-val">122 mmHg</td><td class="p-2 text-slate-500">120-135 mmHg</td><td class="p-2 text-emerald-600 font-semibold">Normal Sinus Rhythm</td></tr>
+              <tr><td class="p-2 font-medium">Pulse Rate (BPM)</td><td class="p-2 font-bold">78 BPM</td><td class="p-2 text-slate-500">60-90 BPM</td><td class="p-2 text-emerald-600 font-semibold">Eucardic</td></tr>
+              <tr><td class="p-2 font-medium">Blood Glucose / FBS</td><td class="p-2 font-bold">106 mg/dL</td><td class="p-2 text-slate-500">70-110 mg/dL</td><td class="p-2 text-emerald-600 font-semibold">Optimal Homeostasis</td></tr>
+              <tr><td class="p-2 font-medium">SpO2 Oxygen Saturation</td><td class="p-2 font-bold">97%</td><td class="p-2 text-slate-500">95-100%</td><td class="p-2 text-emerald-600 font-semibold">Normal Arterial O2</td></tr>
+              <tr><td class="p-2 font-medium">Left Ventricular EF (Echo Proxy)</td><td class="p-2 font-bold">64%</td><td class="p-2 text-slate-500">≥55%</td><td class="p-2 text-emerald-600 font-semibold">Preserved Ejection</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Attending Physician Signoff -->
+        <div class="pt-4 border-t border-slate-200 flex justify-between items-end">
+          <div>
+            <p class="font-bold text-slate-900 text-xs">Attending Physician Sign-Off:</p>
+            <p class="text-[11px] text-slate-600">Dr. Alina Bhart, MD, FACC</p>
+            <p class="text-[10px] text-slate-400">Head of Non-Invasive Hemodynamics · LYNX Cardio Hospitals &amp; Care Berlin</p>
+          </div>
+          <div class="text-right">
+            <div class="font-serif italic text-base text-slate-700 font-bold mb-1">Alina Bhart, M.D.</div>
+            <div class="h-0.5 w-36 bg-slate-400 ml-auto"></div>
+            <span class="text-[9px] text-slate-400">Electronic Verification Hash #9A82-LYNX</span>
+          </div>
+        </div>
+
+        <!-- Disclaimer Footer -->
+        <p class="text-[9px] text-slate-400 pt-2 border-t border-slate-100 leading-tight">
+          NOTICE: This report is compiled by CardioVision AI (LYNX Cardio Hospitals &amp; Care Berlin, Berlin, Germany). Validated under clinical protocol Z-Alizadeh Sani schema. Phone: 1234567890 | Email: Lynx@cardiovison.gmail.com | Address: 2nd Street, 5090, LYNX Cardio Hospitals &amp; Care Berlin, GERMANY - 10115.
+        </p>
+
+      </div>
+    </div>
+  </div>
+
+
+  <!-- Toast Notification Container -->
+  <div id="toast-container" class="fixed bottom-6 right-6 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+  <!-- Loading indicator -->
+  <div id="loading" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-900/30 backdrop-blur-xs">
+    <div class="liquid-glass p-4 rounded-2xl flex items-center gap-3 shadow-lg">
+      <div class="w-5 h-5 border-2 border-brand-coral border-t-transparent rounded-full animate-spin"></div>
+      <span class="text-xs font-bold text-slate-800">Updating Coronary Predictions…</span>
+    </div>
+  </div>
+
+  <!-- Main JavaScript application -->
+  <script type="module" src="app.js"></script>
+</body>
+</html>

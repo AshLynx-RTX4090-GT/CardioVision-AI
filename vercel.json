@@ -2,13 +2,25 @@
   "version": 2,
   "functions": {
     "api/index.js": {
-      "includeFiles": "{frontend/**,models/**,node_modules/three/**,src/**}"
+      "includeFiles": "models/**"
     }
   },
   "rewrites": [
     {
-      "source": "/(.*)",
+      "source": "/api",
       "destination": "/api/index.js"
+    },
+    {
+      "source": "/api/(.*)",
+      "destination": "/api/index.js"
+    },
+    {
+      "source": "/auth/(.*)",
+      "destination": "/api/index.js"
+    },
+    {
+      "source": "/((?!api/|auth/|vendor/).*)",
+      "destination": "/index.html"
     }
   ]
 }
