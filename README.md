@@ -1,82 +1,66 @@
 <div align="center">
-  <h1 style="font-size: 3.5rem; font-weight: 800; margin-bottom: 14px; letter-spacing: 1.5px;">
-    🫀 CardioVision-AI
-  </h1>
 
-  <p>
+  # 🫀 CardioVision-AI
+
+  <p align="center">
     <strong>3D Interactive Coronary Risk Explorer & Clinical Explainability Platform</strong>
   </p>
 
-  <!-- Badges Section -->
-  <p style="margin-bottom: 24px;">
-    <img src="https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python Logo" height="32" />
+  <p align="center">
+    <a href="https://www.python.org/">
+      <img src="https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python" height="28"/>
+    </a>
     &nbsp;
-    <img src="https://img.shields.io/badge/AWS-Solutions%20Architect-FF9900?style=for-the-badge&logo=amazon-aws&logoColor=white" alt="AWS Solutions Architect" height="32" />
+    <a href="https://aws.amazon.com/">
+      <img src="https://img.shields.io/badge/AWS-Solutions%20Architect-FF9900?style=for-the-badge&logo=amazon-aws&logoColor=white" alt="AWS Solutions Architect" height="28"/>
+    </a>
     &nbsp;
-    <img src="./CardioVision%20by%20LYNX.jpg" alt="CardioVision by LYNX" height="42" style="vertical-align: middle; border-radius: 6px;" />
+    <a href="https://cardio-vision-ai-six.vercel.app/">
+      <img src="https://img.shields.io/badge/CardioVision-LYNX%20Co.-00c853?style=for-the-badge&logo=heart&logoColor=white" alt="CardioVision LYNX" height="28"/>
+    </a>
   </p>
 
-  <!-- Video Demonstration -->
-  <div style="max-width: 860px; margin: 20px auto;">
-    <video width="100%" controls style="border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.3);">
-      <source src="M:\CardioVision AI\CardioVision AI\CardioVision by LYNX.mp4" type="video/mp4">
-      Your browser does not support the video tag.
-    </video>
-  </div>
+  <!-- If you have the image file inside your repository root, use this: -->
+  <p align="center">
+    <img src="CardioVision%20by%20LYNX.jpg" alt="CardioVision by LYNX Logo" width="130" style="border-radius: 50%;" />
+  </p>
 
-  <!-- RGB Animated Glow Box for Live Deployment Link -->
-  <style>
-    @keyframes rgbGlow {
-      0%   { background-position: 0% 50%; }
-      50%  { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
-    }
-    .rgb-border-box {
-      display: inline-block;
-      padding: 3px;
-      margin: 24px auto;
-      border-radius: 14px;
-      background: linear-gradient(90deg, #ff0055, #7a00ff, #00e5ff, #00ff66, #ffbe00, #ff0055);
-      background-size: 400% 400%;
-      animation: rgbGlow 6s ease infinite;
-      box-shadow: 0 4px 20px rgba(0, 229, 255, 0.35);
-    }
-    .rgb-inner-content {
-      background: #0d1117;
-      border-radius: 11px;
-      padding: 14px 32px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    .rgb-link {
-      color: #58a6ff;
-      font-size: 1.15rem;
-      font-weight: 600;
-      text-decoration: none;
-      letter-spacing: 0.5px;
-    }
-    .rgb-link:hover {
-      text-decoration: underline;
-      color: #79c0ff;
-    }
-  </style>
+  <br />
 
-  <div class="rgb-border-box">
-    <div class="rgb-inner-content">
-      <span style="font-size: 1.3rem;">🌐</span>
-      <a class="rgb-link" href="https://cardio-vision-ai-six.vercel.app/" target="_blank" rel="noopener noreferrer">
-        https://cardio-vision-ai-six.vercel.app/
-      </a>
-    </div>
-  </div>
+  <!-- Video Preview Card -->
+  <p align="center">
+    <a href="https://cardio-vision-ai-six.vercel.app/">
+      <img src="https://img.shields.io/badge/▶%20Watch%20Demo%20Video-CardioVision%20Walkthrough-red?style=for-the-badge&logo=youtube&logoColor=white" alt="Watch Demo" height="35" />
+    </a>
+  </p>
+
+  <br />
+
+  <!-- RGB Styled Banner Box -->
+  <table align="center" style="border-collapse: collapse; border: none;">
+    <tr>
+      <td align="center" style="background: linear-gradient(135deg, #ff0055, #7a00ff, #00d2ff); padding: 3px; border-radius: 12px;">
+        <table style="background: #0d1117; border-radius: 9px; padding: 12px 28px; border-collapse: collapse;">
+          <tr>
+            <td align="center">
+              🌐 <strong>Live Application:</strong>&nbsp;
+              <a href="https://cardio-vision-ai-six.vercel.app/" target="_blank">
+                <strong>https://cardio-vision-ai-six.vercel.app/</strong>
+              </a>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+
 </div>
 
 ---
 
 ## 📖 Overview
 
-**CardioVision AI** is an interactive clinical decision-support and educational platform that combines real-time **3D anatomical coronary visualization** with machine-learning-based risk estimation and permutation-sampled **Shapley (SHAP-style) explainability**. 
+**CardioVision AI** is an interactive clinical decision-support and educational platform combining real-time **3D anatomical coronary visualization** with machine-learning-based risk estimation and permutation-sampled **Shapley (SHAP-style) explainability**. 
 
 It evaluates individual patient parameters against demographic cohorts to project multi-vessel stenosis risks across primary coronary trees (**LAD**, **LCX**, and **RCA**).
 
@@ -84,9 +68,9 @@ It evaluates individual patient parameters against demographic cohorts to projec
 
 ## ✨ Key Features
 
-- **Interactive 3D Anatomical Coronary Viewport**: Real-time WebGL rendering of the human heart, thoracic landmarks, and major coronary arteries (**LAD**, **LCX**, **RCA**) with mouse drag orbit, zoom, and vessel selection.
+- **Interactive 3D Coronary Viewport**: Real-time WebGL rendering of the human heart, thoracic landmarks, and major coronary arteries (**LAD**, **LCX**, **RCA**) with mouse drag orbit, zoom, and vessel selection.
 - **Multitarget Clinical Risk Prediction**: Simultaneous assessment of global coronary artery disease (**CAD**) index and specific vessel stenosis risks.
-- **Explainable AI (Shapley Values)**: Real-time additive feature attribution that highlights exact risk drivers (demographics, blood pressure, glucose, SpO₂, lifestyle).
+- **Explainable AI (Shapley Values)**: Real-time additive feature attribution highlighting exact risk drivers (demographics, blood pressure, glucose, SpO₂, lifestyle).
 - **Synthetic Population Calibration**: Calibrated against diverse synthetic patient baselines to contextualize individualized percentiles.
 - **Zero-Dependency 3D**: Runs client-side Three.js directly via local imports, preventing CDN lag and enabling reliable offline/clinical deployment.
 
