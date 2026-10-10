@@ -2,12 +2,7 @@
   "version": 2,
   "functions": {
     "api/index.js": {
-      "includeFiles": [
-        "frontend/**",
-        "models/**",
-        "node_modules/three/**",
-        "src/**"
-      ]
+      "includeFiles": "{frontend/**,models/**,node_modules/three/**,src/**}"
     }
   },
   "rewrites": [
