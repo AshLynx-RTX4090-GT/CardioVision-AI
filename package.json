@@ -1,0 +1,16 @@
+{
+  "name": "cardiovision",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "3D coronary stenosis risk explorer and model explanation dashboard",
+  "main": "server.js",
+  "scripts": {
+    "dev": "node server.js",
+    "start": "node server.js",
+    "build": "node -e 'console.log(\"Build complete\")'"
+  },
+  "dependencies": {
+    "express": "^4.21.2",
+    "three": "^0.160.0"
+  }
+}

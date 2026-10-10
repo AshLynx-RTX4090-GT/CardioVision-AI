@@ -8,11 +8,18 @@ const MINUS = "−";
 const UP = "#d1495b", DOWN = "#2a77c9"; // SHAP: raises risk / lowers risk
 const signed = (v, d = 1) => (v >= 0 ? "+" : MINUS) + Math.abs(v * 100).toFixed(d) + " pp";
 
-async function api(path, body) {
-  const r = await fetch(path, body ? { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) } : undefined);
-  const j = await r.json();
-  if (!r.ok) throw new Error(j.error || r.statusText);
-  return j;
+async function api(path, body, retries = 4, delay = 500) {
+  for (let attempt = 0; attempt <= retries; attempt++) {
+    try {
+      const r = await fetch(path, body ? { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) } : undefined);
+      const j = await r.json();
+      if (!r.ok) throw new Error(j.error || r.statusText);
+      return j;
+    } catch (err) {
+      if (attempt === retries) throw err;
+      await new Promise((res) => setTimeout(res, delay * (attempt + 1)));
+    }
+  }
 }
 
 const S = {
@@ -22,10 +29,21 @@ const S = {
 
 // ============================================================================ init
 async function init() {
+  const existingFatal = document.querySelector(".fatal");
+  if (existingFatal) existingFatal.remove();
+
   try {
     [S.schema, S.metrics, S.samples] = await Promise.all([api("/api/schema"), api("/api/metrics"), api("/api/samples")]);
   } catch (e) {
-    document.body.insertAdjacentHTML("afterbegin", `<div class="fatal">Could not reach the API (${esc(e.message)}). Start it with <code>python -m backend.server</code>.</div>`);
+    document.body.insertAdjacentHTML(
+      "afterbegin",
+      `<div class="fatal" role="alert">
+        <span>Could not reach the service (${esc(e.message)}). The server may still be initializing.</span>
+        <button id="retry-init-btn" class="btn small" type="button">Retry</button>
+      </div>`
+    );
+    const retryBtn = document.getElementById("retry-init-btn");
+    if (retryBtn) retryBtn.addEventListener("click", () => init());
     return;
   }
   S.schema.features.forEach((f) => { S.featBy[f.name] = f; S.values[f.name] = f.default; });

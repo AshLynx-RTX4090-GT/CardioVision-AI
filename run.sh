@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
-set -e
-cd "$(dirname "$0")"
-[ -f models/metrics.json ] || python3 -m backend.train
-python3 -m backend.server --port "${PORT:-8000}"
+echo "Starting CardioVision AI..."
+if [ ! -d "node_modules" ]; then
+    echo "Installing dependencies..."
+    npm install
+fi
+echo "Server running at http://localhost:3000"
+npm start

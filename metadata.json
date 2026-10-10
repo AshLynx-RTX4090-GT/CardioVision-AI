@@ -1,0 +1,8 @@
+{
+  "name": "CardioVision",
+  "description": "3D coronary stenosis risk explorer and model explanation dashboard.",
+  "permissions": [],
+  "capabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

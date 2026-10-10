@@ -11,6 +11,7 @@ button { font: inherit; cursor: pointer; }
 code { background: #eef1f6; padding: 1px 5px; border-radius: 4px; font-size: 12.5px; }
 
 /* ---------- disclaimer + header ---------- */
+.fatal { position: sticky; top: 0; z-index: 100; background: #fef3f2; border-bottom: 2px solid #f04438; color: #b42318; padding: 10px 16px; text-align: center; font-size: 13px; display: flex; align-items: center; justify-content: center; gap: 8px; }
 .disclaimer-bar { position: sticky; top: 0; z-index: 50; background: #fff4d6; border-bottom: 2px solid #f0b429; color: #5b4300; padding: 8px 16px; text-align: center; font-size: 13px; }
 .topbar { display: flex; align-items: center; gap: 20px; padding: 10px 20px; background: #fff; border-bottom: 1px solid var(--line); flex-wrap: wrap; }
 .brand { display: flex; align-items: center; gap: 10px; }
