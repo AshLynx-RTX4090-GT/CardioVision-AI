@@ -1,4 +1,5 @@
 <div align="center">
+<<<<<<< HEAD
   <h1>CardioVision-AI</h1>
   <p><strong>3D Coronary Risk Explorer</strong></p>
   <p>
@@ -24,6 +25,107 @@
     Visit the CardioVision-AI Website
   </a>
 </div>
+=======
+
+  # 🫀 CardioVision-AI
+
+  <p align="center">
+    <strong>3D Interactive Coronary Risk Explorer & Clinical Explainability Platform</strong>
+  </p>
+
+  <p align="center">
+    <a href="https://www.python.org/">
+      <img src="https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python" height="28"/>
+    </a>
+    &nbsp;
+    <a href="https://aws.amazon.com/">
+      <img src="https://img.shields.io/badge/AWS-Solutions%20Architect-FF9900?style=for-the-badge&logo=amazon-aws&logoColor=white" alt="AWS Solutions Architect" height="28"/>
+    </a>
+    &nbsp;
+    <a href="https://cardio-vision-ai-six.vercel.app/">
+      <img src="https://img.shields.io/badge/CardioVision-LYNX%20Co.-00c853?style=for-the-badge&logo=heart&logoColor=white" alt="CardioVision LYNX" height="28"/>
+    </a>
+  </p>
+
+  <p align="center">
+    <img src="CardioVision%20by%20LYNX.jpg" alt="CardioVision by LYNX Logo" width="130" style="border-radius: 50%;" />
+  </p>
+
+  <br />
+
+  <!-- RGB Styled Banner Box -->
+  <table align="center" style="border-collapse: collapse; border: none;">
+    <tr>
+      <td align="center" style="background: linear-gradient(135deg, #ff0055, #7a00ff, #00d2ff); padding: 3px; border-radius: 12px;">
+        <table style="background: #0d1117; border-radius: 9px; padding: 12px 28px; border-collapse: collapse;">
+          <tr>
+            <td align="center">
+              🌐 <strong>Live Application:</strong>&nbsp;
+              <a href="https://cardio-vision-ai-six.vercel.app/" target="_blank">
+                <strong>https://cardio-vision-ai-six.vercel.app/</strong>
+              </a>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+
+</div>
+
+<!-- Logos Section: AWS Cloud Solution Architect -->
+<table border="0" align="center">
+<tr>
+ <td align="center" width="200">
+        <img src="https://images.credly.com/images/0e284c3f-5164-4b21-8660-0d84737941bc/image.png" width="100" alt="AWS Solutions Architect Logo" /><br/>
+        <sub><b>AWS Solution Architect</b></sub>
+      </td>
+    </tr>
+  </table>
+  
+---
+
+## 📖 Overview
+
+**CardioVision AI** is an interactive clinical decision-support and educational platform that combines real-time **3D anatomical coronary visualization** with machine-learning-based risk estimation and permutation-sampled **Shapley (SHAP-style) explainability**. 
+
+It evaluates individual patient parameters against demographic cohorts to project multi-vessel stenosis risks across primary coronary trees (**LAD**, **LCX**, and **RCA**).
+
+---
+
+## ✨ Key Features
+
+- **Interactive 3D Coronary Viewport**: Real-time WebGL rendering of the human heart, thoracic landmarks, and major coronary arteries (**LAD**, **LCX**, **RCA**) with mouse drag orbit, zoom, and vessel selection.
+- **Multitarget Clinical Risk Prediction**: Simultaneous assessment of global coronary artery disease (**CAD**) index and specific vessel stenosis risks.
+- **Explainable AI (Shapley Values)**: Real-time additive feature attribution highlighting exact risk drivers (demographics, blood pressure, glucose, SpO₂, lifestyle).
+- **Synthetic Population Calibration**: Calibrated against diverse synthetic patient baselines to contextualize individualized percentiles.
+- **Zero-Dependency 3D**: Runs client-side Three.js directly via local imports, preventing CDN lag and enabling reliable offline/clinical deployment.
+
+---
+
+<!-- ======================================================== -->
+<!-- 🎬 ANIMATED DEMO PREVIEW (MIDDLE OF README)               -->
+<!-- ======================================================== -->
+
+<div align="center">
+  <h3>✨ CardioVision 3D Cardiac Simulation & Telemetry ✨</h3>
+  <br />
+  <!-- If converted to GIF in repo: -->
+  <img src="cardiovision-demo.gif" alt="CardioVision 3D Cardiac Simulation" width="650" style="border-radius: 14px; box-shadow: 0 8px 30px rgba(0, 0, 0, 0.45); max-width: 100%;" />
+  
+  <p><sub><i>Real-time 3D anatomical rendering and clinical telemetry engine by LYNX Co.</i></sub></p>
+</div>
+
+---
+
+## 📁 Repository Structure
+
+
+
+
+
+# CardioVision AI – 3D Coronary Risk Explorer
+>>>>>>> 7397fbeb2acb7f84118e40e34444c648bb12aff9
 
 CardioVision is an interactive clinical decision-support and educational platform that combines 3D anatomical coronary visualization with machine-learning-based risk estimation and permutation-sampled Shapley (SHAP-style) explainability.
 
