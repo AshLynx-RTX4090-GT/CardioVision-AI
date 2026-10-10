@@ -8,6 +8,7 @@ import { predict } from "./model.js";
 import { ALL_TARGETS, DISCLAIMER, FEATURES, GROUP_ORDER, TARGET_LABELS } from "./schema.js";
 import {
   initBackendStorage,
+  getUploadsDir,
   getCurrentSessionProfile,
   saveCurrentSessionProfile,
   loginAccount,
@@ -78,11 +79,27 @@ app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ extended: true, limit: "50mb" }));
 
 // Serve uploaded profile photos & documents from backend files folder
-const UPLOADS_PATH = path.join(process.cwd(), "data", "uploads");
-if (!fs.existsSync(UPLOADS_PATH)) {
-  fs.mkdirSync(UPLOADS_PATH, { recursive: true });
-}
+const UPLOADS_PATH = getUploadsDir();
+try {
+  if (!fs.existsSync(UPLOADS_PATH)) {
+    fs.mkdirSync(UPLOADS_PATH, { recursive: true });
+  }
+} catch (_) {}
+
 app.use("/api/uploads", express.static(UPLOADS_PATH));
+
+// In-memory fallback route for uploads in serverless / read-only filesystem
+app.get("/api/uploads/:filename", (req, res, next) => {
+  const photo = listUploadedPhotos().find((p) => p.filename === req.params.filename);
+  if (photo && photo.dataUrl) {
+    const match = photo.dataUrl.match(/^data:([A-Za-z0-9+.-]+\/[A-Za-z0-9+.-]+);base64,(.+)$/);
+    if (match) {
+      res.setHeader("Content-Type", match[1]);
+      return res.send(Buffer.from(match[2], "base64"));
+    }
+  }
+  next();
+});
 
 // API routes
 app.get("/api/health", (req, res) => {
@@ -378,7 +395,9 @@ app.post("/api/predict", (req, res) => {
 });
 
 // Static assets
-const threePath = findPath(path.join("node_modules", "three"));
+const threeVendorPath = findPath(path.join("frontend", "vendor", "three"));
+const threeNodePath = findPath(path.join("node_modules", "three"));
+const threePath = fs.existsSync(path.join(threeVendorPath, "build", "three.module.js")) ? threeVendorPath : threeNodePath;
 app.use("/vendor/three", express.static(threePath));
 
 const frontendPath = findPath("frontend");

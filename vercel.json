@@ -1,23 +1,19 @@
 {
   "version": 2,
-  "builds": [
-    {
-      "src": "server.js",
-      "use": "@vercel/node",
-      "config": {
-        "includeFiles": [
-          "frontend/**",
-          "models/**",
-          "node_modules/three/**",
-          "src/**"
-        ]
-      }
+  "functions": {
+    "api/index.js": {
+      "includeFiles": [
+        "frontend/**",
+        "models/**",
+        "node_modules/three/**",
+        "src/**"
+      ]
     }
-  ],
-  "routes": [
+  },
+  "rewrites": [
     {
-      "src": "/(.*)",
-      "dest": "/server.js"
+      "source": "/(.*)",
+      "destination": "/api/index.js"
     }
   ]
 }

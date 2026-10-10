@@ -4,6 +4,9 @@
   "type": "module",
   "description": "3D coronary stenosis risk explorer and model explanation dashboard",
   "main": "server.js",
+  "engines": {
+    "node": ">=20.0.0"
+  },
   "scripts": {
     "dev": "node server.js",
     "start": "node server.js",

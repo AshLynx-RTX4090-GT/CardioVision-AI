@@ -1,19 +1,12 @@
 import fs from "node:fs";
 import path from "node:path";
+import os from "node:os";
 import { fileURLToPath } from "node:url";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Root data folder
-const DATA_DIR = path.join(process.cwd(), "data");
-const ACCOUNTS_DIR = path.join(DATA_DIR, "accounts");
-const REPORTS_DIR = path.join(DATA_DIR, "reports");
-const DIAGNOSTICS_DIR = path.join(DATA_DIR, "diagnostics");
-const UPLOADS_DIR = path.join(DATA_DIR, "uploads");
-const CURRENT_SESSION_FILE = path.join(DATA_DIR, "current_session.json");
-
-// Default initial accounts
+// Default initial clinical accounts
 const DEFAULT_ACCOUNTS = {
   sarah: {
     id: "USR-88219",
@@ -169,11 +162,75 @@ const DEFAULT_ACCOUNTS = {
   },
 };
 
-// Safe directory creation
-function ensureDir(dir) {
-  if (!fs.existsSync(dir)) {
-    fs.mkdirSync(dir, { recursive: true });
+// In-memory backing cache (ensures zero crashes in serverless / read-only filesystems like Vercel Lambda)
+const inMemoryStore = {
+  accounts: { ...DEFAULT_ACCOUNTS },
+  currentSession: { ...DEFAULT_ACCOUNTS.sarah },
+  reports: [],
+  diagnostics: [],
+  uploads: [],
+};
+
+// Determine writable data directory
+function resolveDataDir() {
+  if (process.env.VERCEL) {
+    return path.join(os.tmpdir(), "cardiovision_data");
   }
+  const defaultDir = path.join(process.cwd(), "data");
+  try {
+    if (!fs.existsSync(defaultDir)) {
+      fs.mkdirSync(defaultDir, { recursive: true });
+    }
+    const testFile = path.join(defaultDir, ".write_test");
+    fs.writeFileSync(testFile, "ok");
+    fs.unlinkSync(testFile);
+    return defaultDir;
+  } catch (_) {
+    return path.join(os.tmpdir(), "cardiovision_data");
+  }
+}
+
+const DATA_DIR = resolveDataDir();
+const ACCOUNTS_DIR = path.join(DATA_DIR, "accounts");
+const REPORTS_DIR = path.join(DATA_DIR, "reports");
+const DIAGNOSTICS_DIR = path.join(DATA_DIR, "diagnostics");
+const UPLOADS_DIR = path.join(DATA_DIR, "uploads");
+const CURRENT_SESSION_FILE = path.join(DATA_DIR, "current_session.json");
+
+export function getUploadsDir() {
+  return UPLOADS_DIR;
+}
+
+// Safe directory creation that never crashes
+function ensureDir(dir) {
+  try {
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true });
+    }
+  } catch (err) {
+    // Read-only filesystem warning; inMemoryStore serves as fallback
+  }
+}
+
+// Safe file write
+function safeWriteFile(filePath, content) {
+  try {
+    ensureDir(path.dirname(filePath));
+    fs.writeFileSync(filePath, content, "utf8");
+    return true;
+  } catch (err) {
+    return false;
+  }
+}
+
+// Safe file read
+function safeReadFile(filePath) {
+  try {
+    if (fs.existsSync(filePath)) {
+      return fs.readFileSync(filePath, "utf8");
+    }
+  } catch (err) {}
+  return null;
 }
 
 // Initialize backend folder process
@@ -188,28 +245,29 @@ export function initBackendStorage() {
   for (const [key, acc] of Object.entries(DEFAULT_ACCOUNTS)) {
     const accFile = path.join(ACCOUNTS_DIR, `${key}.json`);
     if (!fs.existsSync(accFile)) {
-      fs.writeFileSync(accFile, JSON.stringify(acc, null, 2), "utf8");
+      safeWriteFile(accFile, JSON.stringify(acc, null, 2));
     }
   }
 
   // Initialize active session file if missing
   if (!fs.existsSync(CURRENT_SESSION_FILE)) {
-    fs.writeFileSync(CURRENT_SESSION_FILE, JSON.stringify(DEFAULT_ACCOUNTS.sarah, null, 2), "utf8");
+    safeWriteFile(CURRENT_SESSION_FILE, JSON.stringify(DEFAULT_ACCOUNTS.sarah, null, 2));
   }
 
-  console.log(`Backend storage initialized at ${DATA_DIR}`);
+  console.log(`Backend storage initialized at ${DATA_DIR} (serverless/Vercel resilient)`);
 }
 
 // Get current active user session profile
 export function getCurrentSessionProfile() {
-  try {
-    if (fs.existsSync(CURRENT_SESSION_FILE)) {
-      return JSON.parse(fs.readFileSync(CURRENT_SESSION_FILE, "utf8"));
-    }
-  } catch (e) {
-    console.error("Error reading current session:", e.message);
+  const content = safeReadFile(CURRENT_SESSION_FILE);
+  if (content) {
+    try {
+      const parsed = JSON.parse(content);
+      inMemoryStore.currentSession = parsed;
+      return parsed;
+    } catch (_) {}
   }
-  return DEFAULT_ACCOUNTS.sarah;
+  return inMemoryStore.currentSession || DEFAULT_ACCOUNTS.sarah;
 }
 
 // Save active session and sync to account file
@@ -221,12 +279,12 @@ export function saveCurrentSessionProfile(profileUpdates) {
     updatedAt: new Date().toISOString(),
   };
 
-  fs.writeFileSync(CURRENT_SESSION_FILE, JSON.stringify(updated, null, 2), "utf8");
-
-  // If this profile corresponds to an account, update that account file as well
+  inMemoryStore.currentSession = updated;
   const accountKey = updated.accountKey || updated.email?.toLowerCase().replace(/[^a-z0-9]/g, "_") || "user";
-  const accFile = path.join(ACCOUNTS_DIR, `${accountKey}.json`);
-  fs.writeFileSync(accFile, JSON.stringify(updated, null, 2), "utf8");
+  inMemoryStore.accounts[accountKey] = updated;
+
+  safeWriteFile(CURRENT_SESSION_FILE, JSON.stringify(updated, null, 2));
+  safeWriteFile(path.join(ACCOUNTS_DIR, `${accountKey}.json`), JSON.stringify(updated, null, 2));
 
   return updated;
 }
@@ -235,40 +293,69 @@ export function saveCurrentSessionProfile(profileUpdates) {
 export function loginAccount(keyOrEmail, extraData = {}) {
   const normalizedKey = keyOrEmail ? keyOrEmail.toLowerCase().trim() : "";
 
-  // Check direct preset account file
-  const directPath = path.join(ACCOUNTS_DIR, `${normalizedKey}.json`);
-  if (fs.existsSync(directPath)) {
-    try {
-      const existing = JSON.parse(fs.readFileSync(directPath, "utf8"));
-      const merged = { ...existing, ...extraData, updatedAt: new Date().toISOString() };
-      fs.writeFileSync(directPath, JSON.stringify(merged, null, 2), "utf8");
-      fs.writeFileSync(CURRENT_SESSION_FILE, JSON.stringify(merged, null, 2), "utf8");
+  // 1. Check in-memory store first
+  if (inMemoryStore.accounts[normalizedKey]) {
+    const existing = inMemoryStore.accounts[normalizedKey];
+    const merged = { ...existing, ...extraData, updatedAt: new Date().toISOString() };
+    inMemoryStore.accounts[normalizedKey] = merged;
+    inMemoryStore.currentSession = merged;
+    safeWriteFile(path.join(ACCOUNTS_DIR, `${normalizedKey}.json`), JSON.stringify(merged, null, 2));
+    safeWriteFile(CURRENT_SESSION_FILE, JSON.stringify(merged, null, 2));
+    return merged;
+  }
+
+  // 2. Check by email in-memory
+  for (const [k, acc] of Object.entries(inMemoryStore.accounts)) {
+    if (acc.email && acc.email.toLowerCase() === normalizedKey) {
+      const merged = { ...acc, ...extraData, updatedAt: new Date().toISOString() };
+      inMemoryStore.accounts[k] = merged;
+      inMemoryStore.currentSession = merged;
+      safeWriteFile(path.join(ACCOUNTS_DIR, `${k}.json`), JSON.stringify(merged, null, 2));
+      safeWriteFile(CURRENT_SESSION_FILE, JSON.stringify(merged, null, 2));
       return merged;
-    } catch (e) {
-      console.error("Error reading account:", e.message);
     }
   }
 
-  // Check all accounts in ACCOUNTS_DIR to match email
+  // 3. Check direct preset account file on disk
+  const directPath = path.join(ACCOUNTS_DIR, `${normalizedKey}.json`);
+  const directContent = safeReadFile(directPath);
+  if (directContent) {
+    try {
+      const existing = JSON.parse(directContent);
+      const merged = { ...existing, ...extraData, updatedAt: new Date().toISOString() };
+      inMemoryStore.accounts[normalizedKey] = merged;
+      inMemoryStore.currentSession = merged;
+      safeWriteFile(directPath, JSON.stringify(merged, null, 2));
+      safeWriteFile(CURRENT_SESSION_FILE, JSON.stringify(merged, null, 2));
+      return merged;
+    } catch (_) {}
+  }
+
+  // 4. Scan disk for matching email
   try {
-    const files = fs.readdirSync(ACCOUNTS_DIR);
-    for (const f of files) {
-      if (f.endsWith(".json")) {
-        const full = path.join(ACCOUNTS_DIR, f);
-        const data = JSON.parse(fs.readFileSync(full, "utf8"));
-        if (data.email && data.email.toLowerCase() === normalizedKey) {
-          const merged = { ...data, ...extraData, updatedAt: new Date().toISOString() };
-          fs.writeFileSync(full, JSON.stringify(merged, null, 2), "utf8");
-          fs.writeFileSync(CURRENT_SESSION_FILE, JSON.stringify(merged, null, 2), "utf8");
-          return merged;
+    if (fs.existsSync(ACCOUNTS_DIR)) {
+      const files = fs.readdirSync(ACCOUNTS_DIR);
+      for (const f of files) {
+        if (f.endsWith(".json")) {
+          const full = path.join(ACCOUNTS_DIR, f);
+          const raw = safeReadFile(full);
+          if (raw) {
+            const data = JSON.parse(raw);
+            if (data.email && data.email.toLowerCase() === normalizedKey) {
+              const merged = { ...data, ...extraData, updatedAt: new Date().toISOString() };
+              inMemoryStore.accounts[data.accountKey || f.replace(".json", "")] = merged;
+              inMemoryStore.currentSession = merged;
+              safeWriteFile(full, JSON.stringify(merged, null, 2));
+              safeWriteFile(CURRENT_SESSION_FILE, JSON.stringify(merged, null, 2));
+              return merged;
+            }
+          }
         }
       }
     }
-  } catch (e) {
-    console.error("Error scanning accounts:", e.message);
-  }
+  } catch (_) {}
 
-  // If brand new account (e.g. custom email or oauth)
+  // 5. If brand new account (e.g. custom email or oauth)
   const isEmail = normalizedKey.includes("@");
   const namePart = isEmail ? normalizedKey.split("@")[0].replace(/[._-]/g, " ") : normalizedKey;
   const formattedName = namePart.charAt(0).toUpperCase() + namePart.slice(1);
@@ -295,9 +382,10 @@ export function loginAccount(keyOrEmail, extraData = {}) {
     ...extraData,
   };
 
-  const savePath = path.join(ACCOUNTS_DIR, `${newAccount.accountKey}.json`);
-  fs.writeFileSync(savePath, JSON.stringify(newAccount, null, 2), "utf8");
-  fs.writeFileSync(CURRENT_SESSION_FILE, JSON.stringify(newAccount, null, 2), "utf8");
+  inMemoryStore.accounts[newAccount.accountKey] = newAccount;
+  inMemoryStore.currentSession = newAccount;
+  safeWriteFile(path.join(ACCOUNTS_DIR, `${newAccount.accountKey}.json`), JSON.stringify(newAccount, null, 2));
+  safeWriteFile(CURRENT_SESSION_FILE, JSON.stringify(newAccount, null, 2));
   return newAccount;
 }
 
@@ -323,39 +411,58 @@ export function logoutSession() {
     updatedAt: new Date().toISOString(),
   };
 
-  fs.writeFileSync(CURRENT_SESSION_FILE, JSON.stringify(guestProfile, null, 2), "utf8");
+  inMemoryStore.currentSession = guestProfile;
+  safeWriteFile(CURRENT_SESSION_FILE, JSON.stringify(guestProfile, null, 2));
   return guestProfile;
 }
 
-// List all accounts available in backend folder
+// List all accounts available in backend storage
 export function listSavedAccounts() {
-  ensureDir(ACCOUNTS_DIR);
-  const result = [];
+  const accountMap = new Map();
+
+  // Load from in-memory store
+  for (const [key, data] of Object.entries(inMemoryStore.accounts)) {
+    accountMap.set(key, {
+      accountKey: data.accountKey || key,
+      name: data.name,
+      displayName: data.displayName,
+      email: data.email,
+      provider: data.provider,
+      wearableId: data.wearableId,
+      updatedAt: data.updatedAt,
+    });
+  }
+
+  // Also read from disk if available
   try {
-    const files = fs.readdirSync(ACCOUNTS_DIR);
-    for (const f of files) {
-      if (f.endsWith(".json")) {
-        const data = JSON.parse(fs.readFileSync(path.join(ACCOUNTS_DIR, f), "utf8"));
-        result.push({
-          accountKey: data.accountKey || f.replace(".json", ""),
-          name: data.name,
-          displayName: data.displayName,
-          email: data.email,
-          provider: data.provider,
-          wearableId: data.wearableId,
-          updatedAt: data.updatedAt,
-        });
+    if (fs.existsSync(ACCOUNTS_DIR)) {
+      const files = fs.readdirSync(ACCOUNTS_DIR);
+      for (const f of files) {
+        if (f.endsWith(".json")) {
+          const raw = safeReadFile(path.join(ACCOUNTS_DIR, f));
+          if (raw) {
+            const data = JSON.parse(raw);
+            const key = data.accountKey || f.replace(".json", "");
+            accountMap.set(key, {
+              accountKey: key,
+              name: data.name,
+              displayName: data.displayName,
+              email: data.email,
+              provider: data.provider,
+              wearableId: data.wearableId,
+              updatedAt: data.updatedAt,
+            });
+          }
+        }
       }
     }
-  } catch (e) {
-    console.error("Error listing accounts:", e.message);
-  }
-  return result;
+  } catch (_) {}
+
+  return Array.from(accountMap.values());
 }
 
 // Save a Medical / Biometric Report into backend folder
 export function saveReportToBackend(reportPayload) {
-  ensureDir(REPORTS_DIR);
   const now = new Date();
   const id = `REP-${now.getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`;
   const filename = `report_${now.getTime()}_${id}.json`;
@@ -381,32 +488,39 @@ export function saveReportToBackend(reportPayload) {
     notes: reportPayload.notes || "Official clinical biometric report compiled and archived.",
   };
 
-  fs.writeFileSync(filePath, JSON.stringify(fullReport, null, 2), "utf8");
-  console.log(`Saved report to backend process at ${filePath}`);
+  inMemoryStore.reports.unshift(fullReport);
+  safeWriteFile(filePath, JSON.stringify(fullReport, null, 2));
   return fullReport;
 }
 
-// Get all saved reports from backend folder
+// Get all saved reports from backend storage
 export function getSavedReports() {
-  ensureDir(REPORTS_DIR);
-  const reports = [];
+  const reports = [...inMemoryStore.reports];
+  const seenIds = new Set(reports.map((r) => r.reportId));
+
   try {
-    const files = fs.readdirSync(REPORTS_DIR).sort().reverse();
-    for (const f of files) {
-      if (f.endsWith(".json")) {
-        const r = JSON.parse(fs.readFileSync(path.join(REPORTS_DIR, f), "utf8"));
-        reports.push(r);
+    if (fs.existsSync(REPORTS_DIR)) {
+      const files = fs.readdirSync(REPORTS_DIR).sort().reverse();
+      for (const f of files) {
+        if (f.endsWith(".json")) {
+          const raw = safeReadFile(path.join(REPORTS_DIR, f));
+          if (raw) {
+            const r = JSON.parse(raw);
+            if (r.reportId && !seenIds.has(r.reportId)) {
+              seenIds.add(r.reportId);
+              reports.push(r);
+            }
+          }
+        }
       }
     }
-  } catch (e) {
-    console.error("Error listing reports:", e.message);
-  }
-  return reports;
+  } catch (_) {}
+
+  return reports.sort((a, b) => new Date(b.savedAt) - new Date(a.savedAt));
 }
 
 // Save Diagnostic Calculation into backend folder
 export function saveDiagnosticToBackend(diagPayload) {
-  ensureDir(DIAGNOSTICS_DIR);
   const now = new Date();
   const id = `DIAG-${now.getTime()}-${Math.floor(100 + Math.random() * 900)}`;
   const filename = `diag_${id}.json`;
@@ -422,31 +536,42 @@ export function saveDiagnosticToBackend(diagPayload) {
     results: diagPayload.results || {},
   };
 
-  fs.writeFileSync(filePath, JSON.stringify(fullDiag, null, 2), "utf8");
+  inMemoryStore.diagnostics.unshift(fullDiag);
+  if (inMemoryStore.diagnostics.length > 50) {
+    inMemoryStore.diagnostics.length = 50;
+  }
+  safeWriteFile(filePath, JSON.stringify(fullDiag, null, 2));
   return fullDiag;
 }
 
 // Get recent diagnostics from backend folder
 export function getSavedDiagnostics() {
-  ensureDir(DIAGNOSTICS_DIR);
-  const diags = [];
+  const diags = [...inMemoryStore.diagnostics];
+  const seenIds = new Set(diags.map((d) => d.diagnosticId));
+
   try {
-    const files = fs.readdirSync(DIAGNOSTICS_DIR).sort().reverse().slice(0, 20);
-    for (const f of files) {
-      if (f.endsWith(".json")) {
-        const d = JSON.parse(fs.readFileSync(path.join(DIAGNOSTICS_DIR, f), "utf8"));
-        diags.push(d);
+    if (fs.existsSync(DIAGNOSTICS_DIR)) {
+      const files = fs.readdirSync(DIAGNOSTICS_DIR).sort().reverse().slice(0, 20);
+      for (const f of files) {
+        if (f.endsWith(".json")) {
+          const raw = safeReadFile(path.join(DIAGNOSTICS_DIR, f));
+          if (raw) {
+            const d = JSON.parse(raw);
+            if (d.diagnosticId && !seenIds.has(d.diagnosticId)) {
+              seenIds.add(d.diagnosticId);
+              diags.push(d);
+            }
+          }
+        }
       }
     }
-  } catch (e) {
-    console.error("Error listing diagnostics:", e.message);
-  }
-  return diags;
+  } catch (_) {}
+
+  return diags.slice(0, 20);
 }
 
-// Save uploaded profile photo into data/uploads/ folder process
+// Save uploaded profile photo into storage
 export function saveUploadedPhoto({ dataUrl, buffer, originalFilename, mimeType }) {
-  ensureDir(UPLOADS_DIR);
   let fileBuffer;
   let ext = ".jpg";
 
@@ -480,39 +605,52 @@ export function saveUploadedPhoto({ dataUrl, buffer, originalFilename, mimeType 
   const filename = `${cleanBase || "photo"}_${Date.now()}_${Math.floor(1000 + Math.random() * 9000)}${ext}`;
   const filePath = path.join(UPLOADS_DIR, filename);
 
-  fs.writeFileSync(filePath, fileBuffer);
-  console.log(`Saved uploaded photo to backend folder: ${filePath} (${fileBuffer.length} bytes)`);
-
-  return {
+  const photoRecord = {
     filename,
     url: `/api/uploads/${filename}`,
+    dataUrl: dataUrl || `data:image/${ext.replace(".", "")};base64,${fileBuffer.toString("base64")}`,
     size: fileBuffer.length,
     backendPath: `data/uploads/${filename}`,
     savedAt: new Date().toISOString(),
+    createdAt: new Date().toISOString(),
   };
+
+  inMemoryStore.uploads.unshift(photoRecord);
+
+  try {
+    ensureDir(UPLOADS_DIR);
+    fs.writeFileSync(filePath, fileBuffer);
+  } catch (_) {}
+
+  return photoRecord;
 }
 
-// List all uploaded photos in data/uploads/ folder process
+// List all uploaded photos in storage
 export function listUploadedPhotos() {
-  ensureDir(UPLOADS_DIR);
-  const items = [];
+  const items = [...inMemoryStore.uploads];
+  const seenFiles = new Set(items.map((i) => i.filename));
+
   try {
-    const files = fs.readdirSync(UPLOADS_DIR);
-    for (const f of files) {
-      if (/\.(png|jpe?g|webp|gif|svg)$/i.test(f)) {
-        const full = path.join(UPLOADS_DIR, f);
-        const stat = fs.statSync(full);
-        items.push({
-          filename: f,
-          url: `/api/uploads/${f}`,
-          size: stat.size,
-          createdAt: stat.birthtime || stat.mtime,
-          backendPath: `data/uploads/${f}`,
-        });
+    if (fs.existsSync(UPLOADS_DIR)) {
+      const files = fs.readdirSync(UPLOADS_DIR);
+      for (const f of files) {
+        if (/\.(png|jpe?g|webp|gif|svg)$/i.test(f) && !seenFiles.has(f)) {
+          const full = path.join(UPLOADS_DIR, f);
+          try {
+            const stat = fs.statSync(full);
+            items.push({
+              filename: f,
+              url: `/api/uploads/${f}`,
+              size: stat.size,
+              createdAt: stat.birthtime || stat.mtime,
+              backendPath: `data/uploads/${f}`,
+            });
+            seenFiles.add(f);
+          } catch (_) {}
+        }
       }
     }
-  } catch (err) {
-    console.error("Error listing uploaded photos:", err.message);
-  }
-  return items.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+  } catch (_) {}
+
+  return items.sort((a, b) => new Date(b.createdAt || b.savedAt) - new Date(a.createdAt || a.savedAt));
 }
