@@ -1,4 +1,4 @@
-
+<div align="center">
   <h1>CardioVision-AI</h1>
   <p><strong>3D Coronary Risk Explorer</strong></p>
   <p>
