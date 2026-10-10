@@ -44,12 +44,29 @@
   
   <link rel="stylesheet" href="style.css">
 
+  <!-- jsPDF for Clinical Biometric PDF generation -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
   <!-- Import map for Three.js -->
   <script type="importmap">
   { "imports": {
       "three": "/vendor/three/build/three.module.js",
       "three/addons/": "/vendor/three/examples/jsm/"
   } }
+  </script>
+
+  <!-- Prevent benign ResizeObserver loop notification from triggering unhandled error -->
+  <script>
+    window.addEventListener('error', function(event) {
+      if (event && event.message && (
+        event.message.includes('ResizeObserver loop completed with undelivered notifications') ||
+        event.message.includes('ResizeObserver loop limit exceeded')
+      )) {
+        event.stopImmediatePropagation();
+        event.preventDefault();
+        return true;
+      }
+    });
   </script>
 </head>
 <body class="min-h-screen text-slate-800 antialiased selection:bg-brand-coral selection:text-white pb-10">
@@ -78,7 +95,7 @@
     <header class="flex items-center justify-between mb-6 gap-4 flex-wrap" data-purpose="top-navigation">
       <!-- Logo Branding -->
       <div class="flex items-center gap-3 cursor-pointer" id="brand-logo-btn">
-        <img src="https://lh3.googleusercontent.com/aida/AEtjO1XBe3hLJY_czq1mK56lcxrmIJ9kZ8L9QxfMv_grBhD0qyfrhXBLsfPq_mLltxEh5cAx6UJ9OZrYXJf7Wen_YIpkls-Dba9S7Q0MP8As7uD0d7SIUdld766-2kmWh2y5BQsioHcJr8_oXsvg02KsHKx35GrESexX46jMEy8GEVrlEGKwmRjKLJfn_MNDBO-o5EA2MHi4B8Qiqy07SOaAm6uu-WKIxQe716xJ4YtsJuMzDmlDT6-poVGK-AuO" alt="CardioVision AI Logo" class="w-10 h-10 rounded-xl object-contain drop-shadow-md select-none">
+        <img src="/cardiovision-lynx-logo.svg" alt="CardioVision - LYNX Cardio Hospitals &amp; Care Berlin Logo" class="w-10 h-10 rounded-xl object-contain drop-shadow-md select-none bg-white p-0.5 border border-slate-100">
         <div>
           <span class="text-2xl font-extrabold tracking-tight text-slate-900">CardioVision</span>
           <span class="text-xs font-semibold px-2 py-0.5 ml-1 bg-brand-coral-soft text-brand-coral rounded-md border border-brand-coral/20">AI v3.2</span>
@@ -93,6 +110,7 @@
         <button data-tab="reports" class="nav-tab-btn px-5 py-2 rounded-full text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-white/50 transition-all">Reports</button>
         <button data-tab="calendar" class="nav-tab-btn px-5 py-2 rounded-full text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-white/50 transition-all">Calendar</button>
         <button data-tab="settings" class="nav-tab-btn px-5 py-2 rounded-full text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-white/50 transition-all">Settings</button>
+        <button data-tab="about" class="nav-tab-btn px-5 py-2 rounded-full text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-white/50 transition-all">About Us</button>
       </nav>
 
       <!-- Right Utility Actions -->
@@ -1004,6 +1022,167 @@
       </div>
     </div>
 
+    <!-- ========================================================================= -->
+    <!-- VIEW 7: ABOUT US -->
+    <!-- ========================================================================= -->
+    <div id="view-about" class="tab-view hidden">
+      <div class="max-w-5xl mx-auto space-y-6">
+
+        <!-- Company Hero Header -->
+        <div class="liquid-glass rounded-3xl p-6 sm:p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+          <div class="flex items-center gap-4">
+            <div class="w-20 h-20 rounded-2xl bg-white p-1.5 shadow-md shadow-brand-coral/15 border border-slate-100 flex-shrink-0 flex items-center justify-center overflow-hidden">
+              <img src="/cardiovision-lynx-logo.svg" alt="CardioVision - LYNX Cardio Hospitals &amp; Care Berlin Official Logo" class="w-full h-full object-contain select-none">
+            </div>
+            <div>
+              <div class="flex items-center gap-2 flex-wrap">
+                <h2 class="text-2xl font-black text-slate-900 tracking-tight">LYNX Cardio Hospitals &amp; Care Berlin</h2>
+                <span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-brand-coral-soft text-brand-coral border border-brand-coral/20">Official Provider</span>
+              </div>
+              <p class="text-xs text-slate-500 mt-1">Pioneering Intelligent 3D Non-Invasive Hemodynamic &amp; Coronary Stenosis Diagnostics</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="px-3 py-1.5 rounded-xl liquid-pill text-xs font-semibold text-slate-700">ISO 13485 &amp; GDPR Certified</span>
+          </div>
+        </div>
+
+        <!-- Description & Establishment Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <!-- Company Description -->
+          <div class="liquid-glass rounded-3xl p-6 sm:p-7 flex flex-col justify-between">
+            <div>
+              <div class="flex items-center gap-2 mb-3">
+                <div class="w-8 h-8 rounded-xl bg-orange-50 text-brand-coral flex items-center justify-center font-bold text-sm">
+                  🏢
+                </div>
+                <h3 class="text-base font-bold text-slate-900">Company Description</h3>
+              </div>
+              <p class="text-xs text-slate-600 leading-relaxed">
+                <strong>CardioVision AI</strong> is engineered by <strong>LYNX Cardio Hospitals &amp; Care Berlin</strong>. Our core mission is bridging the gap between non-invasive outpatient biometric telemetry and high-precision coronary artery stenosis detection.
+              </p>
+              <p class="text-xs text-slate-600 leading-relaxed mt-2.5">
+                By synthesizing machine learning trained on gold-standard coronary angiography data with real-time wearable sensor dynamics, CardioVision provides patients and cardiologists with actionable, explainable (SHAP) physiological insights prior to invasive catheterization.
+              </p>
+            </div>
+            <div class="mt-4 pt-3 border-t border-slate-200/80 flex items-center gap-2 text-[11px] text-brand-coral font-semibold">
+              <span class="w-2 h-2 rounded-full bg-brand-coral animate-ping"></span>
+              Autonomous Telemetry Engine Active
+            </div>
+          </div>
+
+          <!-- Establishment -->
+          <div class="liquid-glass rounded-3xl p-6 sm:p-7 flex flex-col justify-between">
+            <div>
+              <div class="flex items-center gap-2 mb-3">
+                <div class="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold text-sm">
+                  🏛
+                </div>
+                <h3 class="text-base font-bold text-slate-900">Establishment &amp; Clinical Heritage</h3>
+              </div>
+              <p class="text-xs text-slate-600 leading-relaxed">
+                <strong>Established in 2021 in Berlin, Germany</strong>, LYNX Cardio Hospitals &amp; Care Berlin originated as an interdisciplinary clinical center for non-invasive hemodynamics and European biomedical computing researchers.
+              </p>
+              <p class="text-xs text-slate-600 leading-relaxed mt-2.5">
+                Over the past half-decade, our clinical trials have processed over 250,000 continuous patient telemetry hours, calibrating mathematical surrogate models for the Left Anterior Descending (LAD), Left Circumflex (LCX), and Right Coronary Artery (RCA).
+              </p>
+            </div>
+            <div class="mt-4 pt-3 border-t border-slate-200/80 flex items-center justify-between text-[11px] text-slate-500">
+              <span>Founded: <strong>2021 (Berlin, Germany)</strong></span>
+              <span class="text-emerald-700 font-bold">5+ Years Clinical Research</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Official Company Contact Details -->
+        <div class="liquid-glass rounded-3xl p-6 sm:p-7">
+          <div class="flex items-center gap-2 mb-4">
+            <div class="w-8 h-8 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold text-sm">
+              📍
+            </div>
+            <h3 class="text-base font-bold text-slate-900">Headquarters &amp; Direct Contact Information</h3>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
+            <!-- Phone -->
+            <div class="p-4 rounded-2xl bg-white border border-slate-200 flex flex-col justify-between">
+              <div>
+                <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Phone Number</span>
+                <p class="text-base font-extrabold text-slate-900 mt-1">1234567890</p>
+                <p class="text-[11px] text-slate-500 mt-0.5">24/7 International Clinical Dispatch Line</p>
+              </div>
+              <a href="tel:1234567890" class="mt-3 text-brand-coral font-bold text-[11px] hover:underline flex items-center gap-1">
+                Call Headquarters →
+              </a>
+            </div>
+
+            <!-- Email -->
+            <div class="p-4 rounded-2xl bg-white border border-slate-200 flex flex-col justify-between">
+              <div>
+                <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Company Mail</span>
+                <p class="text-sm font-extrabold text-slate-900 mt-1 break-all">Lynx@cardiovison.gmail.com</p>
+                <p class="text-[11px] text-slate-500 mt-0.5">Medical Inquiries &amp; Patient Registry</p>
+              </div>
+              <a href="mailto:Lynx@cardiovison.gmail.com" class="mt-3 text-brand-coral font-bold text-[11px] hover:underline flex items-center gap-1">
+                Send Email →
+              </a>
+            </div>
+
+            <!-- Address -->
+            <div class="p-4 rounded-2xl bg-white border border-slate-200 flex flex-col justify-between">
+              <div>
+                <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Company Address</span>
+                <p class="text-xs font-bold text-slate-900 mt-1 leading-snug">
+                  2nd Street, 5090, LYNX Co., Lynx Cardio Hospitals, Berlin, GERMANY - 10115
+                </p>
+                <p class="text-[11px] text-slate-500 mt-0.5">Central Clinical Hospital &amp; AI Research Campus</p>
+              </div>
+              <span class="mt-3 text-slate-400 font-semibold text-[11px]">
+                EU Central Clinical Hub
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Privacy Policy & Terms and Conditions -->
+        <div class="liquid-glass rounded-3xl p-6 sm:p-7 space-y-4">
+          <div class="flex items-center gap-2 mb-2">
+            <div class="w-8 h-8 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center font-bold text-sm">
+              🛡
+            </div>
+            <h3 class="text-base font-bold text-slate-900">Privacy Policy, Data Governance &amp; Terms of Service</h3>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs text-slate-600 leading-relaxed">
+            <div class="p-4 rounded-2xl bg-white/80 border border-slate-200">
+              <h4 class="font-bold text-slate-900 text-xs mb-1.5">1. Biometric Data Protection &amp; GDPR Compliance</h4>
+              <p>
+                All continuous ECG, pulse, blood pressure, and demographic values collected via the CardioTag Sensor or synchronized through Google Fit / Apple Health are protected under <strong>GDPR Article 9</strong> (Special Category Health Data) and international HIPAA equivalents. End-to-end 256-bit AES encryption is enforced during transmission and at rest. Data is strictly processed for the authenticated patient and is never monetized or shared with third-party advertisers.
+              </p>
+            </div>
+
+            <div class="p-4 rounded-2xl bg-white/80 border border-slate-200">
+              <h4 class="font-bold text-slate-900 text-xs mb-1.5">2. Terms of Clinical Decision Support</h4>
+              <p>
+                CardioVision AI predictions and 3D coronary visualizations are designed exclusively for <strong>clinical decision support, risk triage, and educational exploration</strong>. Predictions do not constitute emergency medical advice nor do they replace invasive coronary angiography, fractional flow reserve (FFR), or computed tomography coronary angiography (CTCA). Patients experiencing acute chest pain or myocardial infarction symptoms must immediately dial emergency medical services.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Copyrights & Intellectual Property -->
+        <div class="p-5 rounded-2xl liquid-pill text-center text-xs text-slate-500 border border-slate-200">
+          <p class="font-bold text-slate-800 text-sm">
+            © 2021 – 2026 LYNX Cardio Hospitals &amp; Care Berlin. All Rights Reserved.
+          </p>
+          <p class="text-[11px] text-slate-500 mt-1">
+            CardioVision AI™, CardioTag™, and the 3D Coronary Risk Explorer are registered trademarks of LYNX Cardio Hospitals &amp; Care Berlin (Berlin, Germany). Unauthorized reproduction, reverse engineering of model weights, or commercial distribution of this clinical interface without explicit written consent is strictly prohibited.
+          </p>
+        </div>
+
+      </div>
+    </div>
+
   </div>
   <!-- END: MainContainer -->
 
@@ -1050,6 +1229,464 @@
       </div>
     </div>
   </div>
+
+  <!-- Modal 3: User Profile & Authentication Interface -->
+  <div id="profile-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-md">
+    <div class="liquid-glass rounded-3xl max-w-xl w-full shadow-2xl border border-white overflow-hidden max-h-[90vh] flex flex-col">
+      <!-- Modal Header -->
+      <div class="p-5 border-b border-slate-200/80 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-2xl bg-brand-coral-soft text-brand-coral flex items-center justify-center font-bold text-base">
+            👤
+          </div>
+          <div>
+            <h3 class="text-base font-extrabold text-slate-900">User Profile &amp; Account Portal</h3>
+            <p class="text-[11px] text-slate-500">Manage patient demographics, wearable link, and backend credentials</p>
+          </div>
+        </div>
+        <button id="profile-modal-close" class="text-slate-400 hover:text-slate-700 text-lg font-bold">✕</button>
+      </div>
+
+      <!-- Profile Tabs -->
+      <div class="px-5 pt-3 flex gap-2 border-b border-slate-200/80 bg-white/40 text-xs">
+        <button id="tab-btn-edit-profile" class="px-4 py-2 font-bold text-brand-coral border-b-2 border-brand-coral transition">Edit Profile</button>
+        <button id="tab-btn-auth-login" class="px-4 py-2 font-medium text-slate-500 hover:text-slate-800 transition">Switch Account / Login</button>
+      </div>
+
+      <!-- Modal Body (Scrollable) -->
+      <div class="p-5 overflow-y-auto flex-1 space-y-4">
+        
+        <!-- Tab Content 1: Edit Profile Form -->
+        <div id="profile-tab-edit">
+          <form id="profile-edit-form" class="space-y-3">
+            <!-- Profile Photo Upload & Files Card -->
+            <div class="p-3.5 bg-gradient-to-r from-slate-50 to-orange-50/30 rounded-2xl border border-slate-200 space-y-2.5 shadow-xs">
+              <div class="flex items-center justify-between">
+                <label class="block text-[11px] font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5">
+                  <svg class="w-3.5 h-3.5 text-brand-coral" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                  Profile Photo &amp; Avatar
+                </label>
+                <span id="photo-storage-status" class="text-[10px] text-emerald-600 font-semibold bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                  📁 Saved to Backend Files
+                </span>
+              </div>
+
+              <div class="flex items-start sm:items-center gap-3.5">
+                <!-- Avatar Preview with Click-to-Upload overlay -->
+                <div class="relative group cursor-pointer flex-shrink-0" id="avatar-preview-trigger" title="Click to upload profile photo from your files">
+                  <div class="w-16 h-16 rounded-full overflow-hidden border-2 border-white shadow-md bg-slate-100 flex items-center justify-center">
+                    <img id="form-avatar-preview" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB9eLEf_IPmakKeGwiXjImBaRjBDAoe9gt1FS967W6Dnqp0LSgGYOUOnaSm71uZzEdbic2vARTl8Pmmq1t6Nr09oOmREutsGodYspMN3nwRVlzPKelSud_ydsMXN2Jx-hUiUJcWF3fVW_mzSLl_jQZpEjvUsvH0Zz-31kzoORzM0KydUf0uxa2kaPLEvMmwQRONXxhgR7VbrNhs9CRmAi31fdoyXHKobyWnBSN28Q0PPStEs1lbHYXngA" class="w-full h-full object-cover">
+                  </div>
+                  <div class="absolute inset-0 bg-slate-900/60 rounded-full opacity-0 group-hover:opacity-100 flex flex-col items-center justify-center text-white transition-opacity text-[9px] font-bold">
+                    <svg class="w-4 h-4 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                    <span>Upload</span>
+                  </div>
+                </div>
+
+                <!-- Upload Actions and Drag Drop Zone -->
+                <div class="flex-1 min-w-0 space-y-2">
+                  <div class="flex flex-wrap items-center gap-2">
+                    <!-- Hidden File Input -->
+                    <input type="file" id="prof-avatar-file-input" accept="image/png, image/jpeg, image/jpg, image/webp, image/gif, image/svg+xml" class="hidden">
+                    
+                    <!-- Primary Upload from Files Button -->
+                    <button type="button" id="btn-upload-avatar-file" class="px-3 py-1.5 rounded-xl bg-gradient-to-r from-brand-coral to-rose-500 hover:from-rose-500 hover:to-rose-600 text-white font-bold text-xs shadow-sm transition flex items-center gap-1.5 cursor-pointer">
+                      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
+                      <span>Upload Profile Photo from Files</span>
+                    </button>
+
+                    <!-- Toggle Web URL Option -->
+                    <button type="button" id="btn-toggle-url-input" class="px-2.5 py-1.5 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-600 font-semibold text-[11px] transition cursor-pointer">
+                      Use URL
+                    </button>
+                  </div>
+
+                  <!-- Dropzone hint & selected file feedback -->
+                  <div id="avatar-drop-zone" class="p-2 border border-dashed border-slate-300 rounded-xl bg-white/70 text-center transition hover:border-brand-coral cursor-pointer">
+                    <p id="avatar-file-name-display" class="text-[11px] text-slate-500 font-medium truncate">
+                      Drop an image file here or <span class="text-brand-coral font-bold underline">choose from your files</span> (PNG, JPG, WebP)
+                    </p>
+                  </div>
+
+                  <!-- Direct URL field (collapsible) -->
+                  <div id="avatar-url-container" class="hidden">
+                    <input type="text" id="prof-avatar" class="w-full text-xs py-1.5 px-2.5 rounded-xl border-slate-200 bg-white focus:ring-brand-coral text-slate-700" placeholder="Paste image web URL: https://...">
+                  </div>
+                </div>
+              </div>
+
+              <!-- Uploaded Files Shelf (Persisted in data/uploads/) -->
+              <div id="uploaded-photos-shelf" class="pt-2 border-t border-slate-200/60 hidden">
+                <div class="flex items-center justify-between text-[10px] text-slate-400 mb-1.5">
+                  <span class="font-bold text-slate-600 uppercase flex items-center gap-1">
+                    <span>🗂️</span> My Uploaded Photos (Backend Files)
+                  </span>
+                  <span id="uploaded-photos-count" class="text-slate-400">0 photos</span>
+                </div>
+                <div id="uploaded-photos-list" class="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-thin">
+                  <!-- Dynamic thumbnails -->
+                </div>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+              <div>
+                <label class="block text-[10px] font-bold text-slate-500 mb-1">Full Legal Name</label>
+                <input type="text" id="prof-name" class="w-full text-xs py-2 px-3 rounded-xl border-slate-200 bg-white focus:ring-brand-coral" required>
+              </div>
+              <div>
+                <label class="block text-[10px] font-bold text-slate-500 mb-1">Navbar Display Name</label>
+                <input type="text" id="prof-display-name" class="w-full text-xs py-2 px-3 rounded-xl border-slate-200 bg-white focus:ring-brand-coral" required>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+              <div>
+                <label class="block text-[10px] font-bold text-slate-500 mb-1">Email Address</label>
+                <input type="email" id="prof-email" class="w-full text-xs py-2 px-3 rounded-xl border-slate-200 bg-white focus:ring-brand-coral" required>
+              </div>
+              <div>
+                <label class="block text-[10px] font-bold text-slate-500 mb-1">Phone Number</label>
+                <input type="text" id="prof-phone" class="w-full text-xs py-2 px-3 rounded-xl border-slate-200 bg-white focus:ring-brand-coral">
+              </div>
+            </div>
+
+            <div class="grid grid-cols-3 gap-3 text-xs">
+              <div>
+                <label class="block text-[10px] font-bold text-slate-500 mb-1">Age</label>
+                <input type="number" id="prof-age" min="18" max="110" class="w-full text-xs py-2 px-3 rounded-xl border-slate-200 bg-white focus:ring-brand-coral">
+              </div>
+              <div>
+                <label class="block text-[10px] font-bold text-slate-500 mb-1">Gender</label>
+                <select id="prof-gender" class="w-full text-xs py-2 px-2.5 rounded-xl border-slate-200 bg-white focus:ring-brand-coral">
+                  <option value="Female">Female</option>
+                  <option value="Male">Male</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-[10px] font-bold text-slate-500 mb-1">Blood Type</label>
+                <input type="text" id="prof-blood" class="w-full text-xs py-2 px-3 rounded-xl border-slate-200 bg-white focus:ring-brand-coral" placeholder="A+">
+              </div>
+            </div>
+
+            <div class="text-xs">
+              <label class="block text-[10px] font-bold text-slate-500 mb-1">Emergency Contact (Name &amp; Phone)</label>
+              <input type="text" id="prof-emergency" class="w-full text-xs py-2 px-3 rounded-xl border-slate-200 bg-white focus:ring-brand-coral">
+            </div>
+
+            <div class="p-3 bg-white/70 rounded-2xl border border-slate-200 text-xs flex items-center justify-between">
+              <div>
+                <span class="block text-[10px] font-bold text-slate-500 uppercase">Wearable Sensor Pairing</span>
+                <input type="text" id="prof-wearable-id" class="text-xs font-semibold text-slate-800 bg-transparent border-none p-0 focus:ring-0 mt-0.5" value="CardioTag Sensor #CT-8921">
+              </div>
+              <label class="flex items-center gap-2 cursor-pointer text-xs font-bold text-emerald-700">
+                <input type="checkbox" id="prof-wearable-active" checked class="rounded text-brand-coral focus:ring-brand-coral w-4 h-4"> Active
+              </label>
+            </div>
+
+            <div class="text-xs">
+              <label class="block text-[10px] font-bold text-slate-500 mb-1">Medical History &amp; Clinical Notes</label>
+              <textarea id="prof-notes" rows="2" class="w-full text-xs p-2.5 rounded-xl border-slate-200 bg-white focus:ring-brand-coral" placeholder="Known conditions, allergies, or prior interventions..."></textarea>
+            </div>
+
+            <div class="pt-2 space-y-2">
+              <button type="submit" id="save-profile-btn" class="w-full py-3 rounded-2xl bg-gradient-to-r from-brand-coral to-rose-500 hover:from-rose-500 hover:to-rose-600 text-white font-bold text-xs shadow-md shadow-brand-coral/30 transition flex items-center justify-center gap-2">
+                <span>Save the Profile Details</span>
+              </button>
+
+              <button type="button" id="prof-download-pdf-btn" class="w-full py-2.5 rounded-2xl bg-white border border-brand-coral/40 hover:bg-orange-50/60 text-brand-coral font-bold text-xs shadow-xs transition flex items-center justify-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+                <span>Download Biometric Log (PDF)</span>
+              </button>
+            </div>
+
+            <div class="flex items-center justify-between text-[10px] text-slate-400 px-1 pt-1">
+              <span>Backend Process: <strong class="text-emerald-600">Saved in data/accounts/</strong></span>
+              <span id="prof-last-updated" class="text-slate-400">Synced to server</span>
+            </div>
+          </form>
+        </div>
+
+        <!-- Tab Content 2: Auth Login & Preset Switcher -->
+        <div id="profile-tab-login" class="hidden space-y-4">
+
+          <!-- Connected Accounts & OAuth Redirect Section -->
+          <div class="p-4 bg-white/90 rounded-2xl border border-slate-200 shadow-sm space-y-3">
+            <div class="flex items-center justify-between">
+              <h4 class="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                <span>🔐</span>
+                <span>Connect &amp; Authorize Other Accounts</span>
+              </h4>
+              <span class="text-[10px] bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded-full font-semibold border border-emerald-200">
+                Direct OAuth Redirect
+              </span>
+            </div>
+            <p class="text-[11px] text-slate-500">
+              Select an account below to redirect directly to the authorization portal. Your account details, biometric logs, and diagnostic reports will be saved in your backend process.
+            </p>
+
+            <div class="space-y-2">
+              <!-- Login with Google -->
+              <button type="button" class="oauth-login-btn w-full p-2.5 rounded-xl border border-slate-200 hover:border-blue-400 bg-white hover:bg-blue-50/40 text-left transition flex items-center justify-between group shadow-xs" data-provider="google">
+                <div class="flex items-center gap-3">
+                  <div class="w-8 h-8 rounded-lg bg-white border border-slate-200 shadow-xs flex items-center justify-center flex-shrink-0">
+                    <svg class="w-4 h-4" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/></svg>
+                  </div>
+                  <div>
+                    <span class="text-xs font-bold text-slate-800 block group-hover:text-blue-600 transition">Login with Google</span>
+                    <span class="text-[10px] text-slate-400">OAuth 2.0 Single Sign-On · Account details saved in backend</span>
+                  </div>
+                </div>
+                <span class="text-[11px] font-semibold text-blue-600 group-hover:translate-x-0.5 transition flex items-center gap-1">
+                  Authorize <span class="text-xs">↗</span>
+                </span>
+              </button>
+
+              <!-- Login with Google Fit -->
+              <button type="button" class="oauth-login-btn w-full p-2.5 rounded-xl border border-slate-200 hover:border-emerald-400 bg-white hover:bg-emerald-50/40 text-left transition flex items-center justify-between group shadow-xs" data-provider="google_fit">
+                <div class="flex items-center gap-3">
+                  <div class="w-8 h-8 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-600 shadow-xs flex items-center justify-center flex-shrink-0 font-bold">
+                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+                  </div>
+                  <div>
+                    <span class="text-xs font-bold text-slate-800 block group-hover:text-emerald-600 transition">Login with Google Fit</span>
+                    <span class="text-[10px] text-slate-400">Sync Google Fit Wearable &amp; Cardiac Telemetry · Saved in backend</span>
+                  </div>
+                </div>
+                <span class="text-[11px] font-semibold text-emerald-600 group-hover:translate-x-0.5 transition flex items-center gap-1">
+                  Authorize <span class="text-xs">↗</span>
+                </span>
+              </button>
+
+              <!-- Login with Apple Account -->
+              <button type="button" class="oauth-login-btn w-full p-2.5 rounded-xl border border-slate-200 hover:border-slate-800 bg-white hover:bg-slate-50 text-left transition flex items-center justify-between group shadow-xs" data-provider="apple">
+                <div class="flex items-center gap-3">
+                  <div class="w-8 h-8 rounded-lg bg-slate-900 text-white shadow-xs flex items-center justify-center flex-shrink-0">
+                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 6.42c.67-.82 1.13-1.96.99-3.1-.97.04-2.14.65-2.82 1.44-.6.69-1.12 1.83-.98 2.94 1.08.08 2.15-.55 2.81-1.28"/></svg>
+                  </div>
+                  <div>
+                    <span class="text-xs font-bold text-slate-800 block group-hover:text-slate-900 transition">Login with Apple Account</span>
+                    <span class="text-[10px] text-slate-400">Sign in with Apple ID · Biometric FaceID / TouchID Passkey</span>
+                  </div>
+                </div>
+                <span class="text-[11px] font-semibold text-slate-800 group-hover:translate-x-0.5 transition flex items-center gap-1">
+                  Authorize <span class="text-xs">↗</span>
+                </span>
+              </button>
+
+              <!-- Connect with Apple Fitness+ -->
+              <button type="button" class="oauth-login-btn w-full p-2.5 rounded-xl border border-slate-200 hover:border-pink-400 bg-white hover:bg-pink-50/40 text-left transition flex items-center justify-between group shadow-xs" data-provider="apple_fitness">
+                <div class="flex items-center gap-3">
+                  <div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-pink-500 via-rose-500 to-amber-400 text-white shadow-xs flex items-center justify-center flex-shrink-0">
+                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></svg>
+                  </div>
+                  <div>
+                    <span class="text-xs font-bold text-slate-800 block group-hover:text-pink-600 transition">Connect with Apple Fitness+</span>
+                    <span class="text-[10px] text-slate-400">Apple Watch Activity &amp; Live Cardio Rings · Saved in backend</span>
+                  </div>
+                </div>
+                <span class="text-[11px] font-semibold text-pink-600 group-hover:translate-x-0.5 transition flex items-center gap-1">
+                  Connect <span class="text-xs">↗</span>
+                </span>
+              </button>
+
+              <!-- Login with Microsoft Account -->
+              <button type="button" class="oauth-login-btn w-full p-2.5 rounded-xl border border-slate-200 hover:border-sky-400 bg-white hover:bg-sky-50/40 text-left transition flex items-center justify-between group shadow-xs" data-provider="microsoft">
+                <div class="flex items-center gap-3">
+                  <div class="w-8 h-8 rounded-lg bg-white border border-slate-200 shadow-xs flex items-center justify-center flex-shrink-0">
+                    <svg class="w-4 h-4" viewBox="0 0 21 21"><rect x="1" y="1" width="9" height="9" fill="#f25022"/><rect x="11" y="1" width="9" height="9" fill="#7fba00"/><rect x="1" y="11" width="9" height="9" fill="#00a4ef"/><rect x="11" y="11" width="9" height="9" fill="#ffb900"/></svg>
+                  </div>
+                  <div>
+                    <span class="text-xs font-bold text-slate-800 block group-hover:text-sky-600 transition">Login with Microsoft Account</span>
+                    <span class="text-[10px] text-slate-400">Azure Entra ID &amp; Microsoft Cloud for Healthcare SSO</span>
+                  </div>
+                </div>
+                <span class="text-[11px] font-semibold text-sky-600 group-hover:translate-x-0.5 transition flex items-center gap-1">
+                  Authorize <span class="text-xs">↗</span>
+                </span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Quick Switch Presets -->
+          <div class="p-4 bg-white/80 rounded-2xl border border-slate-200">
+            <h4 class="text-xs font-bold text-slate-800 mb-2">Quick Switch Clinical Profiles</h4>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+              <button type="button" class="preset-login-btn p-2.5 rounded-xl border border-slate-200 hover:border-brand-coral text-left transition hover:bg-orange-50/50" data-preset="sarah">
+                <div class="flex items-center gap-2 mb-1">
+                  <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                  <span class="text-xs font-bold text-slate-900">Sarah C.</span>
+                </div>
+                <p class="text-[10px] text-slate-400">Patient · Age 59 (Low Risk)</p>
+              </button>
+
+              <button type="button" class="preset-login-btn p-2.5 rounded-xl border border-slate-200 hover:border-brand-coral text-left transition hover:bg-orange-50/50" data-preset="marcus">
+                <div class="flex items-center gap-2 mb-1">
+                  <span class="w-2 h-2 rounded-full bg-amber-500"></span>
+                  <span class="text-xs font-bold text-slate-900">Marcus V.</span>
+                </div>
+                <p class="text-[10px] text-slate-400">Patient · Age 64 (Moderate)</p>
+              </button>
+
+              <button type="button" class="preset-login-btn p-2.5 rounded-xl border border-slate-200 hover:border-brand-coral text-left transition hover:bg-orange-50/50" data-preset="dr_alina">
+                <div class="flex items-center gap-2 mb-1">
+                  <span class="w-2 h-2 rounded-full bg-blue-500"></span>
+                  <span class="text-xs font-bold text-slate-900">Dr. Alina B.</span>
+                </div>
+                <p class="text-[10px] text-slate-400">Cardiologist (Staff View)</p>
+              </button>
+            </div>
+          </div>
+
+          <!-- Email Password Sign In Form -->
+          <form id="custom-login-form" class="p-4 bg-white/80 rounded-2xl border border-slate-200 space-y-3">
+            <h4 class="text-xs font-bold text-slate-800">Login with Clinical Credentials</h4>
+            <div>
+              <label class="block text-[10px] font-bold text-slate-500 mb-1">User Email Address</label>
+              <input type="email" id="login-email" class="w-full text-xs py-2 px-3 rounded-xl border-slate-200 bg-white focus:ring-brand-coral" placeholder="name@institution.com" required>
+            </div>
+            <div>
+              <label class="block text-[10px] font-bold text-slate-500 mb-1">Password</label>
+              <input type="password" id="login-password" class="w-full text-xs py-2 px-3 rounded-xl border-slate-200 bg-white focus:ring-brand-coral" placeholder="••••••••••••" value="CardioSecure123">
+            </div>
+            <button type="submit" class="w-full py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs shadow-md transition">
+              Sign In to CardioVision Account
+            </button>
+          </form>
+
+          <div class="flex items-center justify-between text-xs text-slate-400 px-1 pt-1">
+            <span>Session: <strong id="session-status-badge" class="text-emerald-600 font-semibold">Active &amp; Persisted</strong></span>
+            <button id="logout-btn" type="button" class="text-red-600 hover:underline font-bold text-[11px] flex items-center gap-1">
+              <span>🚪</span>
+              <span>Logout Session</span>
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal 4: Comprehensive Medical Diagnostic Report Viewer -->
+  <div id="medical-report-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-md">
+    <div class="liquid-glass rounded-3xl max-w-3xl w-full shadow-2xl border border-white overflow-hidden max-h-[92vh] flex flex-col">
+      <!-- Report Header -->
+      <div class="p-5 border-b border-slate-200/80 flex items-center justify-between bg-white/60">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-2xl bg-brand-coral-soft text-brand-coral flex items-center justify-center font-bold text-base">
+            📋
+          </div>
+          <div>
+            <h3 class="text-base font-extrabold text-slate-900">Official Clinical Biometric &amp; Hemodynamic Report</h3>
+            <p class="text-[11px] text-slate-500">LYNX Cardio Hospitals &amp; Care Berlin · Electronic Health Record (EHR)</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-2">
+          <button id="modal-download-pdf-btn" class="px-3.5 py-1.5 rounded-xl bg-brand-coral text-white font-bold text-xs shadow-md shadow-brand-coral/30 hover:bg-brand-coral-light transition flex items-center gap-1.5">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+            Download PDF
+          </button>
+          <button id="medical-report-modal-close" class="text-slate-400 hover:text-slate-700 text-lg font-bold px-2">✕</button>
+        </div>
+      </div>
+
+      <!-- Printable Document Canvas Preview -->
+      <div id="printable-report-content" class="p-6 overflow-y-auto flex-1 bg-white text-slate-800 space-y-5 text-xs font-sans">
+        
+        <!-- Header Info -->
+        <div class="flex justify-between items-start pb-4 border-b-2 border-slate-900">
+          <div>
+            <h1 class="text-xl font-black text-slate-900 tracking-tight">LYNX CARDIO HOSPITALS &amp; CARE BERLIN</h1>
+            <p class="text-[11px] font-semibold text-brand-coral">Center for Advanced Non-Invasive Coronary Diagnostics</p>
+            <p class="text-[10px] text-slate-500 mt-0.5">2nd Street, 5090, Berlin, GERMANY - 10115 · Tel: 1234567890 · Lynx@cardiovison.gmail.com</p>
+          </div>
+          <div class="text-right">
+            <span class="inline-block px-2.5 py-0.5 rounded text-[10px] font-bold bg-slate-100 text-slate-800 border border-slate-200">DOCUMENT ID: EHR-2026-CT98</span>
+            <p class="text-[10px] text-slate-400 mt-1">Generated: <span id="rep-date"></span></p>
+          </div>
+        </div>
+
+        <!-- Patient Demographics Box -->
+        <div class="grid grid-cols-4 gap-3 p-3 bg-slate-50 rounded-xl border border-slate-200 text-[11px]">
+          <div><span class="text-slate-400 block text-[9px] uppercase font-bold">Patient Name</span><strong id="rep-patient-name" class="text-slate-900">Sarah Connor</strong></div>
+          <div><span class="text-slate-400 block text-[9px] uppercase font-bold">Patient ID / Age / Gender</span><span id="rep-patient-meta">USR-88219 · 59y / F</span></div>
+          <div><span class="text-slate-400 block text-[9px] uppercase font-bold">Wearable Telemetry</span><span id="rep-sensor-id">CardioTag Sensor #CT-8921</span></div>
+          <div><span class="text-slate-400 block text-[9px] uppercase font-bold">Blood Pressure / Resting HR</span><span id="rep-vitals">122/78 mmHg · 78 BPM</span></div>
+        </div>
+
+        <!-- Hemodynamic & CAD Assessment Summary -->
+        <div>
+          <h3 class="font-bold text-slate-900 text-xs uppercase tracking-wide pb-1 border-b border-slate-200 mb-2">1. Coronary Artery Stenosis Risk Assessment (ML Model Output)</h3>
+          <div class="grid grid-cols-4 gap-2 text-center">
+            <div class="p-3 bg-slate-50 rounded-lg border border-slate-200">
+              <span class="text-[10px] font-bold text-slate-500">Overall CAD Likelihood</span>
+              <p id="rep-cad-prob" class="text-lg font-black text-brand-coral mt-1">11.4%</p>
+              <p class="text-[9px] text-emerald-600 font-semibold">Low Stenosis Risk</p>
+            </div>
+            <div class="p-3 bg-slate-50 rounded-lg border border-slate-200">
+              <span class="text-[10px] font-bold text-slate-500">LAD Stenosis Risk</span>
+              <p id="rep-lad-prob" class="text-lg font-black text-slate-800 mt-1">8.2%</p>
+              <p class="text-[9px] text-slate-500">Patent perfusion</p>
+            </div>
+            <div class="p-3 bg-slate-50 rounded-lg border border-slate-200">
+              <span class="text-[10px] font-bold text-slate-500">LCX Stenosis Risk</span>
+              <p id="rep-lcx-prob" class="text-lg font-black text-slate-800 mt-1">12.1%</p>
+              <p class="text-[9px] text-slate-500">Normal lumen</p>
+            </div>
+            <div class="p-3 bg-slate-50 rounded-lg border border-slate-200">
+              <span class="text-[10px] font-bold text-slate-500">RCA Stenosis Risk</span>
+              <p id="rep-rca-prob" class="text-lg font-black text-slate-800 mt-1">9.5%</p>
+              <p class="text-[9px] text-slate-500">Normal run-off</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Clinical Biomarkers Table -->
+        <div>
+          <h3 class="font-bold text-slate-900 text-xs uppercase tracking-wide pb-1 border-b border-slate-200 mb-2">2. Physiological Biomarkers &amp; Lab Parameters</h3>
+          <table class="w-full text-[11px] border border-slate-200 rounded">
+            <thead class="bg-slate-100 text-slate-700 font-bold">
+              <tr>
+                <th class="p-2 text-left">Parameter</th>
+                <th class="p-2 text-left">Recorded Value</th>
+                <th class="p-2 text-left">Reference Population</th>
+                <th class="p-2 text-left">Evaluation</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100">
+              <tr><td class="p-2 font-medium">Resting Systolic/Diastolic BP</td><td class="p-2 font-bold" id="rep-bp-val">122 mmHg</td><td class="p-2 text-slate-500">120-135 mmHg</td><td class="p-2 text-emerald-600 font-semibold">Normal Sinus Rhythm</td></tr>
+              <tr><td class="p-2 font-medium">Pulse Rate (BPM)</td><td class="p-2 font-bold">78 BPM</td><td class="p-2 text-slate-500">60-90 BPM</td><td class="p-2 text-emerald-600 font-semibold">Eucardic</td></tr>
+              <tr><td class="p-2 font-medium">Blood Glucose / FBS</td><td class="p-2 font-bold">106 mg/dL</td><td class="p-2 text-slate-500">70-110 mg/dL</td><td class="p-2 text-emerald-600 font-semibold">Optimal Homeostasis</td></tr>
+              <tr><td class="p-2 font-medium">SpO2 Oxygen Saturation</td><td class="p-2 font-bold">97%</td><td class="p-2 text-slate-500">95-100%</td><td class="p-2 text-emerald-600 font-semibold">Normal Arterial O2</td></tr>
+              <tr><td class="p-2 font-medium">Left Ventricular EF (Echo Proxy)</td><td class="p-2 font-bold">64%</td><td class="p-2 text-slate-500">≥55%</td><td class="p-2 text-emerald-600 font-semibold">Preserved Ejection</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Attending Physician Signoff -->
+        <div class="pt-4 border-t border-slate-200 flex justify-between items-end">
+          <div>
+            <p class="font-bold text-slate-900 text-xs">Attending Physician Sign-Off:</p>
+            <p class="text-[11px] text-slate-600">Dr. Alina Bhart, MD, FACC</p>
+            <p class="text-[10px] text-slate-400">Head of Non-Invasive Hemodynamics · LYNX Cardio Hospitals &amp; Care Berlin</p>
+          </div>
+          <div class="text-right">
+            <div class="font-serif italic text-base text-slate-700 font-bold mb-1">Alina Bhart, M.D.</div>
+            <div class="h-0.5 w-36 bg-slate-400 ml-auto"></div>
+            <span class="text-[9px] text-slate-400">Electronic Verification Hash #9A82-LYNX</span>
+          </div>
+        </div>
+
+        <!-- Disclaimer Footer -->
+        <p class="text-[9px] text-slate-400 pt-2 border-t border-slate-100 leading-tight">
+          NOTICE: This report is compiled by CardioVision AI (LYNX Cardio Hospitals &amp; Care Berlin, Berlin, Germany). Validated under clinical protocol Z-Alizadeh Sani schema. Phone: 1234567890 | Email: Lynx@cardiovison.gmail.com | Address: 2nd Street, 5090, LYNX Cardio Hospitals &amp; Care Berlin, GERMANY - 10115.
+        </p>
+
+      </div>
+    </div>
+  </div>
+
 
   <!-- Toast Notification Container -->
   <div id="toast-container" class="fixed bottom-6 right-6 z-50 flex flex-col gap-2 pointer-events-none"></div>

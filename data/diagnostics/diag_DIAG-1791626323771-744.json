@@ -1,0 +1,52 @@
+{
+  "diagnosticId": "DIAG-1791626323771-744",
+  "backendPath": "data/diagnostics/diag_DIAG-1791626323771-744.json",
+  "timestamp": "2026-10-10T09:58:43.771Z",
+  "patientId": "USR-GOOG-8819",
+  "patientName": "Ashirbad Biswal",
+  "features": {},
+  "results": {
+    "source": "synthetic",
+    "disclaimer": "Decision-support / educational use only. Predictions are statistical estimates and are NOT a substitute for formal diagnostic imaging (e.g. coronary angiography or CT angiography) or clinical judgement.",
+    "warnings": [],
+    "predictions": {
+      "CAD": {
+        "label": "Overall CAD",
+        "probability": 0.7005671424739729,
+        "level": "high",
+        "positive": true,
+        "model": "Random Forest",
+        "prevalence": 0.7557755775577558,
+        "test_auc": 0.9188405797101449
+      },
+      "LAD": {
+        "label": "LAD",
+        "probability": 0.46257015465625045,
+        "level": "moderate",
+        "positive": false,
+        "model": "Random Forest",
+        "prevalence": 0.5082508250825083,
+        "test_auc": 0.9021505376344086
+      },
+      "LCX": {
+        "label": "LCX",
+        "probability": 0.320821300824607,
+        "level": "low",
+        "positive": false,
+        "model": "Random Forest",
+        "prevalence": 0.37293729372937295,
+        "test_auc": 0.6281464530892449
+      },
+      "RCA": {
+        "label": "RCA",
+        "probability": 0.34298953732650117,
+        "level": "moderate",
+        "positive": false,
+        "model": "Random Forest",
+        "prevalence": 0.3927392739273927,
+        "test_auc": 0.6385135135135136
+      }
+    },
+    "explanation": {}
+  }
+}

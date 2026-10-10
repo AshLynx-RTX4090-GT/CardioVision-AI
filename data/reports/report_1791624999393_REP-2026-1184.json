@@ -1,0 +1,41 @@
+{
+  "reportId": "REP-2026-1184",
+  "filename": "report_1791624999393_REP-2026-1184.json",
+  "backendPath": "data/reports/report_1791624999393_REP-2026-1184.json",
+  "hospital": "LYNX Cardio Hospitals & Care Berlin",
+  "hospitalAddress": "2nd Street, 5090, Berlin, GERMANY - 10115",
+  "hospitalContact": "Tel: 1234567890 | Lynx@cardiovison.gmail.com",
+  "savedAt": "2026-10-10T09:36:39.393Z",
+  "patient": {
+    "id": "USR-GOOG-8819",
+    "accountKey": "google",
+    "provider": "Google Account",
+    "name": "Ashirbad Biswal",
+    "displayName": "Ashirbad B.",
+    "email": "ashirbadbiswal82791@gmail.com",
+    "age": 38,
+    "gender": "Male",
+    "phone": "+1 (555) 999-8877",
+    "emergencyContact": "Family Contact (+1 650-555-0199)",
+    "bloodType": "O+",
+    "wearableId": "Google WearOS Cardiac Sensor #GW-7712",
+    "wearableActive": true,
+    "medicalNotes": "Updated medical history notes from patient portal.",
+    "avatarUrl": "https://lh3.googleusercontent.com/aida-public/AB6AXuA7yZrqxXgX0Q-iX3R8qj17eJ37M0-P_wQn2l7hK_RjK7nZ6lK-kM8b_q=s96-c",
+    "createdAt": "2026-10-10T09:36:07.636Z",
+    "updatedAt": "2026-10-10T09:36:32.543Z"
+  },
+  "vitals": {
+    "bp": "122/78 mmHg",
+    "hr": "78 BPM",
+    "spo2": "97%"
+  },
+  "predictions": {},
+  "physicianSignoff": {
+    "physician": "Dr. Alina Bhart, MD, FACC",
+    "title": "Head of Non-Invasive Hemodynamics · LYNX Cardio Hospitals & Care Berlin",
+    "seal": "VERIFIED EHR SEAL #9A82-LYNX",
+    "timestamp": "2026-10-10T09:36:39.393Z"
+  },
+  "notes": "Routine checkup test report"
+}

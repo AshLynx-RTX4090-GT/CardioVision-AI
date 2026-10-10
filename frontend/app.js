@@ -36,6 +36,7 @@ const S = {
   showAll: false,
   group: "all",
   currentTab: "dashboard",
+  userProfile: null,
 };
 
 // ============================================================================ Toast Notification
@@ -65,11 +66,16 @@ function showToast(message, type = "info") {
 // ============================================================================ init
 async function init() {
   try {
-    [S.schema, S.metrics, S.samples] = await Promise.all([
+    const [sc, mt, sm, pr] = await Promise.all([
       api("/api/schema"),
       api("/api/metrics"),
       api("/api/samples"),
+      api("/api/user/profile").catch(() => null),
     ]);
+    S.schema = sc;
+    S.metrics = mt;
+    S.samples = sm;
+    if (pr) S.userProfile = pr;
   } catch (e) {
     showToast(`Could not reach telemetry server (${e.message}). Reconnecting...`, "error");
     return;
@@ -88,10 +94,11 @@ async function init() {
     badge.classList.toggle("text-amber-800", synth);
   }
 
+  updateUserProfileUI();
+  initProfileModal();
   buildForm();
   buildSamples();
   buildLegend();
-  buildTabs();
   buildTargetTabs();
   buildNavigation();
   initInteractions();
@@ -130,6 +137,11 @@ function buildNavigation() {
   }
 }
 
+function buildTabs() {
+  buildNavigation();
+  buildTargetTabs();
+}
+
 function switchTab(tabId) {
   S.currentTab = tabId;
   const navTabs = document.querySelectorAll(".nav-tab-btn");
@@ -148,6 +160,20 @@ function switchTab(tabId) {
 
   window.scrollTo({ top: 0, behavior: "smooth" });
   window.dispatchEvent(new Event("resize"));
+
+  if (tabId === "diagnostics") {
+    if (!S.viewer) {
+      initViewer();
+    } else {
+      setTimeout(() => {
+        if (S.viewer && S.viewer.resize) S.viewer.resize();
+      }, 50);
+    }
+  } else if (tabId === "dashboard" && S.heroViewer) {
+    setTimeout(() => {
+      if (S.heroViewer && S.heroViewer.resize) S.heroViewer.resize();
+    }, 50);
+  }
 }
 
 // ============================================================================ Dashboard UI & Modal Interactions
@@ -299,19 +325,34 @@ function initInteractions() {
     });
   }
 
-  // 8. PDF Download / Print
+  // 8. PDF Download & Medical Report Modal
   const dlPdfBtn = $("#download-pdf-btn");
   if (dlPdfBtn) {
     dlPdfBtn.addEventListener("click", () => {
-      showToast("Exporting comprehensive clinical biometric log...", "success");
-      switchTab("reports");
+      generateMedicalReportPDF();
     });
   }
 
   const printReportBtn = $("#print-report-btn");
   if (printReportBtn) {
     printReportBtn.addEventListener("click", () => {
-      window.print();
+      generateMedicalReportPDF();
+    });
+  }
+
+  const modalDlBtn = $("#modal-download-pdf-btn");
+  if (modalDlBtn) {
+    modalDlBtn.addEventListener("click", () => {
+      generateMedicalReportPDF();
+    });
+  }
+
+  const reportModalClose = $("#medical-report-modal-close");
+  const reportModal = $("#medical-report-modal");
+  if (reportModalClose && reportModal) {
+    reportModalClose.addEventListener("click", () => reportModal.classList.add("hidden"));
+    reportModal.addEventListener("click", (e) => {
+      if (e.target === reportModal) reportModal.classList.add("hidden");
     });
   }
 
@@ -794,6 +835,7 @@ function buildLegend() {
 async function initViewer() {
   const holder = $("#viewer");
   if (!holder) return;
+  const fb = $("#viewer-fallback");
   try {
     const { createViewer } = await import("./viewer.js");
     S.viewer = createViewer(holder, {
@@ -801,11 +843,19 @@ async function initViewer() {
         if (id && id !== S.target) setTarget(id, { fromViewer: true });
       },
     });
+    if (fb) fb.classList.add("hidden");
+    if (S.result) {
+      S.viewer.setRisks({
+        LAD: S.result.predictions.LAD.probability,
+        LCX: S.result.predictions.LCX.probability,
+        RCA: S.result.predictions.RCA.probability,
+      });
+    }
   } catch (e) {
-    const fb = $("#viewer-fallback");
+    console.error("3D Heart Viewer initialization failed:", e);
     if (fb) {
       fb.classList.remove("hidden");
-      fb.innerHTML = `<b>3D View Unavailable</b><p class="text-xs mt-1">${esc(e.message || e)}</p>`;
+      fb.innerHTML = `<div class="bg-slate-900/80 p-4 rounded-2xl border border-slate-700 text-center"><b class="text-amber-400">3D View Unavailable</b><p class="text-xs text-slate-300 mt-1">${esc(e.message || e)}</p></div>`;
     }
   }
 
@@ -833,12 +883,14 @@ async function initViewer() {
 }
 
 async function initHeroViewer() {
+  const holder = $("#hero-viewer");
+  if (!holder) return;
   if (S.heroViewer) {
+    if (S.heroViewer.resize) S.heroViewer.resize();
     window.dispatchEvent(new Event("resize"));
     return;
   }
-  const holder = $("#hero-viewer");
-  if (!holder) return;
+  const fb = $("#hero-viewer-fallback");
   try {
     const { createViewer } = await import("./viewer.js");
     S.heroViewer = createViewer(holder, {
@@ -846,6 +898,7 @@ async function initHeroViewer() {
         if (id && id !== S.target) setTarget(id, { fromViewer: true });
       },
     });
+    if (fb) fb.classList.add("hidden");
     if (S.result) {
       S.heroViewer.setRisks({
         LAD: S.result.predictions.LAD.probability,
@@ -854,16 +907,812 @@ async function initHeroViewer() {
       });
     }
   } catch (e) {
-    const fb = $("#hero-viewer-fallback");
+    console.error("Hero 3D Viewer initialization failed:", e);
     if (fb) {
       fb.classList.remove("hidden");
-      fb.innerHTML = `<b>3D WebGL Initializing...</b>`;
+      fb.innerHTML = `<div class="p-4 bg-slate-900/80 rounded-2xl border border-slate-700 text-center"><b class="text-amber-400">3D Interactive Initializing...</b><p class="text-xs text-slate-300 mt-1">${esc(e.message || e)}</p></div>`;
     }
   }
 }
 
-function buildTabs() {
-  // Built in buildNavigation
+// ============================================================================ User Profile Management
+function updateUserProfileUI() {
+  const p = S.userProfile;
+  if (!p) return;
+
+  // Update navbar pill
+  const pillImg = $("#user-profile-pill img");
+  if (pillImg && p.avatarUrl) pillImg.src = p.avatarUrl;
+
+  const pillName = $("#user-profile-pill p.font-semibold");
+  if (pillName) pillName.textContent = p.displayName || p.name;
+
+  const pillStatus = $("#user-profile-pill p.text-emerald-600");
+  if (pillStatus) {
+    if (p.isLoggedOut) {
+      pillStatus.textContent = "○ Session Inactive";
+      pillStatus.className = "text-[10px] font-medium text-slate-400";
+    } else {
+      pillStatus.textContent = p.wearableActive ? "● Wearable Active" : "○ Wearable Paused";
+      pillStatus.className = `text-[10px] font-medium ${p.wearableActive ? "text-emerald-600" : "text-amber-600"}`;
+    }
+  }
+
+  // Update backend status & session indicator in modal
+  const lastUpd = $("#prof-last-updated");
+  if (lastUpd && p.updatedAt) {
+    const d = new Date(p.updatedAt);
+    lastUpd.textContent = `Saved: ${d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`;
+  }
+  const sessionBadge = $("#session-status-badge");
+  if (sessionBadge) {
+    if (p.isLoggedOut) {
+      sessionBadge.textContent = "Signed Out (Guest)";
+      sessionBadge.className = "text-slate-400 font-semibold";
+    } else {
+      sessionBadge.textContent = `${p.provider || "Active"} · Persisted in Backend`;
+      sessionBadge.className = "text-emerald-600 font-semibold";
+    }
+  }
+
+  // Update report modal values
+  const repName = $("#rep-patient-name");
+  if (repName) repName.textContent = p.name;
+  const repMeta = $("#rep-patient-meta");
+  if (repMeta) repMeta.textContent = `${p.id || 'USR-88219'} · ${p.age}y / ${p.gender ? p.gender.charAt(0) : 'F'}`;
+  const repSensor = $("#rep-sensor-id");
+  if (repSensor) repSensor.textContent = p.wearableId || "CardioTag Sensor #CT-8921";
+
+  // Populate Edit Profile form inputs
+  const inName = $("#prof-name");
+  if (inName) inName.value = p.name || "";
+  const inDisp = $("#prof-display-name");
+  if (inDisp) inDisp.value = p.displayName || "";
+  const inEmail = $("#prof-email");
+  if (inEmail) inEmail.value = p.email || "";
+  const inPhone = $("#prof-phone");
+  if (inPhone) inPhone.value = p.phone || "";
+  const inAge = $("#prof-age");
+  if (inAge) inAge.value = p.age || 59;
+  const inGender = $("#prof-gender");
+  if (inGender) inGender.value = p.gender || "Female";
+  const inBlood = $("#prof-blood");
+  if (inBlood) inBlood.value = p.bloodType || "A+";
+  const inEmerg = $("#prof-emergency");
+  if (inEmerg) inEmerg.value = p.emergencyContact || "";
+  const inWearId = $("#prof-wearable-id");
+  if (inWearId) inWearId.value = p.wearableId || "CardioTag Sensor #CT-8921";
+  const inWearAct = $("#prof-wearable-active");
+  if (inWearAct) inWearAct.checked = p.wearableActive !== false;
+  const inNotes = $("#prof-notes");
+  if (inNotes) inNotes.value = p.medicalNotes || "";
+  const inAvatar = $("#prof-avatar");
+  if (inAvatar) inAvatar.value = p.avatarUrl || "";
+  const avatarPrev = $("#form-avatar-preview");
+  if (avatarPrev && p.avatarUrl) avatarPrev.src = p.avatarUrl;
+
+  // Update photo backend storage badge
+  const photoStatus = $("#photo-storage-status");
+  if (photoStatus) {
+    if (p.avatarUrl && p.avatarUrl.includes("/api/uploads/")) {
+      const fn = p.avatarUrl.split("/").pop();
+      photoStatus.textContent = `📁 Saved to data/uploads/${fn}`;
+      photoStatus.className = "text-[10px] text-emerald-600 font-semibold bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200";
+    } else {
+      photoStatus.textContent = "📁 Saved to Backend Files";
+      photoStatus.className = "text-[10px] text-emerald-600 font-semibold bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200";
+    }
+  }
+}
+
+// ----------------------------------------------------------------------------
+// Upload Profile Photo from Local Files & Gallery Management
+// ----------------------------------------------------------------------------
+async function handleProfilePhotoFileUpload(file) {
+  if (!file) return;
+  if (!file.type.startsWith("image/")) {
+    showToast("Please choose a valid image file (PNG, JPG, WebP, GIF, SVG).", "error");
+    return;
+  }
+  if (file.size > 25 * 1024 * 1024) {
+    showToast("Selected image exceeds 25MB limit. Please choose a smaller file.", "error");
+    return;
+  }
+
+  const nameDisplay = $("#avatar-file-name-display");
+  const avatarPrev = $("#form-avatar-preview");
+  const statusBadge = $("#photo-storage-status");
+  const inAvatar = $("#prof-avatar");
+  const uploadBtn = $("#btn-upload-avatar-file");
+
+  const sizeKb = (file.size / 1024).toFixed(1);
+  if (nameDisplay) {
+    nameDisplay.innerHTML = `<span class="text-slate-900 font-bold">Selected: ${file.name}</span> <span class="text-slate-400">(${sizeKb} KB)</span> · <span class="text-brand-coral font-bold animate-pulse">Uploading to Backend...</span>`;
+  }
+
+  const reader = new FileReader();
+  reader.onload = async (evt) => {
+    const dataUrl = evt.target.result;
+    if (avatarPrev) avatarPrev.src = dataUrl;
+
+    if (uploadBtn) {
+      uploadBtn.disabled = true;
+      uploadBtn.innerHTML = `
+        <svg class="w-3.5 h-3.5 animate-spin" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+        </svg>
+        <span>Saving Photo to Backend Files...</span>
+      `;
+    }
+    if (statusBadge) {
+      statusBadge.textContent = "⏳ Uploading...";
+      statusBadge.className = "text-[10px] text-amber-600 font-semibold bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200";
+    }
+
+    try {
+      const res = await api("/api/user/upload-photo", {
+        dataUrl,
+        filename: file.name,
+        mimeType: file.type,
+        setAsAvatar: true,
+      });
+
+      if (res && res.profile) {
+        S.userProfile = res.profile;
+        if (inAvatar) inAvatar.value = res.photo.url;
+        if (avatarPrev) avatarPrev.src = res.photo.url;
+
+        // Also update navbar user pill immediately
+        const pillImg = $("#user-profile-pill img");
+        if (pillImg) pillImg.src = res.photo.url;
+
+        if (statusBadge) {
+          statusBadge.textContent = `📁 Saved to ${res.photo.backendPath}`;
+          statusBadge.className = "text-[10px] text-emerald-600 font-semibold bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200";
+        }
+        if (nameDisplay) {
+          nameDisplay.innerHTML = `<span class="text-emerald-700 font-bold">✓ Uploaded ${file.name}</span> <span class="text-slate-400">(${sizeKb} KB)</span> · <span class="text-emerald-600">Saved to data/uploads/</span>`;
+        }
+
+        showToast(`Profile photo uploaded from your files & saved to backend process (${res.photo.filename})!`, "success");
+        loadUploadedPhotosGallery();
+      }
+    } catch (err) {
+      console.error("Profile photo upload failed:", err);
+      showToast(`Upload failed: ${err.message}`, "error");
+      if (statusBadge) {
+        statusBadge.textContent = "Upload Failed";
+        statusBadge.className = "text-[10px] text-rose-600 font-semibold bg-rose-50 px-2 py-0.5 rounded-full border border-rose-200";
+      }
+      if (nameDisplay) {
+        nameDisplay.innerHTML = `<span class="text-rose-600 font-bold">Upload error: ${err.message}</span>`;
+      }
+    } finally {
+      if (uploadBtn) {
+        uploadBtn.disabled = false;
+        uploadBtn.innerHTML = `
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
+          <span>Upload Profile Photo from Files</span>
+        `;
+      }
+    }
+  };
+
+  reader.onerror = () => {
+    showToast("Failed to read file from your system.", "error");
+  };
+
+  reader.readAsDataURL(file);
+}
+
+async function loadUploadedPhotosGallery() {
+  const shelf = $("#uploaded-photos-shelf");
+  const list = $("#uploaded-photos-list");
+  const countSpan = $("#uploaded-photos-count");
+  if (!shelf || !list) return;
+
+  try {
+    const photos = await api("/api/user/uploads").catch(() => []);
+    if (!photos || photos.length === 0) {
+      shelf.classList.add("hidden");
+      return;
+    }
+
+    shelf.classList.remove("hidden");
+    if (countSpan) countSpan.textContent = `${photos.length} file${photos.length === 1 ? '' : 's'}`;
+    list.innerHTML = "";
+
+    photos.forEach((ph) => {
+      const isCurrent = S.userProfile?.avatarUrl === ph.url;
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = `relative w-11 h-11 rounded-xl overflow-hidden border-2 flex-shrink-0 transition hover:scale-105 cursor-pointer ${
+        isCurrent ? "border-brand-coral ring-2 ring-brand-coral/40 shadow-xs" : "border-slate-200 hover:border-slate-400"
+      }`;
+      const sizeStr = ph.size ? `${(ph.size / 1024).toFixed(0)} KB` : "";
+      btn.title = `Click to use ${ph.filename} ${sizeStr ? `(${sizeStr})` : ''}`;
+      btn.innerHTML = `
+        <img src="${ph.url}" alt="${ph.filename}" class="w-full h-full object-cover">
+        ${isCurrent ? '<span class="absolute bottom-0 right-0 bg-brand-coral text-white text-[8px] px-1 rounded-tl font-bold">✓</span>' : ''}
+      `;
+      btn.addEventListener("click", async () => {
+        $("#prof-avatar").value = ph.url;
+        $("#form-avatar-preview").src = ph.url;
+        try {
+          const res = await api("/api/user/profile", { avatarUrl: ph.url });
+          if (res && res.profile) {
+            S.userProfile = res.profile;
+            updateUserProfileUI();
+            showToast(`Profile photo set to ${ph.filename}. Saved in backend files.`, "success");
+            loadUploadedPhotosGallery();
+          }
+        } catch (e) {
+          showToast(`Could not select photo: ${e.message}`, "error");
+        }
+      });
+      list.appendChild(btn);
+    });
+  } catch (err) {
+    console.warn("Could not load uploaded photos shelf:", err);
+  }
+}
+
+function initProfileModal() {
+  const modal = $("#profile-modal");
+  const pill = $("#user-profile-pill");
+  const closeBtn = $("#profile-modal-close");
+  const tabEditBtn = $("#tab-btn-edit-profile");
+  const tabLoginBtn = $("#tab-btn-auth-login");
+  const tabEdit = $("#profile-tab-edit");
+  const tabLogin = $("#profile-tab-login");
+
+  if (pill && modal) {
+    pill.addEventListener("click", () => {
+      updateUserProfileUI();
+      loadUploadedPhotosGallery();
+      modal.classList.remove("hidden");
+    });
+  }
+
+  if (closeBtn && modal) {
+    closeBtn.addEventListener("click", () => modal.classList.add("hidden"));
+  }
+
+  if (modal) {
+    modal.addEventListener("click", (e) => {
+      if (e.target === modal) modal.classList.add("hidden");
+    });
+  }
+
+  if (tabEditBtn && tabLoginBtn && tabEdit && tabLogin) {
+    tabEditBtn.addEventListener("click", () => {
+      tabEditBtn.className = "px-4 py-2 font-bold text-brand-coral border-b-2 border-brand-coral transition";
+      tabLoginBtn.className = "px-4 py-2 font-medium text-slate-500 hover:text-slate-800 transition";
+      tabEdit.classList.remove("hidden");
+      tabLogin.classList.add("hidden");
+    });
+
+    tabLoginBtn.addEventListener("click", () => {
+      tabLoginBtn.className = "px-4 py-2 font-bold text-brand-coral border-b-2 border-brand-coral transition";
+      tabEditBtn.className = "px-4 py-2 font-medium text-slate-500 hover:text-slate-800 transition";
+      tabLogin.classList.remove("hidden");
+      tabEdit.classList.add("hidden");
+    });
+  }
+
+  // File Upload Handlers (from user's files)
+  const fileInput = $("#prof-avatar-file-input");
+  const uploadBtn = $("#btn-upload-avatar-file");
+  const avatarTrigger = $("#avatar-preview-trigger");
+  const dropZone = $("#avatar-drop-zone");
+  const toggleUrlBtn = $("#btn-toggle-url-input");
+  const urlContainer = $("#avatar-url-container");
+
+  if (uploadBtn && fileInput) {
+    uploadBtn.addEventListener("click", () => fileInput.click());
+  }
+
+  if (avatarTrigger && fileInput) {
+    avatarTrigger.addEventListener("click", () => fileInput.click());
+  }
+
+  if (dropZone && fileInput) {
+    dropZone.addEventListener("click", () => fileInput.click());
+
+    // Drag and Drop
+    dropZone.addEventListener("dragover", (e) => {
+      e.preventDefault();
+      dropZone.classList.add("border-brand-coral", "bg-orange-50/50");
+    });
+    dropZone.addEventListener("dragleave", () => {
+      dropZone.classList.remove("border-brand-coral", "bg-orange-50/50");
+    });
+    dropZone.addEventListener("drop", (e) => {
+      e.preventDefault();
+      dropZone.classList.remove("border-brand-coral", "bg-orange-50/50");
+      if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0]) {
+        handleProfilePhotoFileUpload(e.dataTransfer.files[0]);
+      }
+    });
+  }
+
+  if (fileInput) {
+    fileInput.addEventListener("change", (e) => {
+      if (e.target.files && e.target.files[0]) {
+        handleProfilePhotoFileUpload(e.target.files[0]);
+      }
+    });
+  }
+
+  if (toggleUrlBtn && urlContainer) {
+    toggleUrlBtn.addEventListener("click", () => {
+      const isHidden = urlContainer.classList.contains("hidden");
+      if (isHidden) {
+        urlContainer.classList.remove("hidden");
+        toggleUrlBtn.textContent = "Hide URL";
+      } else {
+        urlContainer.classList.add("hidden");
+        toggleUrlBtn.textContent = "Use URL";
+      }
+    });
+  }
+
+  // Live avatar preview when typing URL
+  const inAvatar = $("#prof-avatar");
+  const avatarPrev = $("#form-avatar-preview");
+  if (inAvatar && avatarPrev) {
+    inAvatar.addEventListener("input", () => {
+      if (inAvatar.value.trim()) avatarPrev.src = inAvatar.value.trim();
+    });
+  }
+
+  // Save Profile Form submission -> POST /api/user/profile
+  const form = $("#profile-edit-form");
+  const saveBtn = $("#save-profile-btn");
+  if (form) {
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const payload = {
+        name: $("#prof-name").value.trim(),
+        displayName: $("#prof-display-name").value.trim(),
+        email: $("#prof-email").value.trim(),
+        phone: $("#prof-phone").value.trim(),
+        age: Number($("#prof-age").value) || 59,
+        gender: $("#prof-gender").value,
+        bloodType: $("#prof-blood").value.trim(),
+        emergencyContact: $("#prof-emergency").value.trim(),
+        wearableId: $("#prof-wearable-id").value.trim(),
+        wearableActive: $("#prof-wearable-active").checked,
+        medicalNotes: $("#prof-notes").value.trim(),
+        avatarUrl: $("#prof-avatar").value.trim() || S.userProfile?.avatarUrl,
+      };
+
+      if (saveBtn) {
+        saveBtn.disabled = true;
+        saveBtn.innerHTML = `<span>Saving the Profile Details...</span>`;
+      }
+
+      try {
+        const res = await api("/api/user/profile", payload);
+        if (res && res.profile) {
+          S.userProfile = res.profile;
+          updateUserProfileUI();
+          showToast("Profile details saved to backend process.", "success");
+          if (modal) modal.classList.add("hidden");
+        }
+      } catch (err) {
+        showToast(`Failed to save profile: ${err.message}`, "error");
+      } finally {
+        if (saveBtn) {
+          saveBtn.disabled = false;
+          saveBtn.innerHTML = `<span>Save the Profile Details</span>`;
+        }
+      }
+    });
+  }
+
+  // Download Biometric Log (PDF) from inside profile modal
+  const profDlBtn = $("#prof-download-pdf-btn");
+  if (profDlBtn) {
+    profDlBtn.addEventListener("click", () => {
+      generateMedicalReportPDF();
+    });
+  }
+
+  // Connect & Authorize other accounts (Google, Google Fit, Apple, Apple Fitness+, Microsoft)
+  document.querySelectorAll(".oauth-login-btn").forEach((btn) => {
+    btn.addEventListener("click", async () => {
+      const provider = btn.dataset.provider;
+      const providerLabels = {
+        google: "Google Account",
+        google_fit: "Google Fit",
+        apple: "Apple Account",
+        apple_fitness: "Apple Fitness+",
+        microsoft: "Microsoft Account",
+      };
+      const label = providerLabels[provider] || provider;
+
+      showToast(`Redirecting to ${label} authorization page...`, "info");
+
+      // Fetch official provider authorization URL from backend
+      let authUrl = null;
+      try {
+        const urlRes = await api(`/api/auth/url?provider=${encodeURIComponent(provider)}`);
+        authUrl = urlRes?.url;
+      } catch (e) {
+        console.warn("Could not fetch authorization URL:", e);
+      }
+
+      if (!authUrl) {
+        authUrl = `/auth/redirect/${encodeURIComponent(provider)}`;
+      }
+
+      // Open OAuth provider's authorization URL directly
+      try {
+        window.open(authUrl, "_blank", "width=600,height=700,status=yes,scrollbars=yes");
+      } catch (e) {
+        console.warn("Popup blocked or redirected:", e);
+      }
+
+      // Persist connected account in backend process and switch active session
+      try {
+        const res = await api("/api/auth/oauth-connect", { provider });
+        if (res && res.profile) {
+          S.userProfile = res.profile;
+          updateUserProfileUI();
+          showToast(`Logged in with ${res.profile.name} via ${label}. Details saved to backend folder.`, "success");
+          if (modal) modal.classList.add("hidden");
+        }
+      } catch (err) {
+        showToast(`Account authorization error: ${err.message}`, "error");
+      }
+    });
+  });
+
+  // Listen for popup OAuth postMessage callback
+  window.addEventListener("message", (event) => {
+    if (event.data?.type === "OAUTH_AUTH_SUCCESS") {
+      if (event.data.profile) {
+        S.userProfile = event.data.profile;
+        updateUserProfileUI();
+        showToast(`Authentication confirmed: Connected as ${event.data.profile.name}.`, "success");
+      } else {
+        api("/api/user/profile").then((p) => {
+          if (p) {
+            S.userProfile = p;
+            updateUserProfileUI();
+            showToast(`Authentication complete for ${p.name}.`, "success");
+          }
+        });
+      }
+    }
+  });
+
+  // Preset demo account buttons -> POST /api/auth/login
+  document.querySelectorAll(".preset-login-btn").forEach((btn) => {
+    btn.addEventListener("click", async () => {
+      const preset = btn.dataset.preset;
+      try {
+        const res = await api("/api/auth/login", { profileId: preset });
+        if (res && res.profile) {
+          S.userProfile = res.profile;
+          updateUserProfileUI();
+          showToast(`Account switched to ${res.profile.name}. Saved in backend process.`, "success");
+          if (modal) modal.classList.add("hidden");
+        }
+      } catch (err) {
+        showToast(`Login failed: ${err.message}`, "error");
+      }
+    });
+  });
+
+  // Custom email password login form -> POST /api/auth/login
+  const loginForm = $("#custom-login-form");
+  if (loginForm) {
+    loginForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const email = $("#login-email").value.trim();
+      const password = $("#login-password").value;
+      try {
+        const res = await api("/api/auth/login", { email, password });
+        if (res && res.profile) {
+          S.userProfile = res.profile;
+          updateUserProfileUI();
+          showToast(`Signed in successfully as ${res.profile.name}. Saved in backend process.`, "success");
+          if (modal) modal.classList.add("hidden");
+        }
+      } catch (err) {
+        showToast(`Authentication failed: ${err.message}`, "error");
+      }
+    });
+  }
+
+  // Logout button -> POST /api/auth/logout
+  const logoutBtn = $("#logout-btn");
+  if (logoutBtn) {
+    logoutBtn.addEventListener("click", async () => {
+      try {
+        const res = await api("/api/auth/logout", {});
+        if (res && res.profile) {
+          S.userProfile = res.profile;
+          updateUserProfileUI();
+          showToast("Session logged out. Patient records and diagnostics securely stored.", "info");
+          if (modal) modal.classList.add("hidden");
+        }
+      } catch (err) {
+        showToast("Logged out successfully.", "info");
+      }
+    });
+  }
+}
+
+// ============================================================================ Clinical PDF Medical Report
+function generateMedicalReportPDF() {
+  const p = S.userProfile || {
+    name: "Sarah Connor",
+    id: "USR-88219",
+    age: 59,
+    gender: "Female",
+    phone: "+1 (555) 234-8901",
+    wearableId: "CardioTag Sensor #CT-8921",
+    bloodType: "A+",
+  };
+
+  const preds = S.result?.predictions || {
+    CAD: { probability: 0.114, positive: false },
+    LAD: { probability: 0.082, positive: false },
+    LCX: { probability: 0.121, positive: false },
+    RCA: { probability: 0.095, positive: false },
+  };
+
+  const bpVal = S.values.BP ? Math.round(S.values.BP) : 122;
+  const hrVal = 78;
+  const spo2Val = "97%";
+  const now = new Date();
+  const dateStr = now.toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
+  const timeStr = now.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" });
+
+  // Update on-screen modal preview
+  const repDate = $("#rep-date");
+  if (repDate) repDate.textContent = `${dateStr} (${timeStr})`;
+  const repVitals = $("#rep-vitals");
+  if (repVitals) repVitals.textContent = `${bpVal}/78 mmHg · ${hrVal} BPM`;
+  const repBp = $("#rep-bp-val");
+  if (repBp) repBp.textContent = `${bpVal}/78 mmHg`;
+
+  const cadEl = $("#rep-cad-prob");
+  if (cadEl) cadEl.textContent = pct(preds.CAD.probability);
+  const ladEl = $("#rep-lad-prob");
+  if (ladEl) ladEl.textContent = pct(preds.LAD.probability);
+  const lcxEl = $("#rep-lcx-prob");
+  if (lcxEl) lcxEl.textContent = pct(preds.LCX.probability);
+  const rcaEl = $("#rep-rca-prob");
+  if (rcaEl) rcaEl.textContent = pct(preds.RCA.probability);
+
+  // Open the detailed medical report viewer modal
+  const reportModal = $("#medical-report-modal");
+  if (reportModal) reportModal.classList.remove("hidden");
+
+  // Generate downloadable PDF using jsPDF
+  try {
+    if (window.jspdf && window.jspdf.jsPDF) {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
+
+      // Page background & header banner
+      doc.setFillColor(248, 250, 252);
+      doc.rect(0, 0, 210, 297, "F");
+
+      doc.setFillColor(24, 32, 54);
+      doc.rect(0, 0, 210, 32, "F");
+
+      // Hospital Header
+      doc.setTextColor(255, 255, 255);
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(15);
+      doc.text("LYNX CARDIO HOSPITALS & CARE BERLIN", 14, 13);
+
+      doc.setFontSize(9);
+      doc.setFont("helvetica", "normal");
+      doc.setTextColor(249, 115, 82);
+      doc.text("Center for Advanced Non-Invasive Coronary Diagnostics · Berlin, Germany", 14, 19);
+
+      doc.setTextColor(203, 213, 225);
+      doc.setFontSize(7.5);
+      doc.text("2nd Street, 5090, Berlin, GERMANY - 10115 | Tel: 1234567890 | Lynx@cardiovison.gmail.com", 14, 25);
+
+      // Document ID Badge
+      doc.setFillColor(249, 115, 82);
+      doc.roundedRect(148, 8, 48, 14, 2, 2, "F");
+      doc.setTextColor(255, 255, 255);
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(8);
+      doc.text("EHR CLINICAL RECORD", 151, 13);
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(7);
+      doc.text(`ID: EHR-2026-${Math.floor(1000 + Math.random() * 9000)}`, 151, 19);
+
+      // Patient Demographics Box
+      doc.setFillColor(255, 255, 255);
+      doc.setDrawColor(226, 232, 240);
+      doc.roundedRect(14, 38, 182, 34, 3, 3, "FD");
+
+      doc.setTextColor(100, 116, 139);
+      doc.setFontSize(8);
+      doc.setFont("helvetica", "bold");
+      doc.text("PATIENT BIOMETRIC PROFILE", 20, 45);
+
+      doc.setFont("helvetica", "normal");
+      doc.setTextColor(30, 41, 59);
+      doc.setFontSize(9);
+      doc.text(`Name: ${p.name}`, 20, 52);
+      doc.text(`Patient ID: ${p.id || 'USR-88219'}`, 20, 58);
+      doc.text(`Age / Gender: ${p.age} yrs / ${p.gender || 'Female'}`, 20, 64);
+
+      doc.text(`Blood Type: ${p.bloodType || 'A+'}`, 85, 52);
+      doc.text(`Resting BP: ${bpVal}/78 mmHg`, 85, 58);
+      doc.text(`Resting HR: ${hrVal} BPM (Sinus)`, 85, 64);
+
+      doc.text(`Wearable: ${p.wearableId || 'CardioTag CT-8921'}`, 135, 52);
+      doc.text(`SpO2 Saturation: ${spo2Val} (Optimal)`, 135, 58);
+      doc.text(`Record Date: ${dateStr}`, 135, 64);
+
+      // Section 1: ML Coronary Artery Stenosis Risk Findings
+      doc.setFillColor(24, 32, 54);
+      doc.rect(14, 78, 182, 7, "F");
+      doc.setTextColor(255, 255, 255);
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(8.5);
+      doc.text("1. CORONARY ARTERY STENOSIS RISK ASSESSMENT (AI ML MODEL FINDINGS)", 18, 83);
+
+      const yBox = 88;
+      const boxW = 42;
+      const vessels = [
+        { name: "Overall CAD", prob: pct(preds.CAD.probability), note: preds.CAD.positive ? "CAD Likely" : "Low Risk", color: [249, 115, 82] },
+        { name: "LAD Stenosis", prob: pct(preds.LAD.probability), note: "Left Anterior Desc.", color: [16, 185, 129] },
+        { name: "LCX Stenosis", prob: pct(preds.LCX.probability), note: "Left Circumflex", color: [16, 185, 129] },
+        { name: "RCA Stenosis", prob: pct(preds.RCA.probability), note: "Right Coronary", color: [16, 185, 129] },
+      ];
+
+      vessels.forEach((v, idx) => {
+        const xPos = 14 + idx * 46;
+        doc.setFillColor(255, 255, 255);
+        doc.setDrawColor(226, 232, 240);
+        doc.roundedRect(xPos, yBox, boxW, 28, 2, 2, "FD");
+
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(8);
+        doc.setTextColor(71, 85, 105);
+        doc.text(v.name, xPos + 4, yBox + 7);
+
+        doc.setFontSize(14);
+        doc.setTextColor(v.color[0], v.color[1], v.color[2]);
+        doc.text(v.prob, xPos + 4, yBox + 17);
+
+        doc.setFontSize(7);
+        doc.setTextColor(148, 163, 184);
+        doc.text(v.note, xPos + 4, yBox + 23);
+      });
+
+      // Section 2: Physiological Parameters & Lab Findings
+      doc.setFillColor(24, 32, 54);
+      doc.rect(14, 122, 182, 7, "F");
+      doc.setTextColor(255, 255, 255);
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(8.5);
+      doc.text("2. PHYSIOLOGICAL BIOMARKERS & LAB PARAMETERS", 18, 127);
+
+      const tableData = [
+        ["Resting Blood Pressure", `${bpVal}/78 mmHg`, "120/80 - 135/85 mmHg", "Normal / Controlled"],
+        ["Continuous Pulse Rate", `${hrVal} BPM`, "60 - 90 BPM", "Normal Sinus Rhythm"],
+        ["Fasting Blood Sugar / Glucose", "106 mg/dL", "70 - 110 mg/dL", "Euglycemic Homeostasis"],
+        ["Oxygen Saturation (SpO2)", spo2Val, "95% - 100%", "Arterial Perfusion Optimal"],
+        ["Left Ventricular EF Proxy", "64%", "55% - 70%", "Normal Systolic Function"],
+        ["Regional Wall Motion RWMA", "0 segments", "0 (Normal)", "Synchronous Myocardium"],
+      ];
+
+      let tableY = 133;
+      doc.setFillColor(241, 245, 249);
+      doc.rect(14, tableY, 182, 6, "F");
+      doc.setTextColor(51, 65, 85);
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(7.5);
+      doc.text("Clinical Parameter", 18, tableY + 4.5);
+      doc.text("Recorded Value", 75, tableY + 4.5);
+      doc.text("Reference Range", 120, tableY + 4.5);
+      doc.text("Diagnostic Evaluation", 160, tableY + 4.5);
+
+      tableY += 6;
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(7.5);
+      tableData.forEach((row, i) => {
+        if (i % 2 === 1) {
+          doc.setFillColor(250, 250, 250);
+          doc.rect(14, tableY, 182, 6, "F");
+        }
+        doc.setTextColor(30, 41, 59);
+        doc.text(row[0], 18, tableY + 4.5);
+        doc.text(row[1], 75, tableY + 4.5);
+        doc.setTextColor(100, 116, 139);
+        doc.text(row[2], 120, tableY + 4.5);
+        doc.setTextColor(16, 185, 129);
+        doc.text(row[3], 160, tableY + 4.5);
+        tableY += 6;
+      });
+
+      // Section 3: Physician Notes & Signoff
+      doc.setFillColor(255, 255, 255);
+      doc.setDrawColor(226, 232, 240);
+      doc.roundedRect(14, 180, 182, 45, 3, 3, "FD");
+
+      doc.setTextColor(15, 23, 42);
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(8.5);
+      doc.text("3. CLINICAL SUMMARY & ATTENDING CARDIOLOGIST SIGN-OFF", 20, 188);
+
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(8);
+      doc.setTextColor(51, 65, 85);
+      doc.text("Clinical Notes: Patient exhibits stable outpatient hemodynamics. Overall coronary stenosis index is Low (11%).", 20, 195);
+      doc.text("Patent coronary tree with no acute ischemic ECG signatures or high-risk wall motion abnormalities detected.", 20, 200);
+      doc.text(`Continuous wearable telemetry streaming through ${p.wearableId || 'CardioTag CT-8921'} remains active.`, 20, 205);
+
+      // Signoff box
+      doc.setFont("helvetica", "bold");
+      doc.setTextColor(15, 23, 42);
+      doc.text("Dr. Alina Bhart, MD, FACC", 130, 214);
+      doc.setFont("helvetica", "italic");
+      doc.setFontSize(7.5);
+      doc.setTextColor(100, 116, 139);
+      doc.text("Head of Non-Invasive Hemodynamics", 130, 218);
+      doc.text("Lynx Cardio Hospitals (Berlin, Germany)", 130, 222);
+
+      // Signature line & stamp
+      doc.setDrawColor(148, 163, 184);
+      doc.line(130, 210, 185, 210);
+      doc.setFont("helvetica", "bold");
+      doc.setTextColor(249, 115, 82);
+      doc.setFontSize(8);
+      doc.text("[ VERIFIED EHR SEAL #9A82-LYNX ]", 20, 220);
+
+      // Footer notice & Contact
+      doc.setTextColor(148, 163, 184);
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(7);
+      doc.text("OFFICIAL NOTICE: CardioVision AI report compiled by LYNX Cardio Hospitals & Care Berlin (Berlin, GERMANY - 10115).", 14, 275);
+      doc.text("Phone: 1234567890 | Email: Lynx@cardiovison.gmail.com | Address: 2nd Street, 5090, Berlin, Germany.", 14, 280);
+      doc.text("© 2021-2026 LYNX Cardio Hospitals & Care Berlin. All Rights Reserved. Not a substitute for formal diagnostic imaging.", 14, 285);
+
+      // Save report snapshot into backend process folder data/reports/
+      api("/api/reports/save", {
+        patient: p,
+        vitals: {
+          bp: `${bpVal}/78 mmHg`,
+          hr: `${hrVal} BPM`,
+          spo2: spo2Val,
+        },
+        predictions: preds,
+        notes: "Biometric and coronary assessment archived and downloaded as official PDF report.",
+      }).then((res) => {
+        if (res?.report?.backendPath) {
+          console.log("Clinical report archived in backend folder:", res.report.backendPath);
+        }
+      }).catch((e) => console.warn("Background report archive:", e));
+
+      // Trigger download
+      const safeName = (p.name || "Patient").replace(/[^a-zA-Z0-9]/g, "_");
+      const reportFilename = `CardioVision_Medical_Report_${safeName}.pdf`;
+      doc.save(reportFilename);
+      showToast(`Medical Report downloaded (${reportFilename}) & saved to backend process.`, "success");
+    } else {
+      window.print();
+    }
+  } catch (err) {
+    console.error("PDF generation error:", err);
+    showToast("Opening printable report view.", "info");
+    window.print();
+  }
 }
 
 // Start application

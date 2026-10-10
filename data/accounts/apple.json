@@ -1,0 +1,19 @@
+{
+  "id": "USR-APPL-7731",
+  "accountKey": "apple",
+  "provider": "Apple Account",
+  "name": "Sarah Connor (Apple ID)",
+  "displayName": "Sarah (Apple)",
+  "email": "sarah.connor@icloud.com",
+  "age": 59,
+  "gender": "Female",
+  "phone": "+1 (408) 996-1010",
+  "emergencyContact": "John Connor (+1 555-019-2831)",
+  "bloodType": "A+",
+  "wearableId": "Apple Watch Series 10 #AW-5521",
+  "wearableActive": true,
+  "medicalNotes": "Sign in with Apple verified with biometric FaceID passkey.",
+  "avatarUrl": "https://lh3.googleusercontent.com/aida-public/AB6AXuB9eLEf_IPmakKeGwiXjImBaRjBDAoe9gt1FS967W6Dnqp0LSgGYOUOnaSm71uZzEdbic2vARTl8Pmmq1t6Nr09oOmREutsGodYspMN3nwRVlzPKelSud_ydsMXN2Jx-hUiUJcWF3fVW_mzSLl_jQZpEjvUsvH0Zz-31kzoORzM0KydUf0uxa2kaPLEvMmwQRONXxhgR7VbrNhs9CRmAi31fdoyXHKobyWnBSN28Q0PPStEs1lbHYXngA",
+  "createdAt": "2026-10-10T09:36:07.636Z",
+  "updatedAt": "2026-10-10T09:36:32.525Z"
+}

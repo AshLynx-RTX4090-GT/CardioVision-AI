@@ -14,7 +14,12 @@ const VIEWS = {
 const ease = (t) => (t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2);
 
 export function createViewer(container, { onSelect = () => {}, onHover = () => {} } = {}) {
-  const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: "low-power" });
+  const renderer = new THREE.WebGLRenderer({
+    antialias: true,
+    alpha: true,
+    powerPreference: "low-power",
+    preserveDrawingBuffer: true,
+  });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
   renderer.setClearColor(0x000000, 0);
   container.appendChild(renderer.domElement);
@@ -171,18 +176,28 @@ export function createViewer(container, { onSelect = () => {}, onHover = () => {
   });
 
   // ---------------------------------------------------------------- resize + render
+  let lastW = 0, lastH = 0;
   function resize() {
-    const w = container.clientWidth || 600, h = container.clientHeight || 500;
+    const w = container.clientWidth || 600;
+    const h = container.clientHeight || 500;
+    if (w === lastW && h === lastH) return;
+    lastW = w;
+    lastH = h;
     renderer.setSize(w, h, false);
-    renderer.domElement.style.width = w + "px";
-    renderer.domElement.style.height = h + "px";
-    camera.aspect = w / h;
+    camera.aspect = w / (h || 1);
     camera.updateProjectionMatrix();
     invalidate();
   }
-  const ro = new ResizeObserver(resize);
+
+  let resizeRaf = null;
+  const ro = new ResizeObserver(() => {
+    if (resizeRaf) cancelAnimationFrame(resizeRaf);
+    resizeRaf = requestAnimationFrame(() => {
+      resize();
+    });
+  });
   ro.observe(container);
-  resize();
+  requestAnimationFrame(resize);
   controls.addEventListener("change", invalidate);
 
   const tmp = new THREE.Vector3(), centre = new THREE.Vector3();
@@ -220,19 +235,60 @@ export function createViewer(container, { onSelect = () => {}, onHover = () => {
   raf = requestAnimationFrame(frame);
   applyAppearance();
 
+  function selectNone() {
+    select(null, { fly: false });
+  }
+
+  const handleWindowResize = () => {
+    resize();
+  };
+  window.addEventListener("resize", handleWindowResize);
+
   // ---------------------------------------------------------------- public API
   return {
-    setRisks(r) { risks = { ...r }; applyAppearance(); },
+    setRisks(r) {
+      risks = { ...r };
+      applyAppearance();
+    },
     select,
-    get selected() { return selected; },
-    setView, focusVessel,
-    resetView() { selectNone(); setView("anterior"); },
-    setLayer(name, on) { const l = anatomy.layers[name]; if (l) { l.visible = on; invalidate(); } },
-    setHeartOpacity(v) { anatomy.heartMat.opacity = v; invalidate(); },
-    setAutoRotate(on) { controls.autoRotate = on; invalidate(); },
-    snapshot() { render(); return renderer.domElement.toDataURL("image/png"); },
-    dispose() { cancelAnimationFrame(raf); ro.disconnect(); controls.dispose(); renderer.dispose(); },
+    get selected() {
+      return selected;
+    },
+    setView,
+    focusVessel,
+    selectNone,
+    resetView() {
+      selectNone();
+      setView("anterior");
+    },
+    setLayer(name, on) {
+      const l = anatomy.layers[name];
+      if (l) {
+        l.visible = on;
+        invalidate();
+      }
+    },
+    setHeartOpacity(v) {
+      anatomy.heartMat.opacity = v;
+      invalidate();
+    },
+    setAutoRotate(on) {
+      controls.autoRotate = on;
+      invalidate();
+    },
+    snapshot() {
+      render();
+      return renderer.domElement.toDataURL("image/png");
+    },
+    resize,
+    invalidate,
+    dispose() {
+      if (resizeRaf) cancelAnimationFrame(resizeRaf);
+      cancelAnimationFrame(raf);
+      window.removeEventListener("resize", handleWindowResize);
+      ro.disconnect();
+      controls.dispose();
+      renderer.dispose();
+    },
   };
-
-  function selectNone() { select(null, { fly: false }); }
 }

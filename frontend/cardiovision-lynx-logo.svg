@@ -1,0 +1,194 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600" width="100%" height="100%">
+  <defs>
+    <!-- Gradients -->
+    <linearGradient id="bgGlow" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#f8fafc"/>
+    </linearGradient>
+
+    <linearGradient id="wingGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38bdf8"/>
+      <stop offset="40%" stop-color="#0ea5e9"/>
+      <stop offset="100%" stop-color="#0284c7"/>
+    </linearGradient>
+
+    <linearGradient id="wingShadow" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#0369a1"/>
+      <stop offset="100%" stop-color="#075985"/>
+    </linearGradient>
+
+    <linearGradient id="heartGrad" x1="20%" y1="10%" x2="80%" y2="90%">
+      <stop offset="0%" stop-color="#f43f5e"/>
+      <stop offset="25%" stop-color="#e11d48"/>
+      <stop offset="65%" stop-color="#be123c"/>
+      <stop offset="100%" stop-color="#881337"/>
+    </linearGradient>
+
+    <linearGradient id="aortaGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fb7185"/>
+      <stop offset="60%" stop-color="#e11d48"/>
+      <stop offset="100%" stop-color="#9f1239"/>
+    </linearGradient>
+
+    <linearGradient id="staffGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#38bdf8"/>
+      <stop offset="50%" stop-color="#0ea5e9"/>
+      <stop offset="100%" stop-color="#0369a1"/>
+    </linearGradient>
+
+    <linearGradient id="silverSnake" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="35%" stop-color="#e2e8f0"/>
+      <stop offset="70%" stop-color="#cbd5e1"/>
+      <stop offset="100%" stop-color="#94a3b8"/>
+    </linearGradient>
+
+    <linearGradient id="stethTube" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#475569"/>
+      <stop offset="50%" stop-color="#1e293b"/>
+      <stop offset="100%" stop-color="#0f172a"/>
+    </linearGradient>
+
+    <linearGradient id="metalChrome" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="40%" stop-color="#f1f5f9"/>
+      <stop offset="70%" stop-color="#cbd5e1"/>
+      <stop offset="100%" stop-color="#94a3b8"/>
+    </linearGradient>
+
+    <!-- Filters -->
+    <filter id="softGlow" x="-15%" y="-15%" width="130%" height="130%">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#0f172a" flood-opacity="0.12"/>
+    </filter>
+
+    <filter id="featherShadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="#0369a1" flood-opacity="0.25"/>
+    </filter>
+  </defs>
+
+  <g filter="url(#softGlow)">
+    <!-- ==================== WINGS (Behind Heart) ==================== -->
+    <!-- Left Wing -->
+    <g id="left-wing">
+      <!-- Outer Top Feathers -->
+      <path d="M 230 185 C 190 125, 120 100, 50 115 C 75 145, 115 170, 160 185 Z" fill="url(#wingGrad)" filter="url(#featherShadow)"/>
+      <path d="M 220 195 C 175 145, 110 135, 65 155 C 90 180, 130 200, 175 210 Z" fill="url(#wingGrad)"/>
+      <path d="M 210 210 C 160 170, 105 165, 80 190 C 105 210, 145 225, 185 230 Z" fill="url(#wingGrad)"/>
+      <path d="M 205 225 C 150 195, 110 200, 95 225 C 120 240, 160 250, 195 248 Z" fill="url(#wingGrad)"/>
+      <!-- Lower Tier Feathers -->
+      <path d="M 215 240 C 170 220, 135 230, 120 255 C 145 265, 180 268, 210 262 Z" fill="url(#wingShadow)" opacity="0.9"/>
+      <path d="M 225 255 C 185 245, 160 260, 150 280 C 175 285, 205 282, 225 272 Z" fill="url(#wingShadow)" opacity="0.8"/>
+    </g>
+
+    <!-- Right Wing -->
+    <g id="right-wing">
+      <!-- Outer Top Feathers -->
+      <path d="M 370 185 C 410 125, 480 100, 550 115 C 525 145, 485 170, 440 185 Z" fill="url(#wingGrad)" filter="url(#featherShadow)"/>
+      <path d="M 380 195 C 425 145, 490 135, 535 155 C 510 180, 470 200, 425 210 Z" fill="url(#wingGrad)"/>
+      <path d="M 390 210 C 440 170, 495 165, 520 190 C 495 210, 455 225, 415 230 Z" fill="url(#wingGrad)"/>
+      <path d="M 395 225 C 450 195, 490 200, 505 225 C 480 240, 440 250, 405 248 Z" fill="url(#wingGrad)"/>
+      <!-- Lower Tier Feathers -->
+      <path d="M 385 240 C 430 220, 465 230, 480 255 C 455 265, 420 268, 390 262 Z" fill="url(#wingShadow)" opacity="0.9"/>
+      <path d="M 375 255 C 415 245, 440 260, 450 280 C 425 285, 395 282, 375 272 Z" fill="url(#wingShadow)" opacity="0.8"/>
+    </g>
+
+    <!-- ==================== ANATOMICAL HEART ==================== -->
+    <g id="anatomical-heart">
+      <!-- Aorta & Great Vessels (Top Arch) -->
+      <path d="M 280 110 C 275 80, 310 70, 335 85 C 350 95, 345 130, 330 145 Z" fill="url(#aortaGrad)"/>
+      <path d="M 255 125 C 245 95, 275 90, 290 105 C 300 115, 295 140, 280 150 Z" fill="url(#aortaGrad)"/>
+      <path d="M 335 110 C 355 90, 385 105, 380 135 C 375 155, 355 160, 340 150 Z" fill="url(#aortaGrad)"/>
+
+      <!-- Heart Body (Muscle Muscle Ventricles & Atria) -->
+      <path d="M 300 145 
+               C 240 130, 195 185, 205 260 
+               C 215 330, 270 395, 305 445 
+               C 340 395, 395 330, 400 255 
+               C 405 185, 360 130, 300 145 Z" 
+            fill="url(#heartGrad)"/>
+
+      <!-- Coronary Vessels / Texture lines -->
+      <path d="M 265 170 Q 240 230 250 290 Q 255 330 280 370" fill="none" stroke="#ffe4e6" stroke-width="2" opacity="0.6"/>
+      <path d="M 275 230 Q 300 260 305 310" fill="none" stroke="#ffe4e6" stroke-width="1.5" opacity="0.5"/>
+      <path d="M 335 170 Q 360 220 355 280 Q 350 330 325 380" fill="none" stroke="#ffe4e6" stroke-width="2" opacity="0.6"/>
+      <path d="M 320 220 Q 300 250 295 290" fill="none" stroke="#ffe4e6" stroke-width="1.5" opacity="0.5"/>
+    </g>
+
+    <!-- ==================== CADUCEUS STAFF & WINGS ==================== -->
+    <!-- Central Staff -->
+    <g id="caduceus-staff">
+      <!-- Round Finial Orb Top -->
+      <circle cx="300" cy="95" r="18" fill="url(#staffGrad)"/>
+      <circle cx="295" cy="90" r="6" fill="#ffffff" opacity="0.6"/>
+      <!-- Staff Shaft -->
+      <rect x="294" y="110" width="12" height="340" rx="6" fill="url(#staffGrad)"/>
+    </g>
+
+    <!-- Silver Snakes (Twined) -->
+    <g id="caduceus-snakes">
+      <!-- Snake Left/Right Coils -->
+      <!-- Top heads -->
+      <path d="M 285 195 C 260 190, 245 175, 260 160 C 275 145, 290 160, 298 175 Z" fill="url(#silverSnake)"/>
+      <circle cx="265" cy="165" r="2.5" fill="#1e293b"/>
+      <path d="M 315 195 C 340 190, 355 175, 340 160 C 325 145, 310 160, 302 175 Z" fill="url(#silverSnake)"/>
+      <circle cx="335" cy="165" r="2.5" fill="#1e293b"/>
+
+      <!-- Upper Loop -->
+      <path d="M 298 175 C 270 215, 230 220, 230 265 C 230 305, 290 315, 300 340 C 310 315, 370 305, 370 265 C 370 220, 330 215, 302 175" 
+            fill="none" stroke="url(#silverSnake)" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
+
+      <!-- Lower Loop -->
+      <path d="M 300 335 C 270 365, 255 380, 275 405 C 290 420, 305 405, 300 390 C 295 405, 310 420, 325 405 C 345 380, 330 365, 300 335" 
+            fill="none" stroke="url(#silverSnake)" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/>
+    </g>
+
+    <!-- ==================== STETHOSCOPE ==================== -->
+    <g id="stethoscope">
+      <!-- Metallic Binaural Earpieces (Top Left) -->
+      <path d="M 215 140 C 195 130, 165 140, 150 170 C 140 195, 145 230, 160 250" 
+            fill="none" stroke="url(#metalChrome)" stroke-width="6" stroke-linecap="round"/>
+      <circle cx="215" cy="140" r="5" fill="#1e293b"/>
+      <circle cx="160" cy="250" r="5" fill="#1e293b"/>
+
+      <!-- Main Rubber Tubing (Looping around heart) -->
+      <path d="M 150 170 
+               C 120 230, 110 320, 150 375 
+               C 185 425, 250 445, 295 420 
+               C 345 395, 375 350, 395 320" 
+            fill="none" stroke="url(#stethTube)" stroke-width="9" stroke-linecap="round"/>
+
+      <!-- Stethoscope Chestpiece (Bell & Diaphragm in bottom right) -->
+      <g transform="translate(395, 320) rotate(-25)">
+        <circle cx="0" cy="0" r="26" fill="url(#metalChrome)"/>
+        <circle cx="0" cy="0" r="22" fill="#e2e8f0"/>
+        <circle cx="0" cy="0" r="18" fill="url(#metalChrome)"/>
+        <circle cx="0" cy="0" r="6" fill="#64748b"/>
+        <!-- Stem -->
+        <rect x="-6" y="-36" width="12" height="16" rx="3" fill="url(#metalChrome)"/>
+      </g>
+    </g>
+  </g>
+
+  <!-- ==================== TYPOGRAPHY (Bottom) ==================== -->
+  <g id="brand-text" text-anchor="middle">
+    <!-- "CardioVision" in elegant cursive script styling -->
+    <text x="300" y="515" 
+          font-family="'Brush Script MT', 'Dancing Script', 'Segoe Script', 'Plus Jakarta Sans', cursive, sans-serif" 
+          font-size="64" 
+          font-weight="bold" 
+          fill="#1e3a8a" 
+          letter-spacing="1">
+      CardioVision
+    </text>
+
+    <!-- "LYNX Cardio Hospitals & Care Berlin" in crisp medical subtitle -->
+    <text x="300" y="555" 
+          font-family="'Plus Jakarta Sans', 'Inter', system-ui, sans-serif" 
+          font-size="21" 
+          font-weight="700" 
+          fill="#1e3a8a" 
+          letter-spacing="1">
+      LYNX Cardio Hospitals &amp; Care Berlin
+    </text>
+  </g>
+</svg>
