@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+cd "$(dirname "$0")/.."
 echo "Starting CardioVision AI..."
 if [ ! -d "node_modules" ]; then
     echo "Installing dependencies..."

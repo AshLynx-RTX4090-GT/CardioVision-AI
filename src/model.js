@@ -3,7 +3,6 @@ import { FEATURES, FEATURE_BY_NAME, FEATURE_NAMES, GROUP_ORDER, ALL_TARGETS, TAR
 const sigmoid = (x) => 1 / (1 + Math.exp(-Math.max(-15, Math.min(15, x))));
 
 // Standardized clinical coefficients for predicting coronary artery disease and vessel stenosis
-// derived from clinical cardiology risk models & the Z-Alizadeh Sani features
 const MODEL_CONFIG = {
   CAD: {
     intercept: 0.85,
@@ -58,7 +57,6 @@ const MODEL_CONFIG = {
       "Typical Chest Pain": 0.95,
       "LowTH Ang": 0.35,
       "Function Class": 0.30,
-      // Anterior wall specific findings
       "St Elevation": 1.15,
       "Q Wave": 0.95,
       "Poor R Progression": 1.05,
@@ -83,7 +81,6 @@ const MODEL_CONFIG = {
       FH: 0.30,
       "Typical Chest Pain": 0.70,
       "Exertional CP": 0.65,
-      // Lateral wall / depression findings
       "St Depression": 0.90,
       Tinversion: 0.95,
       "Region RWMA": 0.50,
@@ -106,7 +103,6 @@ const MODEL_CONFIG = {
       BP: 0.012,
       "Typical Chest Pain": 0.75,
       "LowTH Ang": 0.55,
-      // Inferior wall specific findings
       "Q Wave": 0.85,
       "St Elevation": 0.75,
       "Systolic Murmur": 0.55,
@@ -130,7 +126,7 @@ export function buildRow(features, stats) {
     const n = f.name;
     let v = features[n];
     if (v === undefined || v === null || v === "") {
-      row[n] = null; // missing, will be imputed with median
+      row[n] = null;
       continue;
     }
     const num = Number(v);
@@ -168,7 +164,6 @@ export function predictProbability(target, inputFeatures, stats) {
     const val = inputFeatures[feat] ?? stats[feat]?.median ?? FEATURE_BY_NAME[feat].default;
     const st = stats[feat];
     const med = st ? st.median : FEATURE_BY_NAME[feat].default;
-    // Log-odds contribution relative to median population baseline
     logit += weight * (val - med);
   }
 
@@ -201,7 +196,6 @@ export function computeShapley(target, patientRow, background, stats, nPerm = 32
   const phi = {};
   for (const n of FEATURE_NAMES) phi[n] = 0.0;
 
-  // Impute patient values with cohort median for evaluation
   const x = {};
   for (const n of FEATURE_NAMES) {
     x[n] = patientRow[n] ?? stats[n]?.median ?? FEATURE_BY_NAME[n].default;
@@ -210,7 +204,6 @@ export function computeShapley(target, patientRow, background, stats, nPerm = 32
   const orders = [];
   const bgs = [];
   for (let p = 0; p < nPerm; p++) {
-    // Generate random permutation of indices 0..d-1
     const perm = Array.from({ length: d }, (_, i) => i);
     for (let i = d - 1; i > 0; i--) {
       const j = Math.floor(rng() * (i + 1));
@@ -221,7 +214,6 @@ export function computeShapley(target, patientRow, background, stats, nPerm = 32
 
     orders.push(perm);
     bgs.push(bg);
-    // Antithetic pairing (reversed permutation) cuts variance
     orders.push([...perm].reverse());
     bgs.push(bg);
   }
@@ -256,7 +248,6 @@ export function computeShapley(target, patientRow, background, stats, nPerm = 32
   const baseValue = totalBaseProb / nOrders;
   const fx = totalFinalProb / nOrders;
 
-  // Build contributions
   const contributions = [];
   const groupTot = {};
   for (const g of GROUP_ORDER) groupTot[g] = 0.0;
