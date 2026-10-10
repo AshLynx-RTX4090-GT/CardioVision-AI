@@ -24,11 +24,7 @@
     Visit the CardioVision-AI Website
   </a>
 </div>
-=======
 
-  # 🫀 CardioVision-AI
-
-  <p align="center">
     <strong>3D Interactive Coronary Risk Explorer & Clinical Explainability Platform</strong>
   </p>
 
