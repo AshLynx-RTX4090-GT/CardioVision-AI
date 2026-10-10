@@ -1,32 +1,4 @@
 <div align="center">
-<<<<<<< HEAD
-  <h1>CardioVision-AI</h1>
-  <p><strong>3D Coronary Risk Explorer</strong></p>
-  <p>
-    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg" alt="Python logo" width="72" height="72">
-    <a href="https://aws.amazon.com/certification/certified-solutions-architect-associate/">
-      <img src="https://img.shields.io/badge/AWS-Solutions%20Architect%20Associate-232F3E?logo=amazonaws&logoColor=FF9900" alt="AWS Solutions Architect badge" height="32">
-    </a>
-    <a href="https://cardio-vision-ai-six.vercel.app/">
-      <img src="frontend/cardiovision-lynx-logo.svg" alt="CardioVision badge" height="72">
-    </a>
-  </p>
-</div>
-
-<div align="center">
-  <video controls width="85%" poster="frontend/cardiovision-lynx-logo.svg">
-    <source src="CardioVision%20by%20LYNX.mp4" type="video/mp4">
-    Your browser does not support the video tag.
-  </video>
-</div>
-
-<div align="center" style="margin: 18px 0;">
-  <a href="https://cardio-vision-ai-six.vercel.app/" style="display: inline-block; padding: 12px 22px; border-radius: 10px; color: #ffffff; font-weight: 700; text-decoration: none; background: linear-gradient(90deg, rgb(0, 119, 255), rgb(126, 34, 206), rgb(236, 72, 153)); box-shadow: 0 0 14px rgba(126, 34, 206, 0.55);">
-    Visit the CardioVision-AI Website
-  </a>
-</div>
-=======
-
   # 🫀 CardioVision-AI
 
   <p align="center">
@@ -60,6 +32,10 @@
         <table style="background: #0d1117; border-radius: 9px; padding: 12px 28px; border-collapse: collapse;">
           <tr>
             <td align="center">
+              <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg" alt="Python logo" width="28" height="28" style="vertical-align: middle;" />
+              &nbsp;
+              <img src="https://img.shields.io/badge/Medical-Heart-E63946?style=for-the-badge&logo=heart&logoColor=white" alt="Medical heart logo" height="28" style="vertical-align: middle;" />
+              &nbsp;
               🌐 <strong>Live Application:</strong>&nbsp;
               <a href="https://cardio-vision-ai-six.vercel.app/" target="_blank">
                 <strong>https://cardio-vision-ai-six.vercel.app/</strong>
@@ -121,11 +97,6 @@ It evaluates individual patient parameters against demographic cohorts to projec
 ## 📁 Repository Structure
 
 
-
-
-
-# CardioVision AI – 3D Coronary Risk Explorer
->>>>>>> 7397fbeb2acb7f84118e40e34444c648bb12aff9
 
 CardioVision is an interactive clinical decision-support and educational platform that combines 3D anatomical coronary visualization with machine-learning-based risk estimation and permutation-sampled Shapley (SHAP-style) explainability.
 
