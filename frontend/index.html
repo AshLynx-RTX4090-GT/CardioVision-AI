@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CardioVision – 3D Coronary Risk</title>
+<link rel="stylesheet" href="style.css">
+<!-- Three.js is loaded from a CDN. To run fully offline: `npm i three@0.160.0`, copy node_modules/three to
+     frontend/vendor/three and change the two URLs below to "./vendor/three/build/three.module.js" and
+     "./vendor/three/examples/jsm/". -->
+<script type="importmap">
+{ "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+} }
+</script>
+</head>
+<body>
+<div class="disclaimer-bar" role="alert">
+  <strong>⚠ Clinical safety notice:</strong> predictions are for <b>decision support / educational purposes only</b> and are
+  <b>not a substitute for formal diagnostic imaging</b> (e.g. coronary angiography, CT angiography) or clinical judgement.
+</div>
+
+<header class="topbar">
+  <div class="brand"><span class="logo">♥</span><div><h1>CardioVision</h1><p>3D coronary stenosis risk explorer</p></div></div>
+  <nav class="tabs" role="tablist">
+    <button class="tab active" data-tab="patient" role="tab">Patient &amp; 3D</button>
+    <button class="tab" data-tab="perf" role="tab">Model performance</button>
+  </nav>
+  <div id="source-badge" class="badge">loading…</div>
+</header>
+
+<main id="view-patient" class="layout">
+  <!-- LEFT: patient input -->
+  <aside class="panel input-panel">
+    <div class="panel-head">
+      <h2>Patient data</h2>
+      <div class="row">
+        <select id="sample-select" aria-label="Load example patient"><option value="">Load example…</option></select>
+        <button id="reset-btn" class="btn ghost" type="button">Reset</button>
+      </div>
+    </div>
+    <p class="hint">Edits update the prediction automatically. Blank fields are imputed with the cohort median.</p>
+    <form id="patient-form" autocomplete="off"></form>
+    <button id="predict-btn" class="btn primary" type="button">Run prediction</button>
+  </aside>
+
+  <!-- CENTRE: 3D -->
+  <section class="panel viewer-panel">
+    <div class="viewer-toolbar">
+      <div class="seg" id="view-buttons">
+        <button data-view="anterior">Front</button><button data-view="left">Left</button>
+        <button data-view="posterior">Back</button><button data-view="right">Right</button>
+        <button data-view="superior">Top</button>
+      </div>
+      <div class="seg">
+        <label><input type="checkbox" data-layer="torso" checked> Torso</label>
+        <label><input type="checkbox" data-layer="ribs" checked> Ribs</label>
+        <label><input type="checkbox" data-layer="lungs" checked> Lungs</label>
+        <label><input type="checkbox" id="autorotate"> Auto-rotate</label>
+      </div>
+      <label class="slider">Heart opacity <input type="range" id="heart-opacity" min="0.25" max="1" step="0.05" value="0.92"></label>
+      <button class="btn ghost" id="snap-btn" type="button">Save PNG</button>
+    </div>
+    <div id="viewer" class="viewer">
+      <div id="viewer-fallback" class="viewer-fallback" hidden></div>
+      <div class="viewer-badge">Educational visualization · not diagnostic imaging</div>
+      <div class="viewer-help">Drag = rotate · Scroll = zoom · Right-drag = pan · Click an artery to inspect</div>
+    </div>
+    <div class="legend">
+      <div class="legend-bar" id="legend-bar"></div>
+      <div class="legend-scale"><span>0%</span><span>33%</span><span>66%</span><span>100%</span></div>
+      <p class="legend-note">Artery colour = predicted probability that the vessel has ≥50 % stenosis. It is a <b>patient-level</b> estimate for the whole vessel, not a map of where along the artery a narrowing sits.</p>
+    </div>
+  </section>
+
+  <!-- RIGHT: results -->
+  <section class="panel results-panel">
+    <div id="summary"></div>
+    <div id="warnings"></div>
+    <div class="target-tabs" id="target-tabs" role="tablist"></div>
+    <div id="explain"></div>
+  </section>
+</main>
+
+<main id="view-perf" class="perf" hidden></main>
+
+<footer class="footer">
+  Decision support / educational use only · Not a medical device · Dataset: Z-Alizadeh Sani CAD (UCI) schema ·
+  Explanations: permutation-sampled Shapley values (SHAP-style)
+</footer>
+
+<div id="loading" class="loading" hidden><div class="spinner"></div></div>
+<script type="module" src="app.js"></script>
+</body>
+</html>
