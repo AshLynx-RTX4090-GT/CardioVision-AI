@@ -25,11 +25,6 @@
   </a>
 </div>
 
-<div align="center">
-   <strong>3D Interactive Coronary Risk Explorer & Clinical Explainability Platform</strong>
->>>>>>> 2175ee63d59968c25c681a3a1aa1d12a358b6447
-  </p>
-
   <p align="center">
     <a href="https://www.python.org/">
       <img src="https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python" height="28"/>
