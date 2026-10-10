@@ -10,6 +10,7 @@
     "build": "node -e 'console.log(\"Build complete\")'"
   },
   "dependencies": {
+    "@vercel/speed-insights": "^2.0.0",
     "express": "^4.21.2",
     "three": "^0.160.0"
   }
