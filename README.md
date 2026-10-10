@@ -1,10 +1,4 @@
-<div align="center">
-<<<<<<< HEAD
-  # 🫀 CardioVision-AI
 
-  <p align="center">
-    <strong>3D Interactive Coronary Risk Explorer & Clinical Explainability Platform</strong>
-=======
   <h1>CardioVision-AI</h1>
   <p><strong>3D Coronary Risk Explorer</strong></p>
   <p>
