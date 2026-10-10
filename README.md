@@ -1,8 +1,39 @@
 <div align="center">
+<<<<<<< HEAD
   # 🫀 CardioVision-AI
 
   <p align="center">
     <strong>3D Interactive Coronary Risk Explorer & Clinical Explainability Platform</strong>
+=======
+  <h1>CardioVision-AI</h1>
+  <p><strong>3D Coronary Risk Explorer</strong></p>
+  <p>
+    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg" alt="Python logo" width="72" height="72">
+    <a href="https://aws.amazon.com/certification/certified-solutions-architect-associate/">
+      <img src="https://img.shields.io/badge/AWS-Solutions%20Architect%20Associate-232F3E?logo=amazonaws&logoColor=FF9900" alt="AWS Solutions Architect badge" height="32">
+    </a>
+    <a href="https://cardio-vision-ai-six.vercel.app/">
+      <img src="frontend/cardiovision-lynx-logo.svg" alt="CardioVision badge" height="72">
+    </a>
+  </p>
+</div>
+
+<div align="center">
+  <video controls width="85%" poster="frontend/cardiovision-lynx-logo.svg">
+    <source src="CardioVision%20by%20LYNX.mp4" type="video/mp4">
+    Your browser does not support the video tag.
+  </video>
+</div>
+
+<div align="center" style="margin: 18px 0;">
+  <a href="https://cardio-vision-ai-six.vercel.app/" style="display: inline-block; padding: 12px 22px; border-radius: 10px; color: #ffffff; font-weight: 700; text-decoration: none; background: linear-gradient(90deg, rgb(0, 119, 255), rgb(126, 34, 206), rgb(236, 72, 153)); box-shadow: 0 0 14px rgba(126, 34, 206, 0.55);">
+    Visit the CardioVision-AI Website
+  </a>
+</div>
+
+<div align="center">
+   <strong>3D Interactive Coronary Risk Explorer & Clinical Explainability Platform</strong>
+>>>>>>> 2175ee63d59968c25c681a3a1aa1d12a358b6447
   </p>
 
   <p align="center">
