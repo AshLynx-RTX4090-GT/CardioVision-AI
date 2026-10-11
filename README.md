@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="CardioVision%20by%20LYNX.gif" alt="CardioVision by LYNX" />
+</p>
+
 <div align="center">
   <h1>CardioVision-AI</h1>
   <p><strong>3D Coronary Risk Explorer</strong></p>
