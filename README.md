@@ -208,11 +208,15 @@ The application automatically binds to `0.0.0.0:${PORT:-3000}`.
 
 <h1 align="center">License</h1>
 
-This project is distributed under the terms of the [Apache-2.0 License](LICENSE).
+<p align="center">
+  This project is distributed under the terms of the <a href="LICENSE">Apache-2.0 License</a>.
+</p>
 
-## Disclaimer
+<h2 align="center">⚠️ Disclaimer</h2>
 
-CardioVision-AI is intended for educational, research, and demonstration purposes only. It is not a medical device and does not provide diagnosis, treatment recommendations, or emergency medical advice. Predictions and visualizations must not replace assessment by a qualified healthcare professional. Always consult an appropriately licensed clinician for medical decisions.
+<p align="center">
+  CardioVision-AI is intended for educational, research, and demonstration purposes only. It is not a medical device and does not provide diagnosis, treatment recommendations, or emergency medical advice. Predictions and visualizations must not replace assessment by a qualified healthcare professional. Always consult an appropriately licensed clinician for medical decisions.
+</p>
 
 ## 3D Project Flowchart
 
