@@ -1,10 +1,4 @@
 <div align="center">
-<<<<<<< HEAD
-  # 🫀 CardioVision-AI
-
-  <p align="center">
-    <strong>3D Interactive Coronary Risk Explorer & Clinical Explainability Platform</strong>
-=======
   <h1>CardioVision-AI</h1>
   <p><strong>3D Coronary Risk Explorer</strong></p>
   <p>
@@ -30,11 +24,6 @@
     Visit the CardioVision-AI Website
   </a>
 </div>
-
-<div align="center">
-   <strong>3D Interactive Coronary Risk Explorer & Clinical Explainability Platform</strong>
->>>>>>> 2175ee63d59968c25c681a3a1aa1d12a358b6447
-  </p>
 
   <p align="center">
     <a href="https://www.python.org/">
