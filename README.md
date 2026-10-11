@@ -206,9 +206,9 @@ The application automatically binds to `0.0.0.0:${PORT:-3000}`.
 
 ---
 
-## License
+<h1 align="center">License</h1>
 
-This project is distributed under the terms of the [MIT License](LICENSE).
+This project is distributed under the terms of the [Apache-2.0 License](LICENSE).
 
 ## Disclaimer
 
