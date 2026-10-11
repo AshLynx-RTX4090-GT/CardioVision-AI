@@ -6,10 +6,6 @@
   <h1>CardioVision-AI</h1>
   <p><strong>3D Coronary Risk Explorer</strong></p>
   <p>
-    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg" alt="Python logo" width="72" height="72">
-    <a href="https://aws.amazon.com/certification/certified-solutions-architect-associate/">
-      <img src="https://img.shields.io/badge/AWS-Solutions%20Architect%20Associate-232F3E?logo=amazonaws&logoColor=FF9900" alt="AWS Solutions Architect badge" height="32">
-    </a>
     <a href="https://cardio-vision-ai-six.vercel.app/">
       <img src="frontend/cardiovision-lynx-logo.svg" alt="CardioVision badge" height="72">
     </a>
@@ -29,22 +25,26 @@
   </a>
 </div>
 
-  <p align="center">
-    <a href="https://www.python.org/">
-      <img src="https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python" height="28"/>
-    </a>
-    &nbsp;
-    <a href="https://aws.amazon.com/">
-      <img src="https://img.shields.io/badge/AWS-Solutions%20Architect-FF9900?style=for-the-badge&logo=amazon-aws&logoColor=white" alt="AWS Solutions Architect" height="28"/>
-    </a>
-    &nbsp;
-    <a href="https://cardio-vision-ai-six.vercel.app/">
-      <img src="https://img.shields.io/badge/CardioVision-LYNX%20Co.-00c853?style=for-the-badge&logo=heart&logoColor=white" alt="CardioVision LYNX" height="28"/>
-    </a>
-  </p>
+  <table align="center" style="border-collapse: separate; border-spacing: 10px; border: 1px solid #30363d; border-radius: 12px; padding: 8px 12px; background: #0d1117;">
+    <tr>
+      <td>
+        <a href="https://www.python.org/">
+          <img src="https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python" height="28"/>
+        </a>
+      </td>
+      <td>
+        <a href="https://aws.amazon.com/">
+          <img src="https://img.shields.io/badge/AWS-Solutions%20Architect-FF9900?style=for-the-badge&logo=amazon-aws&logoColor=white" alt="AWS Solutions Architect" height="28"/>
+        </a>
+      </td>
+      <td>
+        <img src="https://img.shields.io/badge/Medical-Heart-E63946?style=for-the-badge&logo=heart&logoColor=white" alt="Medical heart badge" height="28"/>
+      </td>
+    </tr>
+  </table>
 
   <p align="center">
-    <img src="CardioVision%20by%20LYNX.jpg" alt="CardioVision by LYNX Logo" width="130" style="border-radius: 50%;" />
+    <img src="CardioVision%20by%20LYNX.jpeg" alt="CardioVision by LYNX Logo" width="130" style="border-radius: 50%;" />
   </p>
 
   <br />
@@ -56,10 +56,6 @@
         <table style="background: #0d1117; border-radius: 9px; padding: 12px 28px; border-collapse: collapse;">
           <tr>
             <td align="center">
-              <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg" alt="Python logo" width="28" height="28" style="vertical-align: middle;" />
-              &nbsp;
-              <img src="https://img.shields.io/badge/Medical-Heart-E63946?style=for-the-badge&logo=heart&logoColor=white" alt="Medical heart logo" height="28" style="vertical-align: middle;" />
-              &nbsp;
               🌐 <strong>Live Application:</strong>&nbsp;
               <a href="https://cardio-vision-ai-six.vercel.app/" target="_blank">
                 <strong>https://cardio-vision-ai-six.vercel.app/</strong>
